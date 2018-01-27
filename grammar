@@ -1,0 +1,45 @@
+Import mojo
+Import brl
+Global Game:Game_app
+Global Score: int
+
+'Main program starts here:
+Function Main ()
+	Game = New Game_app
+End
+
+'All game code goes here:
+Class Game_app Extends App
+
+	Global GameState:String = "MENU"
+	Field menu:Image
+	'Global sound: Sound
+	
+	'Field maze:Level
+	
+	'Field characters:Image 'The image of all the characters from the sprite map
+	'Field p1:Character 'p1 is the player object
+	'Field ghost:Character
+	'Field psherman:Character
+	
+Method OnCreate ()
+	'All the initialisation for the game goes here:
+		SetUpdateRate 60
+		menu = LoadImage ("menu.png")
+
+Method OnRender ()
+'All the graphics drawing goes here:
+	Select GameState
+		Case "MENU"
+			DrawImage menu, 0,0
+		Case "PLAYING"
+			Cls 0, 0, 0
+			maze.draw
+			p1.draw
+			ghost.draw 'The new ghost is drawn to the screen
+			psherman.draw 'Draws the goggles to the screen
+			DrawText(Score, 60, 50, 2, 2)
+			End
+			
+	End
+End
