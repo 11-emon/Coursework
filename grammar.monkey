@@ -60,6 +60,7 @@ Method OnRender ()
 		Case "PLAYING"
 			Cls 0, 191, 255 '0-191-255
 			DrawImage airballoon,17, 270
+			'DrawImage player.sprite, player.x, player.y
 			DrawRect px,py,16,16
 			'airballoon.draw
 			'DrawText(Score, 60, 50, 2, 2)
@@ -69,14 +70,19 @@ Method OnRender ()
 		End
 End
 
-'Class balloon
+Class balloon
 
-'Field sprite:Image = LoadImage ("hotairballoon.png")
-'Field x:Float
-'Field y:Float
-	'Method New(x_spawn:Int, y_spawn:Int)
-		'x = x_spawn
-		'y = y_spawn
+Field sprite:Image = LoadImage ("hotairballoon.png")
+Field x:Float
+Field y:Float
+	Method New(x_spawn:Int, y_spawn:Int)
+		x = x_spawn
+		y = y_spawn
 
-	'End
+	End
+	Method Move(x_distance:Int)
+		x+=x_distance
+			If x<0 Then x=0
+			If x>590 Then x=590
+	End
 'End
