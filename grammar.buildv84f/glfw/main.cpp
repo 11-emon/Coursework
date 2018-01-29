@@ -5346,6 +5346,7 @@ String dbg_type(c_App**p){return "App";}
 class c_Game_app : public c_App{
 	public:
 	c_Image* m_menu;
+	c_Image* m_airballoon;
 	c_Game_app();
 	c_Game_app* m_new();
 	int p_OnCreate();
@@ -5694,12 +5695,13 @@ String c_App::debug(){
 }
 c_Game_app::c_Game_app(){
 	m_menu=0;
+	m_airballoon=0;
 }
 c_Game_app* c_Game_app::m_new(){
 	DBG_ENTER("Game_app.new")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<12>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<10>");
 	c_App::m_new();
 	return this;
 }
@@ -5707,10 +5709,12 @@ int c_Game_app::p_OnCreate(){
 	DBG_ENTER("Game_app.OnCreate")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<27>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<18>");
 	bb_app_SetUpdateRate(60);
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<28>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<19>");
 	gc_assign(m_menu,bb_graphics_LoadImage(String(L"login.png",9),1,c_Image::m_DefaultFlags));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<20>");
+	gc_assign(m_airballoon,bb_graphics_LoadImage(String(L"hotairballoon.png",17),1,c_Image::m_DefaultFlags));
 	return 0;
 }
 String c_Game_app::m_GameState;
@@ -5718,27 +5722,27 @@ int c_Game_app::p_OnUpdate(){
 	DBG_ENTER("Game_app.OnUpdate")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<33>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<28>");
 	String t_1=m_GameState;
 	DBG_LOCAL(t_1,"1")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<34>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<29>");
 	if(t_1==String(L"MENU",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<35>");
-		if((bb_input_KeyHit(32))!=0){
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<30>");
+		if((bb_input_KeyHit(13))!=0){
 			DBG_BLOCK();
 			m_GameState=String(L"INITIALISE",10);
 		}
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<36>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<31>");
 		if(t_1==String(L"INITIALISE",10)){
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<37>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<32>");
 			m_GameState=String(L"PLAYING",7);
 		}else{
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<38>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<33>");
 			if(t_1==String(L"PLAYING",7)){
 				DBG_BLOCK();
 			}
@@ -5750,21 +5754,23 @@ int c_Game_app::p_OnRender(){
 	DBG_ENTER("Game_app.OnRender")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<45>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<40>");
 	String t_2=m_GameState;
 	DBG_LOCAL(t_2,"2")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<46>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<41>");
 	if(t_2==String(L"MENU",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<47>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<42>");
 		bb_graphics_DrawImage(m_menu,FLOAT(0.0),FLOAT(0.0),0);
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<48>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<43>");
 		if(t_2==String(L"PLAYING",7)){
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<49>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<44>");
 			bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<45>");
+			bb_graphics_DrawImage(m_airballoon,FLOAT(20.0),FLOAT(20.0),0);
 		}
 	}
 	return 0;
@@ -5772,12 +5778,14 @@ int c_Game_app::p_OnRender(){
 void c_Game_app::mark(){
 	c_App::mark();
 	gc_mark_q(m_menu);
+	gc_mark_q(m_airballoon);
 }
 String c_Game_app::debug(){
 	String t="(Game_app)\n";
 	t=c_App::debug()+t;
 	t+=dbg_decl("GameState",&c_Game_app::m_GameState);
 	t+=dbg_decl("menu",&m_menu);
+	t+=dbg_decl("airballoon",&m_airballoon);
 	return t;
 }
 c_App* bb_app__app;
@@ -5969,7 +5977,7 @@ BBGame* bb_app__game;
 c_Game_app* bb_grammar_Game;
 int bbMain(){
 	DBG_ENTER("Main")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<8>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<7>");
 	gc_assign(bb_grammar_Game,(new c_Game_app)->m_new());
 	return 0;
 }
