@@ -5,9 +5,13 @@ Global py:Int = 220
 ' starting movement direction
 Global currentdir:String="right"
 Global movementspeed = 1
-Global airballoon:Image
-Global player:Int
+
 Class MyGame Extends App
+
+Global airballoon:Image
+Field enemy_collection:List<balloon>
+Field player:balloon
+
     Method OnCreate()
         SetUpdateRate(60)
         airballoon = LoadImage ("hotairballoon.png")
@@ -29,7 +33,7 @@ Class MyGame Extends App
     Method OnRender()
         Cls 0,191,255
         'SetColor 0, 191, 255
-        DrawImage, airballoon, 320 ,220
+        DrawImage, airballoon,320,220
         'DrawImage player.sprite, player.x, player.y
         For Local enemy:=Eachin enemy_collection
 
@@ -54,4 +58,21 @@ Next
 End
 Function Main()
     New MyGame()
+End
+
+Class balloon
+
+Field sprite:Image = LoadImage ("hotairballoon.png")
+Field x:Float
+Field y:Float
+	Method New(x_spawn:Int, y_spawn:Int)
+		x = x_spawn
+		y = y_spawn
+
+	End
+	Method Move(x_distance:Int)
+		x+=x_distance
+			If x<0 Then x=0
+			If x>590 Then x=590
+	End
 End
