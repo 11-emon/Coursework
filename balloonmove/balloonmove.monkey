@@ -5,11 +5,12 @@ Global py:Int = 220
 ' starting movement direction
 Global currentdir:String="right"
 Global movementspeed = 1
+Global updowndir:String
 
 Class MyGame Extends App
 
 Global airballoon:Image
-Field enemy_collection:List<balloon>
+'Field enemy_collection:List<balloon>
 Field player:balloon
 
     Method OnCreate()
@@ -33,26 +34,26 @@ Field player:balloon
     Method OnRender()
         Cls 0,191,255
         'SetColor 0, 191, 255
-        DrawImage, airballoon,320,220
+        DrawImage airballoon,320,220
         'DrawImage player.sprite, player.x, player.y
-        For Local enemy:=Eachin enemy_collection
+        'For Local enemy:=Eachin enemy_collection
 
-If enemy.y > 400 Then ' check if at bottom
+If airballoon.y > 400 Then ' check if at bottom
 updowndir = "up" 
 End If
-If enemy.y < 0 Then ' check If at top
+If airballoon.y < 0 Then ' check If at top
 updowndir = "down"
 End If
 
 If updowndir = "down" Then ' respond to down flag
-enemy.y +=2
+airballoon.y +=2
 ' change to speed up movement down
 Else 
-enemy.y -=3 ' movement up
+airballoon.y -=3 ' movement up
 End If
-Print enemy.y ' for debug to see Y values
-DrawImage enemy.sprite, enemy.x, enemy.y
-Next
+Print airballoon.y ' for debug to see Y values
+'DrawImage enemy.sprite, enemy.x, enemy.y
+'Next
 
     End
 End
