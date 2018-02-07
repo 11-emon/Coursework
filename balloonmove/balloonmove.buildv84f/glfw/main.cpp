@@ -4750,7 +4750,7 @@ int c_Game::p_OnRender(){
 	c_Game *self=this;
 	DBG_LOCAL(self,"Self")
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<18>");
-	bb_graphics_Cls(FLOAT(0.0),FLOAT(0.0),FLOAT(0.0));
+	bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<19>");
 	m_balloon->p_Move();
 	return 0;

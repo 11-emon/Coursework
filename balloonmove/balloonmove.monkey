@@ -15,7 +15,7 @@ Class Game Extends App
     
 
     Method OnRender()
-        Cls
+        Cls 0, 191, 255
 	balloon.Move()
 		
 	
