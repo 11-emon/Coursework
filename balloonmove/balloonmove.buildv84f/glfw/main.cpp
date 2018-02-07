@@ -4337,7 +4337,7 @@ void *BBThread::run( void *p ){
 #endif
 
 class c_App;
-class c_MyGame;
+class c_Game;
 class c_GameDelegate;
 class c_Image;
 class c_GraphicsContext;
@@ -4350,11 +4350,7 @@ class c_IntMap;
 class c_Stack;
 class c_Node;
 class c_BBGameEvent;
-class c_balloon;
-class c_List;
-class c_Enumerator;
-class c_Node2;
-class c_HeadNode;
+class c_Balloon;
 class c_App : public Object{
 	public:
 	c_App();
@@ -4363,7 +4359,7 @@ class c_App : public Object{
 	virtual int p_OnCreate();
 	int p_OnSuspend();
 	int p_OnResume();
-	virtual int p_OnUpdate();
+	int p_OnUpdate();
 	int p_OnLoading();
 	virtual int p_OnRender();
 	int p_OnClose();
@@ -4372,19 +4368,17 @@ class c_App : public Object{
 	String debug();
 };
 String dbg_type(c_App**p){return "App";}
-class c_MyGame : public c_App{
+class c_Game : public c_App{
 	public:
-	c_List* m_enemy_collection;
-	c_MyGame();
-	c_MyGame* m_new();
-	static c_Image* m_airballoon;
+	c_Balloon* m_balloon;
+	c_Game();
+	c_Game* m_new();
 	int p_OnCreate();
-	int p_OnUpdate();
 	int p_OnRender();
 	void mark();
 	String debug();
 };
-String dbg_type(c_MyGame**p){return "MyGame";}
+String dbg_type(c_Game**p){return "Game";}
 extern c_App* bb_app__app;
 class c_GameDelegate : public BBGameDelegate{
 	public:
@@ -4620,6 +4614,18 @@ String dbg_type(c_BBGameEvent**p){return "BBGameEvent";}
 void bb_app_EndApp();
 extern int bb_app__updateRate;
 void bb_app_SetUpdateRate(int);
+class c_Balloon : public Object{
+	public:
+	c_Image* m_image;
+	int m_balloony;
+	String m_updowndir;
+	c_Balloon();
+	c_Balloon* m_new(int);
+	int p_Move();
+	void mark();
+	String debug();
+};
+String dbg_type(c_Balloon**p){return "Balloon";}
 int bb_graphics_DebugRenderDevice();
 int bb_graphics_Cls(Float,Float,Float);
 int bb_graphics_DrawImage(c_Image*,Float,Float,int);
@@ -4631,59 +4637,6 @@ int bb_graphics_Rotate(Float);
 int bb_graphics_Scale(Float,Float);
 int bb_graphics_PopMatrix();
 int bb_graphics_DrawImage2(c_Image*,Float,Float,Float,Float,Float,int);
-class c_balloon : public Object{
-	public:
-	Float m_y;
-	c_Image* m_sprite;
-	Float m_x;
-	c_balloon();
-	void mark();
-	String debug();
-};
-String dbg_type(c_balloon**p){return "balloon";}
-class c_List : public Object{
-	public:
-	c_Node2* m__head;
-	c_List();
-	c_Enumerator* p_ObjectEnumerator();
-	void mark();
-	String debug();
-};
-String dbg_type(c_List**p){return "List";}
-class c_Enumerator : public Object{
-	public:
-	c_List* m__list;
-	c_Node2* m__curr;
-	c_Enumerator();
-	c_Enumerator* m_new(c_List*);
-	c_Enumerator* m_new2();
-	bool p_HasNext();
-	c_balloon* p_NextObject();
-	void mark();
-	String debug();
-};
-String dbg_type(c_Enumerator**p){return "Enumerator";}
-class c_Node2 : public Object{
-	public:
-	c_Node2* m__succ;
-	c_Node2* m__pred;
-	c_balloon* m__data;
-	c_Node2();
-	c_Node2* m_new(c_Node2*,c_Node2*,c_balloon*);
-	c_Node2* m_new2();
-	void mark();
-	String debug();
-};
-String dbg_type(c_Node2**p){return "Node";}
-class c_HeadNode : public c_Node2{
-	public:
-	c_HeadNode();
-	c_HeadNode* m_new();
-	void mark();
-	String debug();
-};
-String dbg_type(c_HeadNode**p){return "HeadNode";}
-extern String bb_balloonmove_updowndir;
 void gc_mark( BBGame *p ){}
 String dbg_type( BBGame **p ){ return "BBGame"; }
 String dbg_value( BBGame **p ){ return dbg_ptr_value( *p ); }
@@ -4771,86 +4724,45 @@ String c_App::debug(){
 	String t="(App)\n";
 	return t;
 }
-c_MyGame::c_MyGame(){
-	m_enemy_collection=0;
+c_Game::c_Game(){
+	m_balloon=0;
 }
-c_MyGame* c_MyGame::m_new(){
-	DBG_ENTER("MyGame.new")
-	c_MyGame *self=this;
+c_Game* c_Game::m_new(){
+	DBG_ENTER("Game.new")
+	c_Game *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<10>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<3>");
 	c_App::m_new();
 	return this;
 }
-c_Image* c_MyGame::m_airballoon;
-int c_MyGame::p_OnCreate(){
-	DBG_ENTER("MyGame.OnCreate")
-	c_MyGame *self=this;
+int c_Game::p_OnCreate(){
+	DBG_ENTER("Game.OnCreate")
+	c_Game *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<17>");
-	bb_app_SetUpdateRate(60);
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<12>");
+	bb_app_SetUpdateRate(30);
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<13>");
+	gc_assign(m_balloon,(new c_Balloon)->m_new(0));
+	return 0;
+}
+int c_Game::p_OnRender(){
+	DBG_ENTER("Game.OnRender")
+	c_Game *self=this;
+	DBG_LOCAL(self,"Self")
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<18>");
-	gc_assign(m_airballoon,bb_graphics_LoadImage(String(L"hotairballoon.png",17),1,c_Image::m_DefaultFlags));
+	bb_graphics_Cls(FLOAT(0.0),FLOAT(0.0),FLOAT(0.0));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<19>");
+	m_balloon->p_Move();
 	return 0;
 }
-int c_MyGame::p_OnUpdate(){
-	DBG_ENTER("MyGame.OnUpdate")
-	c_MyGame *self=this;
-	DBG_LOCAL(self,"Self")
-	return 0;
-}
-int c_MyGame::p_OnRender(){
-	DBG_ENTER("MyGame.OnRender")
-	c_MyGame *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<35>");
-	bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<37>");
-	bb_graphics_DrawImage(m_airballoon,FLOAT(320.0),FLOAT(220.0),0);
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<39>");
-	c_Enumerator* t_=m_enemy_collection->p_ObjectEnumerator();
-	while(t_->p_HasNext()){
-		DBG_BLOCK();
-		c_balloon* t_enemy=t_->p_NextObject();
-		DBG_LOCAL(t_enemy,"enemy")
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<41>");
-		if(t_enemy->m_y>FLOAT(400.0)){
-			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<42>");
-			bb_balloonmove_updowndir=String(L"up",2);
-		}
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<44>");
-		if(t_enemy->m_y<FLOAT(0.0)){
-			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<45>");
-			bb_balloonmove_updowndir=String(L"down",4);
-		}
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<48>");
-		if(bb_balloonmove_updowndir==String(L"down",4)){
-			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<49>");
-			t_enemy->m_y=t_enemy->m_y+FLOAT(2.0);
-		}else{
-			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<52>");
-			t_enemy->m_y=t_enemy->m_y-FLOAT(3.0);
-		}
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<54>");
-		bbPrint(String(t_enemy->m_y));
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<55>");
-		bb_graphics_DrawImage(t_enemy->m_sprite,t_enemy->m_x,t_enemy->m_y,0);
-	}
-	return 0;
-}
-void c_MyGame::mark(){
+void c_Game::mark(){
 	c_App::mark();
-	gc_mark_q(m_enemy_collection);
+	gc_mark_q(m_balloon);
 }
-String c_MyGame::debug(){
-	String t="(MyGame)\n";
+String c_Game::debug(){
+	String t="(Game)\n";
 	t=c_App::debug()+t;
-	t+=dbg_decl("airballoon",&c_MyGame::m_airballoon);
-	t+=dbg_decl("enemy_collection",&m_enemy_collection);
+	t+=dbg_decl("balloon",&m_balloon);
 	return t;
 }
 c_App* bb_app__app;
@@ -5041,8 +4953,8 @@ c_GameDelegate* bb_app__delegate;
 BBGame* bb_app__game;
 int bbMain(){
 	DBG_ENTER("Main")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<61>");
-	(new c_MyGame)->m_new();
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<27>");
+	(new c_Game)->m_new();
 	return 0;
 }
 gxtkGraphics* bb_graphics_device;
@@ -6549,6 +6461,60 @@ void bb_app_SetUpdateRate(int t_hertz){
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/app.monkey<225>");
 	bb_app__game->SetUpdateRate(t_hertz);
 }
+c_Balloon::c_Balloon(){
+	m_image=bb_graphics_LoadImage(String(L"hotairballoon.png",17),1,c_Image::m_DefaultFlags);
+	m_balloony=0;
+	m_updowndir=String(L"down",4);
+}
+c_Balloon* c_Balloon::m_new(int t_balloony){
+	DBG_ENTER("Balloon.new")
+	c_Balloon *self=this;
+	DBG_LOCAL(self,"Self")
+	return this;
+}
+int c_Balloon::p_Move(){
+	DBG_ENTER("Balloon.Move")
+	c_Balloon *self=this;
+	DBG_LOCAL(self,"Self")
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<42>");
+	bb_graphics_DrawImage(m_image,FLOAT(20.0),Float(m_balloony),0);
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<43>");
+	m_balloony+=1;
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<44>");
+	if(m_balloony>=400){
+		DBG_BLOCK();
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<45>");
+		m_updowndir=String(L"up",2);
+	}
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<47>");
+	if(m_balloony<0){
+		DBG_BLOCK();
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<48>");
+		m_updowndir=String(L"down",4);
+	}
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<51>");
+	if(m_updowndir==String(L"down",4)){
+		DBG_BLOCK();
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<52>");
+		m_balloony+=2;
+	}else{
+		DBG_BLOCK();
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<55>");
+		m_balloony-=3;
+	}
+	return 0;
+}
+void c_Balloon::mark(){
+	Object::mark();
+	gc_mark_q(m_image);
+}
+String c_Balloon::debug(){
+	String t="(Balloon)\n";
+	t+=dbg_decl("image",&m_image);
+	t+=dbg_decl("balloony",&m_balloony);
+	t+=dbg_decl("updowndir",&m_updowndir);
+	return t;
+}
 int bb_graphics_DebugRenderDevice(){
 	DBG_ENTER("DebugRenderDevice")
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<53>");
@@ -6741,168 +6707,6 @@ int bb_graphics_DrawImage2(c_Image* t_image,Float t_x,Float t_y,Float t_rotation
 	bb_graphics_PopMatrix();
 	return 0;
 }
-c_balloon::c_balloon(){
-	m_y=FLOAT(.0);
-	m_sprite=bb_graphics_LoadImage(String(L"hotairballoon.png",17),1,c_Image::m_DefaultFlags);
-	m_x=FLOAT(.0);
-}
-void c_balloon::mark(){
-	Object::mark();
-	gc_mark_q(m_sprite);
-}
-String c_balloon::debug(){
-	String t="(balloon)\n";
-	t+=dbg_decl("sprite",&m_sprite);
-	t+=dbg_decl("x",&m_x);
-	t+=dbg_decl("y",&m_y);
-	return t;
-}
-c_List::c_List(){
-	m__head=((new c_HeadNode)->m_new());
-}
-c_Enumerator* c_List::p_ObjectEnumerator(){
-	DBG_ENTER("List.ObjectEnumerator")
-	c_List *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<186>");
-	c_Enumerator* t_=(new c_Enumerator)->m_new(this);
-	return t_;
-}
-void c_List::mark(){
-	Object::mark();
-	gc_mark_q(m__head);
-}
-String c_List::debug(){
-	String t="(List)\n";
-	t+=dbg_decl("_head",&m__head);
-	return t;
-}
-c_Enumerator::c_Enumerator(){
-	m__list=0;
-	m__curr=0;
-}
-c_Enumerator* c_Enumerator::m_new(c_List* t_list){
-	DBG_ENTER("Enumerator.new")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_list,"list")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<326>");
-	gc_assign(m__list,t_list);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<327>");
-	gc_assign(m__curr,t_list->m__head->m__succ);
-	return this;
-}
-c_Enumerator* c_Enumerator::m_new2(){
-	DBG_ENTER("Enumerator.new")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<323>");
-	return this;
-}
-bool c_Enumerator::p_HasNext(){
-	DBG_ENTER("Enumerator.HasNext")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<331>");
-	while(m__curr->m__succ->m__pred!=m__curr){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<332>");
-		gc_assign(m__curr,m__curr->m__succ);
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<334>");
-	bool t_=m__curr!=m__list->m__head;
-	return t_;
-}
-c_balloon* c_Enumerator::p_NextObject(){
-	DBG_ENTER("Enumerator.NextObject")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<338>");
-	c_balloon* t_data=m__curr->m__data;
-	DBG_LOCAL(t_data,"data")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<339>");
-	gc_assign(m__curr,m__curr->m__succ);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<340>");
-	return t_data;
-}
-void c_Enumerator::mark(){
-	Object::mark();
-	gc_mark_q(m__list);
-	gc_mark_q(m__curr);
-}
-String c_Enumerator::debug(){
-	String t="(Enumerator)\n";
-	t+=dbg_decl("_list",&m__list);
-	t+=dbg_decl("_curr",&m__curr);
-	return t;
-}
-c_Node2::c_Node2(){
-	m__succ=0;
-	m__pred=0;
-	m__data=0;
-}
-c_Node2* c_Node2::m_new(c_Node2* t_succ,c_Node2* t_pred,c_balloon* t_data){
-	DBG_ENTER("Node.new")
-	c_Node2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_succ,"succ")
-	DBG_LOCAL(t_pred,"pred")
-	DBG_LOCAL(t_data,"data")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<261>");
-	gc_assign(m__succ,t_succ);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<262>");
-	gc_assign(m__pred,t_pred);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<263>");
-	gc_assign(m__succ->m__pred,this);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<264>");
-	gc_assign(m__pred->m__succ,this);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<265>");
-	gc_assign(m__data,t_data);
-	return this;
-}
-c_Node2* c_Node2::m_new2(){
-	DBG_ENTER("Node.new")
-	c_Node2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<258>");
-	return this;
-}
-void c_Node2::mark(){
-	Object::mark();
-	gc_mark_q(m__succ);
-	gc_mark_q(m__pred);
-	gc_mark_q(m__data);
-}
-String c_Node2::debug(){
-	String t="(Node)\n";
-	t+=dbg_decl("_succ",&m__succ);
-	t+=dbg_decl("_pred",&m__pred);
-	t+=dbg_decl("_data",&m__data);
-	return t;
-}
-c_HeadNode::c_HeadNode(){
-}
-c_HeadNode* c_HeadNode::m_new(){
-	DBG_ENTER("HeadNode.new")
-	c_HeadNode *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<310>");
-	c_Node2::m_new2();
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<311>");
-	gc_assign(m__succ,(this));
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<312>");
-	gc_assign(m__pred,(this));
-	return this;
-}
-void c_HeadNode::mark(){
-	c_Node2::mark();
-}
-String c_HeadNode::debug(){
-	String t="(HeadNode)\n";
-	t=c_Node2::debug()+t;
-	return t;
-}
-String bb_balloonmove_updowndir;
 int bbInit(){
 	GC_CTOR
 	bb_app__app=0;
@@ -6933,10 +6737,6 @@ int bbInit(){
 	DBG_GLOBAL("renderDevice",&bb_graphics_renderDevice);
 	bb_app__updateRate=0;
 	DBG_GLOBAL("_updateRate",&bb_app__updateRate);
-	c_MyGame::m_airballoon=0;
-	DBG_GLOBAL("airballoon",&c_MyGame::m_airballoon);
-	bb_balloonmove_updowndir=String();
-	DBG_GLOBAL("updowndir",&bb_balloonmove_updowndir);
 	return 0;
 }
 void gc_mark(){
@@ -6949,7 +6749,6 @@ void gc_mark(){
 	gc_mark_q(bb_app__displayModes);
 	gc_mark_q(bb_app__desktopMode);
 	gc_mark_q(bb_graphics_renderDevice);
-	gc_mark_q(c_MyGame::m_airballoon);
 }
 //${TRANSCODE_END}
 
