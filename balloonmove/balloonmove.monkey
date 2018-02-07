@@ -41,7 +41,7 @@ End
 Method Move( )
         DrawImage image,20, balloony
         balloony+=1 
-        If balloony >=   400 Then ' check if at bottom
+        If balloony >=   278 Then ' check if at bottom
 	updowndir = "up" 
 	End If
 	If balloony < 0 Then ' check If at top

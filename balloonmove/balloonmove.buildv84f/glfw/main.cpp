@@ -6481,7 +6481,7 @@ int c_Balloon::p_Move(){
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<43>");
 	m_balloony+=1;
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<44>");
-	if(m_balloony>=400){
+	if(m_balloony>=278){
 		DBG_BLOCK();
 		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<45>");
 		m_updowndir=String(L"up",2);
