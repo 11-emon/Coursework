@@ -6496,11 +6496,11 @@ int c_Balloon::p_Move(){
 	if(m_updowndir==String(L"down",4)){
 		DBG_BLOCK();
 		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<52>");
-		m_balloony+=2;
+		m_balloony+=1;
 	}else{
 		DBG_BLOCK();
 		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<55>");
-		m_balloony-=3;
+		m_balloony-=2;
 	}
 	return 0;
 }

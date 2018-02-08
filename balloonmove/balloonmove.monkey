@@ -49,10 +49,10 @@ Method Move( )
 	End If
 	
 	If updowndir = "down" Then ' respond to down flag
-	balloony +=2
+	balloony +=1
 	' change to speed up movement down
 	Else 
-	balloony -=3 ' movement up
+	balloony -=2 ' movement up
 	End If    
 	'end of movement code
 End
