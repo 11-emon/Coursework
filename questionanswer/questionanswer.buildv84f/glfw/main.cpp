@@ -5415,6 +5415,9 @@ class c_Image : public Object{
 	int p_ApplyFlags(int);
 	c_Image* p_Init(gxtkSurface*,int,int);
 	c_Image* p_Init2(gxtkSurface*,int,int,int,int,int,int,c_Image*,int,int,int,int);
+	int p_Width();
+	int p_Height();
+	int p_Frames();
 	void mark();
 	String debug();
 };
@@ -5684,6 +5687,7 @@ int bb_graphics_Scale(Float,Float);
 int bb_graphics_PopMatrix();
 int bb_graphics_DrawImage2(c_Image*,Float,Float,Float,Float,Float,int);
 int bb_graphics_Cls(Float,Float,Float);
+int bb_graphics_DrawText(String,Float,Float,Float,Float);
 void gc_mark( BBGame *p ){}
 String dbg_type( BBGame **p ){ return "BBGame"; }
 String dbg_value( BBGame **p ){ return dbg_ptr_value( *p ); }
@@ -5897,8 +5901,10 @@ int c_Game_app::p_OnRender(){
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<74>");
 			bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<75>");
-			bb_graphics_DrawImage(m_youreballoon,FLOAT(20.0),FLOAT(20.0),0);
+			bb_graphics_DrawText(String(L"Choose the answer fill the gap: I love _____ dog!",49),FLOAT(20.0),FLOAT(40.0),FLOAT(0.0),FLOAT(0.0));
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<76>");
+			bb_graphics_DrawImage(m_youreballoon,FLOAT(20.0),FLOAT(20.0),0);
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<77>");
 			bb_graphics_DrawImage(m_yourballoon,FLOAT(40.0),FLOAT(20.0),0);
 		}
 	}
@@ -6311,6 +6317,28 @@ c_Image* c_Image::p_Init2(gxtkSurface* t_surf,int t_x,int t_y,int t_iwidth,int t
 	p_ApplyFlags(t_iflags);
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<183>");
 	return this;
+}
+int c_Image::p_Width(){
+	DBG_ENTER("Image.Width")
+	c_Image *self=this;
+	DBG_LOCAL(self,"Self")
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<81>");
+	return m_width;
+}
+int c_Image::p_Height(){
+	DBG_ENTER("Image.Height")
+	c_Image *self=this;
+	DBG_LOCAL(self,"Self")
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<85>");
+	return m_height;
+}
+int c_Image::p_Frames(){
+	DBG_ENTER("Image.Frames")
+	c_Image *self=this;
+	DBG_LOCAL(self,"Self")
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<93>");
+	int t_=m_frames.Length();
+	return t_;
 }
 void c_Image::mark(){
 	Object::mark();
@@ -7653,30 +7681,30 @@ int c_Balloon::p_Move(){
 	DBG_ENTER("Balloon.Move")
 	c_Balloon *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<115>");
-	bb_graphics_DrawImage(m_image,FLOAT(20.0),Float(m_balloony),0);
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<116>");
-	m_balloony+=1;
+	bb_graphics_DrawImage(m_image,FLOAT(20.0),Float(m_balloony),0);
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<117>");
+	m_balloony+=1;
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<118>");
 	if(m_balloony>=278){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<118>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<119>");
 		m_updowndir=String(L"up",2);
 	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<120>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<121>");
 	if(m_balloony<0){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<121>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<122>");
 		m_updowndir=String(L"down",4);
 	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<124>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<125>");
 	if(m_updowndir==String(L"down",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<125>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<126>");
 		m_balloony+=1;
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<128>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<129>");
 		m_balloony-=2;
 	}
 	return 0;
@@ -8038,6 +8066,46 @@ int bb_graphics_Cls(Float t_r,Float t_g,Float t_b){
 	bb_graphics_DebugRenderDevice();
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<380>");
 	bb_graphics_renderDevice->Cls(t_r,t_g,t_b);
+	return 0;
+}
+int bb_graphics_DrawText(String t_text,Float t_x,Float t_y,Float t_xalign,Float t_yalign){
+	DBG_ENTER("DrawText")
+	DBG_LOCAL(t_text,"text")
+	DBG_LOCAL(t_x,"x")
+	DBG_LOCAL(t_y,"y")
+	DBG_LOCAL(t_xalign,"xalign")
+	DBG_LOCAL(t_yalign,"yalign")
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<577>");
+	bb_graphics_DebugRenderDevice();
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<579>");
+	if(!((bb_graphics_context->m_font)!=0)){
+		DBG_BLOCK();
+		return 0;
+	}
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<581>");
+	int t_w=bb_graphics_context->m_font->p_Width();
+	DBG_LOCAL(t_w,"w")
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<582>");
+	int t_h=bb_graphics_context->m_font->p_Height();
+	DBG_LOCAL(t_h,"h")
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<584>");
+	t_x-=(Float)floor(Float(t_w*t_text.Length())*t_xalign);
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<585>");
+	t_y-=(Float)floor(Float(t_h)*t_yalign);
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<587>");
+	for(int t_i=0;t_i<t_text.Length();t_i=t_i+1){
+		DBG_BLOCK();
+		DBG_LOCAL(t_i,"i")
+		DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<588>");
+		int t_ch=(int)t_text.At(t_i)-bb_graphics_context->m_firstChar;
+		DBG_LOCAL(t_ch,"ch")
+		DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<589>");
+		if(t_ch>=0 && t_ch<bb_graphics_context->m_font->p_Frames()){
+			DBG_BLOCK();
+			DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<590>");
+			bb_graphics_DrawImage(bb_graphics_context->m_font,t_x+Float(t_i*t_w),t_y,t_ch);
+		}
+	}
 	return 0;
 }
 int bbInit(){

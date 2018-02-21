@@ -72,6 +72,7 @@ Method OnRender()
 			balloon.Move()
 		Case "PLAYING"
 			Cls 0, 191, 255
+			DrawText "Choose the answer fill the gap: I love _____ dog!", 20, 40
 			DrawImage youreballoon, 20,20
 			DrawImage yourballoon, 40,20
 			
