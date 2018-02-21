@@ -5840,9 +5840,9 @@ int c_Game_app::p_OnRender(){
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<58>");
 			bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<59>");
-			bb_graphics_DrawImage(m_youreballoon,FLOAT(0.0),FLOAT(0.0),0);
+			bb_graphics_DrawImage(m_youreballoon,FLOAT(20.0),FLOAT(20.0),0);
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<60>");
-			bb_graphics_DrawImage(m_yourballoon,FLOAT(340.0),FLOAT(0.0),0);
+			bb_graphics_DrawImage(m_yourballoon,FLOAT(40.0),FLOAT(20.0),0);
 		}
 	}
 	return 0;

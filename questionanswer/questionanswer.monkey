@@ -56,8 +56,8 @@ Method OnRender()
 			DrawImage menu, 0, 0
 		Case "PLAYING"
 			Cls 0, 191, 255
-			DrawImage youreballoon, 0,0
-			DrawImage yourballoon, 340,0
+			DrawImage youreballoon, 20,20
+			DrawImage yourballoon, 40,20
 
 End
 End
