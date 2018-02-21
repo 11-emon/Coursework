@@ -14,10 +14,13 @@
 #define CFG_CPP_GC_MODE 1
 #define CFG_GLFW_SWAP_INTERVAL -1
 #define CFG_GLFW_USE_MINGW 1
-#define CFG_GLFW_VERSION 2
+#define CFG_GLFW_VERSION 3
+#define CFG_GLFW_WINDOW_DECORATED 1
+#define CFG_GLFW_WINDOW_FLOATING 0
 #define CFG_GLFW_WINDOW_FULLSCREEN 0
 #define CFG_GLFW_WINDOW_HEIGHT 480
 #define CFG_GLFW_WINDOW_RESIZABLE 0
+#define CFG_GLFW_WINDOW_SAMPLES 0
 #define CFG_GLFW_WINDOW_TITLE Monkey Game
 #define CFG_GLFW_WINDOW_WIDTH 640
 #define CFG_HOST winnt
@@ -2202,7 +2205,7 @@ static int readShort( FILE *f ){
 static void skipBytes( int n,FILE *f ){
 	char *p=(char*)malloc( n );
 	fread( p,n,1,f );
-	free( p );
+	free(p);
 }
 
 unsigned char *LoadWAV( FILE *f,int *plength,int *pchannels,int *pformat,int *phertz ){
@@ -2260,31 +2263,30 @@ unsigned char *LoadOGG( FILE *f,int *length,int *channels,int *format,int *hertz
 	stb_vorbis_info info=stb_vorbis_get_info( v );
 	
 	int limit=info.channels*4096;
-	int offset=0,total=limit;
+	int offset=0,data_len=0,total=limit;
 
-	short *data=(short*)malloc( total*2 );
+	short *data=(short*)malloc( total*sizeof(short) );
 	
 	for(;;){
 		int n=stb_vorbis_get_frame_short_interleaved( v,info.channels,data+offset,total-offset );
 		if( !n ) break;
 	
+		data_len+=n;
 		offset+=n*info.channels;
 		
 		if( offset+limit>total ){
 			total*=2;
-			data=(short*)realloc( data,total*2 );
+			data=(short*)realloc( data,total*sizeof(short) );
 		}
 	}
 	
-	data=(short*)realloc( data,offset*2 );
-	
-	*length=offset/info.channels;
+	*length=data_len;
 	*channels=info.channels;
 	*format=2;
 	*hertz=info.sample_rate;
 	
 	stb_vorbis_close(v);
-	
+
 	return (unsigned char*)data;
 }
 
@@ -2292,19 +2294,10 @@ unsigned char *LoadOGG( FILE *f,int *length,int *channels,int *format,int *hertz
 
 //***** glfwgame.h *****
 
-struct BBGlfwVideoMode : public Object{
-	int Width;
-	int Height;
-	int RedBits;
-	int GreenBits;
-	int BlueBits;
-	BBGlfwVideoMode( int w,int h,int r,int g,int b ):Width(w),Height(h),RedBits(r),GreenBits(g),BlueBits(b){}
-};
-
 class BBGlfwGame : public BBGame{
 public:
 	BBGlfwGame();
-
+	
 	static BBGlfwGame *GlfwGame(){ return _glfwGame; }
 	
 	virtual void SetUpdateRate( int hertz );
@@ -2312,60 +2305,68 @@ public:
 	virtual bool PollJoystick( int port,Array<Float> joyx,Array<Float> joyy,Array<Float> joyz,Array<bool> buttons );
 	virtual void OpenUrl( String url );
 	virtual void SetMouseVisible( bool visible );
-	
-	virtual int GetDeviceWidth();
-	virtual int GetDeviceHeight();
+		
+	virtual int GetDeviceWidth(){ return _width; }
+	virtual int GetDeviceHeight(){ return _height; }
 	virtual void SetDeviceWindow( int width,int height,int flags );
+	virtual void SetSwapInterval( int interval );
 	virtual Array<BBDisplayMode*> GetDisplayModes();
 	virtual BBDisplayMode *GetDesktopMode();
-	virtual void SetSwapInterval( int interval );
 
-	virtual int SaveState( String state );
-	virtual String LoadState();
 	virtual String PathToFilePath( String path );
-	virtual unsigned char *LoadImageData( String path,int *width,int *height,int *depth );
+	virtual unsigned char *LoadImageData( String path,int *width,int *height,int *format );
 	virtual unsigned char *LoadAudioData( String path,int *length,int *channels,int *format,int *hertz );
 	
-	virtual void SetGlfwWindow( int width,int height,int red,int green,int blue,int alpha,int depth,int stencil,bool fullscreen );
-	virtual BBGlfwVideoMode *GetGlfwDesktopMode();
-	virtual Array<BBGlfwVideoMode*> GetGlfwVideoModes();
+	void Run();
 	
-	virtual void Run();
-	
+	GLFWwindow *GetGLFWwindow(){ return _window; }
+		
 private:
 	static BBGlfwGame *_glfwGame;
+	
+	GLFWvidmode _desktopMode;
+	
+	GLFWwindow *_window;
+	int _width;
+	int _height;
+	int _swapInterval;
+	bool _focus;
 
 	double _updatePeriod;
 	double _nextUpdate;
 	
-	String _baseDir;
-	String _internalDir;
-	
-	int _swapInterval;
-
+	double GetTime();
+	void Sleep( double time );
 	void UpdateEvents();
+
+//	void SetGlfwWindow( int width,int height,int red,int green,int blue,int alpha,int depth,int stencil,bool fullscreen );
 		
-protected:
 	static int TransKey( int key );
 	static int KeyToChar( int key );
 	
-	static void GLFWCALL OnKey( int key,int action );
-	static void GLFWCALL OnChar( int chr,int action );
-	static void GLFWCALL OnMouseButton( int button,int action );
-	static void GLFWCALL OnMousePos( int x,int y );
-	static int  GLFWCALL OnWindowClose();
+	static void OnKey( GLFWwindow *window,int key,int scancode,int action,int mods );
+	static void OnChar( GLFWwindow *window,unsigned int chr );
+	static void OnMouseButton( GLFWwindow *window,int button,int action,int mods );
+	static void OnCursorPos( GLFWwindow *window,double x,double y );
+	static void OnWindowClose( GLFWwindow *window );
+	static void OnWindowSize( GLFWwindow *window,int width,int height );
 };
 
 //***** glfwgame.cpp *****
+
+#include <errno.h>
+
+#define _QUOTE(X) #X
+#define _STRINGIZE( X ) _QUOTE(X)
 
 enum{
 	VKEY_BACKSPACE=8,VKEY_TAB,
 	VKEY_ENTER=13,
 	VKEY_SHIFT=16,
 	VKEY_CONTROL=17,
-	VKEY_ESC=27,
+	VKEY_ESCAPE=27,
 	VKEY_SPACE=32,
-	VKEY_PAGEUP=33,VKEY_PAGEDOWN,VKEY_END,VKEY_HOME,
+	VKEY_PAGE_UP=33,VKEY_PAGE_DOWN,VKEY_END,VKEY_HOME,
 	VKEY_LEFT=37,VKEY_UP,VKEY_RIGHT,VKEY_DOWN,
 	VKEY_INSERT=45,VKEY_DELETE,
 	VKEY_0=48,VKEY_1,VKEY_2,VKEY_3,VKEY_4,VKEY_5,VKEY_6,VKEY_7,VKEY_8,VKEY_9,
@@ -2383,9 +2384,9 @@ enum{
 	VKEY_F1=112,VKEY_F2,VKEY_F3,VKEY_F4,VKEY_F5,VKEY_F6,
 	VKEY_F7,VKEY_F8,VKEY_F9,VKEY_F10,VKEY_F11,VKEY_F12,
 
-	VKEY_LSHIFT=160,VKEY_RSHIFT,
-	VKEY_LCONTROL=162,VKEY_RCONTROL,
-	VKEY_LALT=164,VKEY_RALT,
+	VKEY_LEFT_SHIFT=160,VKEY_RIGHT_SHIFT,
+	VKEY_LEFT_CONTROL=162,VKEY_RIGHT_CONTROL,
+	VKEY_LEFT_ALT=164,VKEY_RIGHT_ALT,
 
 	VKEY_TILDE=192,VKEY_MINUS=189,VKEY_EQUALS=187,
 	VKEY_OPENBRACKET=219,VKEY_BACKSLASH=220,VKEY_CLOSEBRACKET=221,
@@ -2393,35 +2394,19 @@ enum{
 	VKEY_COMMA=188,VKEY_PERIOD=190,VKEY_SLASH=191
 };
 
-enum{
-	JOY_A=0x00,
-	JOY_B=0x01,
-	JOY_X=0x02,
-	JOY_Y=0x03,
-	JOY_LB=0x04,
-	JOY_RB=0x05,
-	JOY_BACK=0x06,
-	JOY_START=0x07,
-	JOY_LEFT=0x08,
-	JOY_UP=0x09,
-	JOY_RIGHT=0x0a,
-	JOY_DOWN=0x0b,
-	JOY_LSB=0x0c,
-	JOY_RSB=0x0d,
-	JOY_MENU=0x0e
-};
-
-BBGlfwGame *BBGlfwGame::_glfwGame;
-
-BBGlfwGame::BBGlfwGame():_updatePeriod(0),_nextUpdate(0),_swapInterval( CFG_GLFW_SWAP_INTERVAL ){
-	_glfwGame=this;
-}
-
-//***** BBGame *****
-
 void Init_GL_Exts();
 
 int glfwGraphicsSeq=0;
+
+BBGlfwGame *BBGlfwGame::_glfwGame;
+
+BBGlfwGame::BBGlfwGame():_window(0),_width(0),_height(0),_swapInterval(1),_focus(true),_updatePeriod(0),_nextUpdate(0){
+	_glfwGame=this;
+
+	memset( &_desktopMode,0,sizeof(_desktopMode) );	
+	const GLFWvidmode *vmode=glfwGetVideoMode( glfwGetPrimaryMonitor() );
+	if( vmode ) _desktopMode=*vmode;
+}
 
 void BBGlfwGame::SetUpdateRate( int updateRate ){
 	BBGame::SetUpdateRate( updateRate );
@@ -2430,39 +2415,29 @@ void BBGlfwGame::SetUpdateRate( int updateRate ){
 }
 
 int BBGlfwGame::Millisecs(){
-	return int( glfwGetTime()*1000.0 );
+	return int( GetTime()*1000.0 );
 }
 
 bool BBGlfwGame::PollJoystick( int port,Array<Float> joyx,Array<Float> joyy,Array<Float> joyz,Array<bool> buttons ){
 
-	//Just in case...my PC has either started doing weird things with joystick ordering, or I assumed too much in the past!
 	static int pjoys[4];
 	if( !port ){
 		int i=0;
-		for( int joy=GLFW_JOYSTICK_1;joy<=GLFW_JOYSTICK_16 && i<4;++joy ){
-			if( glfwGetJoystickParam( joy,GLFW_PRESENT ) ) pjoys[i++]=joy;
+		for( int joy=0;joy<16 && i<4;++joy ){
+			if( glfwJoystickPresent( joy ) ) pjoys[i++]=joy;
 		}
 		while( i<4 ) pjoys[i++]=-1;
 	}
-	int joy=pjoys[port];
-	if( joy==-1 ) return false;
+	port=pjoys[port];
+	if( port==-1 ) return false;
 	
-	//Stopped working on my PC at some point...
-//	int joy=GLFW_JOYSTICK_1+port;
-//	if( !glfwGetJoystickParam( joy,GLFW_PRESENT ) ) return false;
-
 	//read axes
-	float axes[6];
-	memset( axes,0,sizeof(axes) );
-	int n_axes=glfwGetJoystickPos( joy,axes,6 );
+	int n_axes=0;
+	const float *axes=glfwGetJoystickAxes( port,&n_axes );
 	
 	//read buttons
-	unsigned char buts[32];
-	memset( buts,0,sizeof(buts) );
-	int n_buts=glfwGetJoystickButtons( joy,buts,32 );
-
-//	static int done;
-//	if( !done++ ) printf( "n_axes=%i, n_buts=%i\n",n_axes,n_buts );fflush( stdout );
+	int n_buts=0;
+	const unsigned char *buts=glfwGetJoystickButtons( port,&n_buts );
 
 	//Ugh...
 	
@@ -2472,12 +2447,12 @@ bool BBGlfwGame::PollJoystick( int port,Array<Float> joyx,Array<Float> joyy,Arra
 #if _WIN32
 	
 	//xbox 360 controller
-	const int xbox360_axes[]={0,1,2,4,0x43,0x42,999};
-	const int xbox360_buttons[]={0,1,2,3,4,5,6,7,-4,-3,-2,-1,8,9,999};
+	const int xbox360_axes[]={0,0x41,2,4,0x43,0x42,999};
+	const int xbox360_buttons[]={0,1,2,3,4,5,6,7,13,10,11,12,8,9,999};
 	
 	//logitech dual action
 	const int logitech_axes[]={0,1,0x86,2,0x43,0x87,999};
-	const int logitech_buttons[]={1,2,0,3,4,5,8,9,-4,-3,-2,-1,10,11,999};
+	const int logitech_buttons[]={1,2,0,3,4,5,8,9,15,12,13,14,10,11,999};
 	
 	if( n_axes==5 && n_buts==14 ){
 		dev_axes=xbox360_axes;
@@ -2490,15 +2465,15 @@ bool BBGlfwGame::PollJoystick( int port,Array<Float> joyx,Array<Float> joyy,Arra
 #else
 
 	//xbox 360 controller
-	const int xbox360_axes[]={0,1,0x14,2,3,0x25,999};
+	const int xbox360_axes[]={0,0x41,0x14,2,0x43,0x15,999};
 	const int xbox360_buttons[]={11,12,13,14,8,9,5,4,2,0,3,1,6,7,10,999};
 
 	//ps3 controller
-	const int ps3_axes[]={0,1,0x88,2,3,0x89,999};
+	const int ps3_axes[]={0,0x41,0x88,2,0x43,0x89,999};
 	const int ps3_buttons[]={14,13,15,12,10,11,0,3,7,4,5,6,1,2,16,999};
 
 	//logitech dual action
-	const int logitech_axes[]={0,1,0x86,2,3,0x87,999};
+	const int logitech_axes[]={0,0x41,0x86,2,0x43,0x87,999};
 	const int logitech_buttons[]={1,2,0,3,4,5,8,9,15,12,13,14,10,11,999};
 
 	if( n_axes==6 && n_buts==15 ){
@@ -2564,114 +2539,21 @@ void BBGlfwGame::OpenUrl( String url ){
 
 void BBGlfwGame::SetMouseVisible( bool visible ){
 	if( visible ){
-		glfwEnable( GLFW_MOUSE_CURSOR );
+		glfwSetInputMode( _window,GLFW_CURSOR,GLFW_CURSOR_NORMAL );
 	}else{
-		glfwDisable( GLFW_MOUSE_CURSOR );
+		glfwSetInputMode( _window,GLFW_CURSOR,GLFW_CURSOR_HIDDEN );
 	}
-}
-
-int BBGlfwGame::SaveState( String state ){
-#ifdef CFG_GLFW_APP_LABEL
-	if( FILE *f=OpenFile( "monkey://internal/.monkeystate","wb" ) ){
-		bool ok=state.Save( f );
-		fclose( f );
-		return ok ? 0 : -2;
-	}
-	return -1;
-#else
-	return BBGame::SaveState( state );
-#endif
-}
-
-String BBGlfwGame::LoadState(){
-#ifdef CFG_GLFW_APP_LABEL
-	if( FILE *f=OpenFile( "monkey://internal/.monkeystate","rb" ) ){
-		String str=String::Load( f );
-		fclose( f );
-		return str;
-	}
-	return "";
-#else
-	return BBGame::LoadState();
-#endif
 }
 
 String BBGlfwGame::PathToFilePath( String path ){
-
-	if( !_baseDir.Length() ){
-	
-		String appPath;
-
-#if _WIN32
-		WCHAR buf[MAX_PATH+1];
-		GetModuleFileNameW( GetModuleHandleW(0),buf,MAX_PATH );
-		buf[MAX_PATH]=0;appPath=String( buf ).Replace( "\\","/" );
-
-#elif __APPLE__
-
-		char buf[PATH_MAX+1];
-		uint32_t size=sizeof( buf );
-		_NSGetExecutablePath( buf,&size );
-		buf[PATH_MAX]=0;appPath=String( buf ).Replace( "/./","/" );
-	
-#elif __linux
-		char lnk[PATH_MAX+1],buf[PATH_MAX];
-		sprintf( lnk,"/proc/%i/exe",getpid() );
-		int n=readlink( lnk,buf,PATH_MAX );
-		if( n<0 || n>=PATH_MAX ) abort();
-		appPath=String( buf,n );
-
-#endif
-		int i=appPath.FindLast( "/" );if( i==-1 ) abort();
-		_baseDir=appPath.Slice( 0,i );
-		
-#if __APPLE__
-		if( _baseDir.EndsWith( ".app/Contents/MacOS" ) ) _baseDir=_baseDir.Slice( 0,-5 )+"Resources";
-#endif
-//		bbPrint( String( "_baseDir=" )+_baseDir );
-	}
-	
 	if( !path.StartsWith( "monkey:" ) ){
 		return path;
 	}else if( path.StartsWith( "monkey://data/" ) ){
-		return _baseDir+"/data/"+path.Slice( 14 );
+		return String("./data/")+path.Slice( 14 );
 	}else if( path.StartsWith( "monkey://internal/" ) ){
-		if( !_internalDir.Length() ){
-#ifdef CFG_GLFW_APP_LABEL
-
-#if _WIN32
-			_internalDir=String( getenv( "APPDATA" ) );
-#elif __APPLE__
-			_internalDir=String( getenv( "HOME" ) )+"/Library/Application Support";
-#elif __linux
-			_internalDir=String( getenv( "HOME" ) )+"/.config";
-			mkdir( _internalDir.ToCString<char>(),0777 );
-#endif
-
-#ifdef CFG_GLFW_APP_PUBLISHER
-			_internalDir=_internalDir+"/"+_STRINGIZE( CFG_GLFW_APP_PUBLISHER );
-#if _WIN32
-			_wmkdir( _internalDir.ToCString<wchar_t>() );
-#else
-			mkdir( _internalDir.ToCString<char>(),0777 );
-#endif
-#endif
-
-			_internalDir=_internalDir+"/"+_STRINGIZE( CFG_GLFW_APP_LABEL );
-#if _WIN32
-			_wmkdir( _internalDir.ToCString<wchar_t>() );
-#else
-			mkdir( _internalDir.ToCString<char>(),0777 );
-#endif
-
-#else
-			_internalDir=_baseDir+"/internal";
-#endif			
-//			bbPrint( String( "_internalDir=" )+_internalDir );
-		}
-		return _internalDir+"/"+path.Slice( 18 );
+		return String("./internal/")+path.Slice( 18 );
 	}else if( path.StartsWith( "monkey://external/" ) ){
-		return _baseDir+"/external/"+path.Slice( 18 );
+		return String("./external/")+path.Slice( 18 );
 	}
 	return "";
 }
@@ -2688,6 +2570,33 @@ unsigned char *BBGlfwGame::LoadImageData( String path,int *width,int *height,int
 	
 	return data;
 }
+
+/*
+extern "C" unsigned char *load_image_png( FILE *f,int *width,int *height,int *format );
+extern "C" unsigned char *load_image_jpg( FILE *f,int *width,int *height,int *format );
+
+unsigned char *BBGlfwGame::LoadImageData( String path,int *width,int *height,int *depth ){
+
+	FILE *f=OpenFile( path,"rb" );
+	if( !f ) return 0;
+
+	unsigned char *data=0;
+	
+	if( path.ToLower().EndsWith( ".png" ) ){
+		data=load_image_png( f,width,height,depth );
+	}else if( path.ToLower().EndsWith( ".jpg" ) || path.ToLower().EndsWith( ".jpeg" ) ){
+		data=load_image_jpg( f,width,height,depth );
+	}else{
+		//meh?
+	}
+
+	fclose( f );
+	
+	if( data ) gc_ext_malloced( (*width)*(*height)*(*depth) );
+	
+	return data;
+}
+*/
 
 unsigned char *BBGlfwGame::LoadAudioData( String path,int *length,int *channels,int *format,int *hertz ){
 
@@ -2715,7 +2624,6 @@ int BBGlfwGame::TransKey( int key ){
 	if( key>='A' && key<='Z' ) return key;
 
 	switch( key ){
-
 	case ' ':return VKEY_SPACE;
 	case ';':return VKEY_SEMICOLON;
 	case '=':return VKEY_EQUALS;
@@ -2732,24 +2640,24 @@ int BBGlfwGame::TransKey( int key ){
 	case '`':return VKEY_TILDE;
 	case '\'':return VKEY_QUOTES;
 
-	case GLFW_KEY_LSHIFT:
-	case GLFW_KEY_RSHIFT:return VKEY_SHIFT;
-	case GLFW_KEY_LCTRL:
-	case GLFW_KEY_RCTRL:return VKEY_CONTROL;
+	case GLFW_KEY_LEFT_SHIFT:
+	case GLFW_KEY_RIGHT_SHIFT:return VKEY_SHIFT;
+	case GLFW_KEY_LEFT_CONTROL:
+	case GLFW_KEY_RIGHT_CONTROL:return VKEY_CONTROL;
 	
-//	case GLFW_KEY_LSHIFT:return VKEY_LSHIFT;
-//	case GLFW_KEY_RSHIFT:return VKEY_RSHIFT;
+//	case GLFW_KEY_LEFT_SHIFT:return VKEY_LEFT_SHIFT;
+//	case GLFW_KEY_RIGHT_SHIFT:return VKEY_RIGHT_SHIFT;
 //	case GLFW_KEY_LCTRL:return VKEY_LCONTROL;
 //	case GLFW_KEY_RCTRL:return VKEY_RCONTROL;
 	
 	case GLFW_KEY_BACKSPACE:return VKEY_BACKSPACE;
 	case GLFW_KEY_TAB:return VKEY_TAB;
 	case GLFW_KEY_ENTER:return VKEY_ENTER;
-	case GLFW_KEY_ESC:return VKEY_ESC;
+	case GLFW_KEY_ESCAPE:return VKEY_ESCAPE;
 	case GLFW_KEY_INSERT:return VKEY_INSERT;
-	case GLFW_KEY_DEL:return VKEY_DELETE;
-	case GLFW_KEY_PAGEUP:return VKEY_PAGEUP;
-	case GLFW_KEY_PAGEDOWN:return VKEY_PAGEDOWN;
+	case GLFW_KEY_DELETE:return VKEY_DELETE;
+	case GLFW_KEY_PAGE_UP:return VKEY_PAGE_UP;
+	case GLFW_KEY_PAGE_DOWN:return VKEY_PAGE_DOWN;
 	case GLFW_KEY_HOME:return VKEY_HOME;
 	case GLFW_KEY_END:return VKEY_END;
 	case GLFW_KEY_UP:return VKEY_UP;
@@ -2772,7 +2680,7 @@ int BBGlfwGame::TransKey( int key ){
 	case GLFW_KEY_KP_SUBTRACT:return VKEY_NUMSUBTRACT;
 	case GLFW_KEY_KP_ADD:return VKEY_NUMADD;
 	case GLFW_KEY_KP_DECIMAL:return VKEY_NUMDECIMAL;
-    	
+	
 	case GLFW_KEY_F1:return VKEY_F1;
 	case GLFW_KEY_F2:return VKEY_F2;
 	case GLFW_KEY_F3:return VKEY_F3;
@@ -2795,10 +2703,10 @@ int BBGlfwGame::KeyToChar( int key ){
 	case VKEY_BACKSPACE:
 	case VKEY_TAB:
 	case VKEY_ENTER:
-	case VKEY_ESC:
+	case VKEY_ESCAPE:
 		return key;
-	case VKEY_PAGEUP:
-	case VKEY_PAGEDOWN:
+	case VKEY_PAGE_UP:
+	case VKEY_PAGE_DOWN:
 	case VKEY_END:
 	case VKEY_HOME:
 	case VKEY_LEFT:
@@ -2813,15 +2721,37 @@ int BBGlfwGame::KeyToChar( int key ){
 	return 0;
 }
 
-void BBGlfwGame::OnMouseButton( int button,int action ){
+void BBGlfwGame::OnKey( GLFWwindow *window,int key,int scancode,int action,int mods ){
+
+	key=TransKey( key );
+	if( !key ) return;
+	
+	switch( action ){
+	case GLFW_PRESS:
+	case GLFW_REPEAT:
+		_glfwGame->KeyEvent( BBGameEvent::KeyDown,key );
+		if( int chr=KeyToChar( key ) ) _glfwGame->KeyEvent( BBGameEvent::KeyChar,chr );
+		break;
+	case GLFW_RELEASE:
+		_glfwGame->KeyEvent( BBGameEvent::KeyUp,key );
+		break;
+	}
+}
+
+void BBGlfwGame::OnChar( GLFWwindow *window,unsigned int chr ){
+
+	_glfwGame->KeyEvent( BBGameEvent::KeyChar,chr );
+}
+
+void BBGlfwGame::OnMouseButton( GLFWwindow *window,int button,int action,int mods ){
 	switch( button ){
 	case GLFW_MOUSE_BUTTON_LEFT:button=0;break;
 	case GLFW_MOUSE_BUTTON_RIGHT:button=1;break;
 	case GLFW_MOUSE_BUTTON_MIDDLE:button=2;break;
 	default:return;
 	}
-	int x,y;
-	glfwGetMousePos( &x,&y );
+	double x=0,y=0;
+	glfwGetCursorPos( window,&x,&y );
 	switch( action ){
 	case GLFW_PRESS:
 		_glfwGame->MouseEvent( BBGameEvent::MouseDown,button,x,y );
@@ -2832,132 +2762,142 @@ void BBGlfwGame::OnMouseButton( int button,int action ){
 	}
 }
 
-void BBGlfwGame::OnMousePos( int x,int y ){
-	_game->MouseEvent( BBGameEvent::MouseMove,-1,x,y );
+void BBGlfwGame::OnCursorPos( GLFWwindow *window,double x,double y ){
+	_glfwGame->MouseEvent( BBGameEvent::MouseMove,-1,x,y );
 }
 
-int BBGlfwGame::OnWindowClose(){
-	_game->KeyEvent( BBGameEvent::KeyDown,0x1b0 );
-	_game->KeyEvent( BBGameEvent::KeyUp,0x1b0 );
-	return GL_FALSE;
+void BBGlfwGame::OnWindowClose( GLFWwindow *window ){
+	_glfwGame->KeyEvent( BBGameEvent::KeyDown,0x1b0 );
+	_glfwGame->KeyEvent( BBGameEvent::KeyUp,0x1b0 );
 }
 
-void BBGlfwGame::OnKey( int key,int action ){
+void BBGlfwGame::OnWindowSize( GLFWwindow *window,int width,int height ){
 
-	key=TransKey( key );
-	if( !key ) return;
+	_glfwGame->_width=width;
+	_glfwGame->_height=height;
 	
-	switch( action ){
-	case GLFW_PRESS:
-		_glfwGame->KeyEvent( BBGameEvent::KeyDown,key );
-		if( int chr=KeyToChar( key ) ) _game->KeyEvent( BBGameEvent::KeyChar,chr );
-		break;
-	case GLFW_RELEASE:
-		_glfwGame->KeyEvent( BBGameEvent::KeyUp,key );
-		break;
-	}
+#if CFG_GLFW_WINDOW_RENDER_WHILE_RESIZING && !__linux
+	_glfwGame->RenderGame();
+	glfwSwapBuffers( _glfwGame->_window );
+	_glfwGame->_nextUpdate=0;
+#endif
 }
 
-void BBGlfwGame::OnChar( int chr,int action ){
+void BBGlfwGame::SetDeviceWindow( int width,int height,int flags ){
 
-	switch( action ){
-	case GLFW_PRESS:
-		_glfwGame->KeyEvent( BBGameEvent::KeyChar,chr );
-		break;
-	}
-}
+	_focus=false;
 
-void BBGlfwGame::SetGlfwWindow( int width,int height,int red,int green,int blue,int alpha,int depth,int stencil,bool fullscreen ){
-
-	for( int i=0;i<=GLFW_KEY_LAST;++i ){
-		int key=TransKey( i );
-		if( key && glfwGetKey( i )==GLFW_PRESS ) KeyEvent( BBGameEvent::KeyUp,key );
+	if( _window ){
+		for( int i=0;i<=GLFW_KEY_LAST;++i ){
+			int key=TransKey( i );
+			if( key && glfwGetKey( _window,i )==GLFW_PRESS ) KeyEvent( BBGameEvent::KeyUp,key );
+		}
+		glfwDestroyWindow( _window );
+		_window=0;
 	}
 
-	GLFWvidmode desktopMode;
-	glfwGetDesktopMode( &desktopMode );
+	bool fullscreen=(flags & 1);
+	bool resizable=(flags & 2);
+	bool decorated=(flags & 4);
+	bool floating=(flags & 8);
+	bool depthbuffer=(flags & 16);
+	bool doublebuffer=!(flags & 32);
+	bool secondmonitor=(flags & 64);
 
-	glfwCloseWindow();
+	glfwWindowHint( GLFW_RED_BITS,8 );
+	glfwWindowHint( GLFW_GREEN_BITS,8 );
+	glfwWindowHint( GLFW_BLUE_BITS,8 );
+	glfwWindowHint( GLFW_ALPHA_BITS,0 );
+	glfwWindowHint( GLFW_DEPTH_BITS,depthbuffer ? 32 : 0 );
+	glfwWindowHint( GLFW_STENCIL_BITS,0 );
+	glfwWindowHint( GLFW_RESIZABLE,resizable );
+	glfwWindowHint( GLFW_DECORATED,decorated );
+	glfwWindowHint( GLFW_FLOATING,floating );
+	glfwWindowHint( GLFW_VISIBLE,fullscreen );
+	glfwWindowHint( GLFW_DOUBLEBUFFER,doublebuffer );
+	glfwWindowHint( GLFW_SAMPLES,CFG_GLFW_WINDOW_SAMPLES );
+	glfwWindowHint( GLFW_REFRESH_RATE,60 );
 	
-	glfwOpenWindowHint( GLFW_REFRESH_RATE,60 );
-	glfwOpenWindowHint( GLFW_WINDOW_NO_RESIZE,CFG_GLFW_WINDOW_RESIZABLE ? GL_FALSE : GL_TRUE );
-
-	glfwOpenWindow( width,height,red,green,blue,alpha,depth,stencil,fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW );
-
+	GLFWmonitor *monitor=0;
+	if( fullscreen ){
+		int monitorid=secondmonitor ? 1 : 0;
+		int count=0;
+		GLFWmonitor **monitors=glfwGetMonitors( &count );
+		if( monitorid>=count ) monitorid=count-1;
+		monitor=monitors[monitorid];
+	}
+	
+	_window=glfwCreateWindow( width,height,_STRINGIZE(CFG_GLFW_WINDOW_TITLE),monitor,0 );
+	if( !_window ){
+		bbPrint( "glfwCreateWindow FAILED!" );
+		abort();
+	}
+	
+	_width=width;
+	_height=height;
+	
 	++glfwGraphicsSeq;
 
 	if( !fullscreen ){	
-		glfwSetWindowPos( (desktopMode.Width-width)/2,(desktopMode.Height-height)/2 );
-		glfwSetWindowTitle( _STRINGIZE(CFG_GLFW_WINDOW_TITLE) );
+		glfwSetWindowPos( _window,(_desktopMode.width-width)/2,(_desktopMode.height-height)/2 );
+		glfwShowWindow( _window );
 	}
+	
+	glfwMakeContextCurrent( _window );
+	
+	if( _swapInterval>=0 ) glfwSwapInterval( _swapInterval );
 
 #if CFG_OPENGL_INIT_EXTENSIONS
 	Init_GL_Exts();
 #endif
 
-	if( _swapInterval>=0 ) glfwSwapInterval( _swapInterval );
-
-	glfwEnable( GLFW_KEY_REPEAT );
-	glfwDisable( GLFW_AUTO_POLL_EVENTS );
-	glfwSetKeyCallback( OnKey );
-	glfwSetCharCallback( OnChar );
-	glfwSetMouseButtonCallback( OnMouseButton );
-	glfwSetMousePosCallback( OnMousePos );
-	glfwSetWindowCloseCallback(	OnWindowClose );
-}
-
-Array<BBGlfwVideoMode*> BBGlfwGame::GetGlfwVideoModes(){
-	GLFWvidmode modes[1024];
-	int n=glfwGetVideoModes( modes,1024 );
-	Array<BBGlfwVideoMode*> bbmodes( n );
-	for( int i=0;i<n;++i ){
-		bbmodes[i]=new BBGlfwVideoMode( modes[i].Width,modes[i].Height,modes[i].RedBits,modes[i].GreenBits,modes[i].BlueBits );
-	}
-	return bbmodes;
-}
-
-BBGlfwVideoMode *BBGlfwGame::GetGlfwDesktopMode(){
-	GLFWvidmode mode;
-	glfwGetDesktopMode( &mode );
-	return new BBGlfwVideoMode( mode.Width,mode.Height,mode.RedBits,mode.GreenBits,mode.BlueBits );
-}
-
-int BBGlfwGame::GetDeviceWidth(){
-	int width,height;
-	glfwGetWindowSize( &width,&height );
-	return width;
-}
-
-int BBGlfwGame::GetDeviceHeight(){
-	int width,height;
-	glfwGetWindowSize( &width,&height );
-	return height;
-}
-
-void BBGlfwGame::SetDeviceWindow( int width,int height,int flags ){
-
-	SetGlfwWindow( width,height,8,8,8,0,CFG_OPENGL_DEPTH_BUFFER_ENABLED ? 32 : 0,0,(flags&1)!=0 );
-}
-
-Array<BBDisplayMode*> BBGlfwGame::GetDisplayModes(){
-
-	GLFWvidmode vmodes[1024];
-	int n=glfwGetVideoModes( vmodes,1024 );
-	Array<BBDisplayMode*> modes( n );
-	for( int i=0;i<n;++i ) modes[i]=new BBDisplayMode( vmodes[i].Width,vmodes[i].Height );
-	return modes;
-}
-
-BBDisplayMode *BBGlfwGame::GetDesktopMode(){
-
-	GLFWvidmode vmode;
-	glfwGetDesktopMode( &vmode );
-	return new BBDisplayMode( vmode.Width,vmode.Height );
+	glfwSetKeyCallback( _window,OnKey );
+	glfwSetCharCallback( _window,OnChar );
+	glfwSetMouseButtonCallback( _window,OnMouseButton );
+	glfwSetCursorPosCallback( _window,OnCursorPos );
+	glfwSetWindowCloseCallback(	_window,OnWindowClose );
+	glfwSetWindowSizeCallback(_window,OnWindowSize );
 }
 
 void BBGlfwGame::SetSwapInterval( int interval ){
+
 	_swapInterval=interval;
-	if( _swapInterval>=0 ) glfwSwapInterval( _swapInterval );
+	
+	if( _swapInterval>=0 && _window ) glfwSwapInterval( _swapInterval );
+}
+
+Array<BBDisplayMode*> BBGlfwGame::GetDisplayModes(){
+	int count=0;
+	const GLFWvidmode *vmodes=glfwGetVideoModes( glfwGetPrimaryMonitor(),&count );
+	Array<BBDisplayMode*> modes( count );
+	int n=0;
+	for( int i=0;i<count;++i ){
+		const GLFWvidmode *vmode=&vmodes[i];
+		if( vmode->refreshRate && vmode->refreshRate!=60 ) continue;
+		modes[n++]=new BBDisplayMode( vmode->width,vmode->height );
+	}
+	return modes.Slice(0,n);
+}
+
+BBDisplayMode *BBGlfwGame::GetDesktopMode(){ 
+	return new BBDisplayMode( _desktopMode.width,_desktopMode.height ); 
+}
+
+double BBGlfwGame::GetTime(){
+	return glfwGetTime();
+}
+
+void BBGlfwGame::Sleep( double time ){
+#if _WIN32
+	WaitForSingleObject( GetCurrentThread(),(DWORD)( time*1000.0 ) );
+#else
+	timespec ts,rem;
+	ts.tv_sec=floor(time);
+	ts.tv_nsec=(time-floor(time))*1000000000.0;
+	while( nanosleep( &ts,&rem )==EINTR ){
+		ts=rem;
+	}
+#endif
 }
 
 void BBGlfwGame::UpdateEvents(){
@@ -2967,13 +2907,14 @@ void BBGlfwGame::UpdateEvents(){
 	}else{
 		glfwPollEvents();
 	}
-	if( glfwGetWindowParam( GLFW_ACTIVE ) ){
+	if( glfwGetWindowAttrib( _window,GLFW_FOCUSED ) ){
+		_focus=true;
 		if( _suspended ){
 			ResumeGame();
 			_nextUpdate=0;
 		}
-	}else if( glfwGetWindowParam( GLFW_ICONIFIED ) || CFG_MOJO_AUTO_SUSPEND_ENABLED ){
-		if( !_suspended ){
+	}else if( glfwGetWindowAttrib( _window,GLFW_ICONIFIED ) || CFG_MOJO_AUTO_SUSPEND_ENABLED ){
+		if( _focus && !_suspended ){
 			SuspendGame();
 			_nextUpdate=0;
 		}
@@ -2984,28 +2925,48 @@ void BBGlfwGame::Run(){
 
 #if	CFG_GLFW_WINDOW_WIDTH && CFG_GLFW_WINDOW_HEIGHT
 
-	SetGlfwWindow( CFG_GLFW_WINDOW_WIDTH,CFG_GLFW_WINDOW_HEIGHT,8,8,8,0,CFG_OPENGL_DEPTH_BUFFER_ENABLED ? 32 : 0,0,CFG_GLFW_WINDOW_FULLSCREEN );
+	int flags=0;
+#if CFG_GLFW_WINDOW_FULLSCREEN
+	flags|=1;
+#endif
+#if CFG_GLFW_WINDOW_RESIZABLE
+	flags|=2;
+#endif
+#if CFG_GLFW_WINDOW_DECORATED
+	flags|=4;
+#endif
+#if CFG_GLFW_WINDOW_FLOATING
+	flags|=8;
+#endif
+#if CFG_OPENGL_DEPTH_BUFFER_ENABLED
+	flags|=16;
+#endif
+
+	SetDeviceWindow( CFG_GLFW_WINDOW_WIDTH,CFG_GLFW_WINDOW_HEIGHT,flags );
 
 #endif
 
 	StartGame();
 	
-	while( glfwGetWindowParam( GLFW_OPENED ) ){
+	while( !glfwWindowShouldClose( _window ) ){
 	
 		RenderGame();
-
-		glfwSwapBuffers();
 		
+		glfwSwapBuffers( _window );
+		
+		//Wait for next update
 		if( _nextUpdate ){
-			double delay=_nextUpdate-glfwGetTime();
-			if( delay>0 ) glfwSleep( delay );
+			double delay=_nextUpdate-GetTime();
+			if( delay>0 ) Sleep( delay );
 		}
 		
 		//Update user events
 		UpdateEvents();
 
 		//App suspended?		
-		if( _suspended ) continue;
+		if( _suspended ){
+			continue;
+		}
 
 		//'Go nuts' mode!
 		if( !_updateRate ){
@@ -3014,7 +2975,9 @@ void BBGlfwGame::Run(){
 		}
 		
 		//Reset update timer?
-		if( !_nextUpdate ) _nextUpdate=glfwGetTime();
+		if( !_nextUpdate ){
+			_nextUpdate=GetTime();
+		}
 		
 		//Catch up updates...
 		int i=0;
@@ -3025,7 +2988,7 @@ void BBGlfwGame::Run(){
 			
 			_nextUpdate+=_updatePeriod;
 			
-			if( _nextUpdate>glfwGetTime() ) break;
+			if( _nextUpdate>GetTime() ) break;
 		}
 		
 		if( i==4 ) _nextUpdate=0;
@@ -3038,7 +3001,6 @@ void BBGlfwGame::Run(){
 
 class BBMonkeyGame : public BBGlfwGame{
 public:
-
 	static void Main( int args,const char *argv[] );
 };
 
@@ -3047,11 +3009,18 @@ public:
 #define _QUOTE(X) #X
 #define _STRINGIZE(X) _QUOTE(X)
 
+static void onGlfwError( int err,const char *msg ){
+	printf( "GLFW Error: err=%i, msg=%s\n",err,msg );
+	fflush( stdout );
+}
+
 void BBMonkeyGame::Main( int argc,const char *argv[] ){
 
+	glfwSetErrorCallback( onGlfwError );
+	
 	if( !glfwInit() ){
 		puts( "glfwInit failed" );
-		exit(-1);
+		exit( -1 );
 	}
 
 	BBMonkeyGame *game=new BBMonkeyGame();
@@ -5333,12 +5302,6 @@ class c_Node2;
 class c_HeadNode;
 class c_Stream;
 class c_FileStream;
-class c_DataBuffer;
-class c_StreamError;
-class c_StreamReadError;
-class c_Stack2;
-class c_Enumerator;
-class c_Enumerator2;
 class c_App : public Object{
 	public:
 	c_App();
@@ -5504,8 +5467,6 @@ class c_InputDevice : public Object{
 	void p_TouchEvent(int,int,Float,Float);
 	void p_MotionEvent(int,int,Float,Float,Float);
 	int p_KeyHit(int);
-	Float p_MouseX();
-	Float p_MouseY();
 	void mark();
 	String debug();
 };
@@ -5616,6 +5577,8 @@ class c_BBGameEvent : public Object{
 };
 String dbg_type(c_BBGameEvent**p){return "BBGameEvent";}
 void bb_app_EndApp();
+extern int bb_app__updateRate;
+void bb_app_SetUpdateRate(int);
 class c_Balloon : public Object{
 	public:
 	c_Image* m_image;
@@ -5628,20 +5591,9 @@ class c_Balloon : public Object{
 	String debug();
 };
 String dbg_type(c_Balloon**p){return "Balloon";}
-extern int bb_app__updateRate;
-void bb_app_SetUpdateRate(int);
 class c_Difference_area : public Object{
 	public:
-	int m_x;
-	int m_y;
-	int m_w;
-	int m_h;
-	int m_middle_x;
-	int m_middle_y;
-	bool m_found;
 	c_Difference_area();
-	c_Difference_area* m_new(int,int,int,int);
-	c_Difference_area* m_new2();
 	void mark();
 	String debug();
 };
@@ -5654,7 +5606,6 @@ class c_List : public Object{
 	c_Node2* p_AddLast(c_Difference_area*);
 	c_List* m_new2(Array<c_Difference_area* >);
 	int p_Clear();
-	c_Enumerator2* p_ObjectEnumerator();
 	void mark();
 	String debug();
 };
@@ -5683,115 +5634,17 @@ int bb_input_KeyHit(int);
 class c_Stream : public Object{
 	public:
 	c_Stream();
-	c_Stream* m_new();
-	virtual int p_Read(c_DataBuffer*,int,int)=0;
-	void p_ReadError();
-	void p_ReadAll(c_DataBuffer*,int,int);
-	c_DataBuffer* p_ReadAll2();
-	String p_ReadString(int,String);
-	String p_ReadString2(String);
-	virtual void p_Close()=0;
 	void mark();
 	String debug();
 };
 String dbg_type(c_Stream**p){return "Stream";}
 class c_FileStream : public c_Stream{
 	public:
-	BBFileStream* m__stream;
 	c_FileStream();
-	static BBFileStream* m_OpenStream(String,String);
-	c_FileStream* m_new(String,String);
-	c_FileStream* m_new2(BBFileStream*);
-	c_FileStream* m_new3();
-	static c_FileStream* m_Open(String,String);
-	void p_Close();
-	int p_Read(c_DataBuffer*,int,int);
 	void mark();
 	String debug();
 };
 String dbg_type(c_FileStream**p){return "FileStream";}
-class c_DataBuffer : public BBDataBuffer{
-	public:
-	c_DataBuffer();
-	c_DataBuffer* m_new(int);
-	c_DataBuffer* m_new2();
-	void p_CopyBytes(int,c_DataBuffer*,int,int);
-	void p_PeekBytes(int,Array<int >,int,int);
-	Array<int > p_PeekBytes2(int,int);
-	String p_PeekString(int,int,String);
-	String p_PeekString2(int,String);
-	void mark();
-	String debug();
-};
-String dbg_type(c_DataBuffer**p){return "DataBuffer";}
-class c_StreamError : public ThrowableObject{
-	public:
-	c_Stream* m__stream;
-	c_StreamError();
-	c_StreamError* m_new(c_Stream*);
-	c_StreamError* m_new2();
-	void mark();
-	String debug();
-};
-String dbg_type(c_StreamError**p){return "StreamError";}
-class c_StreamReadError : public c_StreamError{
-	public:
-	c_StreamReadError();
-	c_StreamReadError* m_new(c_Stream*);
-	c_StreamReadError* m_new2();
-	void mark();
-	String debug();
-};
-String dbg_type(c_StreamReadError**p){return "StreamReadError";}
-class c_Stack2 : public Object{
-	public:
-	Array<c_DataBuffer* > m_data;
-	int m_length;
-	c_Stack2();
-	c_Stack2* m_new();
-	c_Stack2* m_new2(Array<c_DataBuffer* >);
-	void p_Push4(c_DataBuffer*);
-	void p_Push5(Array<c_DataBuffer* >,int,int);
-	void p_Push6(Array<c_DataBuffer* >,int);
-	c_Enumerator* p_ObjectEnumerator();
-	static c_DataBuffer* m_NIL;
-	void p_Length(int);
-	int p_Length2();
-	void mark();
-	String debug();
-};
-String dbg_type(c_Stack2**p){return "Stack";}
-class c_Enumerator : public Object{
-	public:
-	c_Stack2* m_stack;
-	int m_index;
-	c_Enumerator();
-	c_Enumerator* m_new(c_Stack2*);
-	c_Enumerator* m_new2();
-	bool p_HasNext();
-	c_DataBuffer* p_NextObject();
-	void mark();
-	String debug();
-};
-String dbg_type(c_Enumerator**p){return "Enumerator";}
-int bb_math_Max(int,int);
-Float bb_math_Max2(Float,Float);
-class c_Enumerator2 : public Object{
-	public:
-	c_List* m__list;
-	c_Node2* m__curr;
-	c_Enumerator2();
-	c_Enumerator2* m_new(c_List*);
-	c_Enumerator2* m_new2();
-	bool p_HasNext();
-	c_Difference_area* p_NextObject();
-	void mark();
-	String debug();
-};
-String dbg_type(c_Enumerator2**p){return "Enumerator";}
-Float bb_input_MouseX();
-Float bb_input_MouseY();
-bool bb_questionanswer_intersects(int,int,int,int,int,int,int,int);
 int bb_graphics_DebugRenderDevice();
 int bb_graphics_DrawImage(c_Image*,Float,Float,int);
 int bb_graphics_PushMatrix();
@@ -5914,16 +5767,18 @@ int c_Game_app::p_OnCreate(){
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<28>");
-	gc_assign(m_balloon,(new c_Balloon)->m_new(0));
+	bb_app_SetUpdateRate(30);
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<29>");
-	bb_app_SetUpdateRate(60);
+	gc_assign(m_balloon,(new c_Balloon)->m_new(0));
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<30>");
-	gc_assign(m_menu,bb_graphics_LoadImage(String(L"background.png",14),1,c_Image::m_DefaultFlags));
+	bb_app_SetUpdateRate(60);
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<31>");
-	gc_assign(m_difference_collection,(new c_List)->m_new());
+	gc_assign(m_menu,bb_graphics_LoadImage(String(L"background.png",14),1,c_Image::m_DefaultFlags));
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<32>");
-	gc_assign(m_circle,bb_graphics_LoadImage(String(L"circle.png",10),1,c_Image::m_DefaultFlags));
+	gc_assign(m_difference_collection,(new c_List)->m_new());
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<33>");
+	gc_assign(m_circle,bb_graphics_LoadImage(String(L"circle.png",10),1,c_Image::m_DefaultFlags));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<34>");
 	gc_assign(m_complete,bb_graphics_LoadImage(String(L"background.png",14),1,c_Image::m_DefaultFlags));
 	return 0;
 }
@@ -5932,115 +5787,62 @@ int c_Game_app::p_OnUpdate(){
 	DBG_ENTER("Game_app.OnUpdate")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<39>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<40>");
 	String t_1=m_GameState;
 	DBG_LOCAL(t_1,"1")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<40>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<41>");
 	if(t_1==String(L"MENU",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<41>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<42>");
 		if((bb_input_KeyHit(13))!=0){
 			DBG_BLOCK();
 			m_GameState=String(L"LOADGAME",8);
 		}
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<42>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<43>");
 		if(t_1==String(L"LOADGAME",8)){
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<43>");
-			m_won=false;
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<44>");
-			m_difference_collection->p_Clear();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<46>");
-			gc_assign(m_youreballoon,bb_graphics_LoadImage(String(L"you'reballoon.png",17),1,c_Image::m_DefaultFlags));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<47>");
-			gc_assign(m_yourballoon,bb_graphics_LoadImage(String(L"yourballoon.png",15),1,c_Image::m_DefaultFlags));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<49>");
+			m_GameState=String(L"PLAYING",7);
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<45>");
 			c_FileStream* t_level_file=0;
 			DBG_LOCAL(t_level_file,"level_file")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<50>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<46>");
 			String t_level_data=String();
 			DBG_LOCAL(t_level_data,"level_data")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<51>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<47>");
 			Array<String > t_data_item=Array<String >();
 			DBG_LOCAL(t_data_item,"data_item")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<52>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<48>");
 			int t_x=0;
 			DBG_LOCAL(t_x,"x")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<53>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<49>");
 			int t_y=0;
 			DBG_LOCAL(t_y,"y")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<54>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<50>");
 			int t_w=0;
 			DBG_LOCAL(t_w,"w")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<55>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<51>");
 			int t_h=0;
-			DBG_LOCAL(t_h,"h")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<57>");
-			t_level_file=c_FileStream::m_Open(String(L"monkey://data/puzzle1.txt",25),String(L"r",1));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<58>");
-			if((t_level_file)!=0){
-				DBG_BLOCK();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<59>");
-				t_level_data=t_level_file->p_ReadString2(String(L"utf8",4));
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<60>");
-				t_level_file->p_Close();
-			}
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<62>");
-			t_data_item=t_level_data.Split(String(L"\n",1));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<63>");
-			for(int t_counter=0;t_counter<=t_data_item.Length()-1;t_counter=t_counter+4){
-				DBG_BLOCK();
-				DBG_LOCAL(t_counter,"counter")
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<64>");
-				t_x=(t_data_item.At(t_counter)).ToInt();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<65>");
-				t_y=(t_data_item.At(t_counter+1)).ToInt();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<66>");
-				t_w=(t_data_item.At(t_counter+2)).ToInt();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<67>");
-				t_h=(t_data_item.At(t_counter+3)).ToInt();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<68>");
-				m_difference_collection->p_AddLast((new c_Difference_area)->m_new(t_x,t_y,t_w,t_h));
-			}
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<71>");
-			m_GameState=String(L"PLAYING",7);
 		}else{
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<73>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<56>");
 			if(t_1==String(L"PLAYING",7)){
 				DBG_BLOCK();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<74>");
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<57>");
 				if((bb_input_KeyHit(27))!=0){
 					DBG_BLOCK();
 					m_GameState=String(L"MENU",4);
 				}
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<75>");
-				if((bb_input_KeyHit(1))!=0){
-					DBG_BLOCK();
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<76>");
-					m_won=true;
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<77>");
-					m_difference_collection->p_Clear();
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<80>");
-					c_Enumerator2* t_=m_difference_collection->p_ObjectEnumerator();
-					while(t_->p_HasNext()){
-						DBG_BLOCK();
-						c_Difference_area* t_difference=t_->p_NextObject();
-						DBG_LOCAL(t_difference,"difference")
-						DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<81>");
-						if(bb_questionanswer_intersects(int(bb_input_MouseX()-FLOAT(30.0)),int(bb_input_MouseY()-FLOAT(30.0)),60,60,t_difference->m_x,t_difference->m_y,t_difference->m_w,t_difference->m_h)){
-							DBG_BLOCK();
-							t_difference->m_found=true;
-						}
-						DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<82>");
-						if(t_difference->m_found==false){
-							DBG_BLOCK();
-							m_won=false;
-						}
-					}
-				}
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<58>");
+				m_won=false;
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<59>");
+				m_difference_collection->p_Clear();
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<60>");
+				gc_assign(m_youreballoon,bb_graphics_LoadImage(String(L"you'reballoon.png",17),1,c_Image::m_DefaultFlags));
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<61>");
+				gc_assign(m_yourballoon,bb_graphics_LoadImage(String(L"yourballoon.png",15),1,c_Image::m_DefaultFlags));
 			}
 		}
 	}
@@ -6050,49 +5852,29 @@ int c_Game_app::p_OnRender(){
 	DBG_ENTER("Game_app.OnRender")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<89>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<69>");
 	String t_2=m_GameState;
 	DBG_LOCAL(t_2,"2")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<90>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<70>");
 	if(t_2==String(L"MENU",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<91>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<71>");
 		bb_graphics_DrawImage(m_menu,FLOAT(0.0),FLOAT(0.0),0);
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<92>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<72>");
 		m_balloon->p_Move();
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<93>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<73>");
 		if(t_2==String(L"PLAYING",7)){
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<94>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<74>");
 			bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<95>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<75>");
 			bb_graphics_DrawText(String(L"Choose the answer fill the gap: I love _____ dog!",49),FLOAT(20.0),FLOAT(40.0),FLOAT(0.0),FLOAT(0.0));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<76>");
 			bb_graphics_DrawImage(m_youreballoon,FLOAT(20.0),FLOAT(20.0),0);
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<97>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<77>");
 			bb_graphics_DrawImage(m_yourballoon,FLOAT(40.0),FLOAT(20.0),0);
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<99>");
-			c_Enumerator2* t_=m_difference_collection->p_ObjectEnumerator();
-			while(t_->p_HasNext()){
-				DBG_BLOCK();
-				c_Difference_area* t_difference=t_->p_NextObject();
-				DBG_LOCAL(t_difference,"difference")
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<100>");
-				if(t_difference->m_found){
-					DBG_BLOCK();
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<101>");
-					bb_graphics_DrawImage(m_circle,Float(t_difference->m_middle_x),Float(t_difference->m_middle_y),0);
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<102>");
-					bb_graphics_DrawImage(m_circle,Float(t_difference->m_middle_x+340),Float(t_difference->m_middle_y),0);
-				}
-			}
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<105>");
-			if(m_won){
-				DBG_BLOCK();
-				bb_graphics_DrawImage(m_complete,FLOAT(0.0),FLOAT(0.0),0);
-			}
 		}
 	}
 	return 0;
@@ -7060,20 +6842,6 @@ int c_InputDevice::p_KeyHit(int t_key){
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<53>");
 	return 0;
 }
-Float c_InputDevice::p_MouseX(){
-	DBG_ENTER("InputDevice.MouseX")
-	c_InputDevice *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<69>");
-	return m__mouseX;
-}
-Float c_InputDevice::p_MouseY(){
-	DBG_ENTER("InputDevice.MouseY")
-	c_InputDevice *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<73>");
-	return m__mouseY;
-}
 void c_InputDevice::mark(){
 	Object::mark();
 	gc_mark_q(m__joyStates);
@@ -7858,6 +7626,15 @@ void bb_app_EndApp(){
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/app.monkey<259>");
 	bbError(String());
 }
+int bb_app__updateRate;
+void bb_app_SetUpdateRate(int t_hertz){
+	DBG_ENTER("SetUpdateRate")
+	DBG_LOCAL(t_hertz,"hertz")
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/app.monkey<224>");
+	bb_app__updateRate=t_hertz;
+	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/app.monkey<225>");
+	bb_app__game->SetUpdateRate(t_hertz);
+}
 c_Balloon::c_Balloon(){
 	m_image=bb_graphics_LoadImage(String(L"hotairballoon.png",17),1,c_Image::m_DefaultFlags);
 	m_balloony=0;
@@ -7873,30 +7650,30 @@ int c_Balloon::p_Move(){
 	DBG_ENTER("Balloon.Move")
 	c_Balloon *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<148>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<116>");
 	bb_graphics_DrawImage(m_image,FLOAT(20.0),Float(m_balloony),0);
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<149>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<117>");
 	m_balloony+=1;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<150>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<118>");
 	if(m_balloony>=278){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<151>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<119>");
 		m_updowndir=String(L"up",2);
 	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<153>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<121>");
 	if(m_balloony<0){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<154>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<122>");
 		m_updowndir=String(L"down",4);
 	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<157>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<125>");
 	if(m_updowndir==String(L"down",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<158>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<126>");
 		m_balloony+=1;
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<161>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<129>");
 		m_balloony-=2;
 	}
 	return 0;
@@ -7912,67 +7689,13 @@ String c_Balloon::debug(){
 	t+=dbg_decl("updowndir",&m_updowndir);
 	return t;
 }
-int bb_app__updateRate;
-void bb_app_SetUpdateRate(int t_hertz){
-	DBG_ENTER("SetUpdateRate")
-	DBG_LOCAL(t_hertz,"hertz")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/app.monkey<224>");
-	bb_app__updateRate=t_hertz;
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/app.monkey<225>");
-	bb_app__game->SetUpdateRate(t_hertz);
-}
 c_Difference_area::c_Difference_area(){
-	m_x=0;
-	m_y=0;
-	m_w=0;
-	m_h=0;
-	m_middle_x=0;
-	m_middle_y=0;
-	m_found=false;
-}
-c_Difference_area* c_Difference_area::m_new(int t_diff_x,int t_diff_y,int t_diff_w,int t_diff_h){
-	DBG_ENTER("Difference_area.new")
-	c_Difference_area *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_diff_x,"diff_x")
-	DBG_LOCAL(t_diff_y,"diff_y")
-	DBG_LOCAL(t_diff_w,"diff_w")
-	DBG_LOCAL(t_diff_h,"diff_h")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<120>");
-	m_x=t_diff_x;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<121>");
-	m_y=t_diff_y;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<122>");
-	m_w=t_diff_w;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<123>");
-	m_h=t_diff_h;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<124>");
-	m_middle_x=m_x+m_w/2-15;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<125>");
-	m_middle_y=m_y+m_h/2-15;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<126>");
-	m_found=false;
-	return this;
-}
-c_Difference_area* c_Difference_area::m_new2(){
-	DBG_ENTER("Difference_area.new")
-	c_Difference_area *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<110>");
-	return this;
 }
 void c_Difference_area::mark(){
 	Object::mark();
 }
 String c_Difference_area::debug(){
 	String t="(Difference_area)\n";
-	t+=dbg_decl("x",&m_x);
-	t+=dbg_decl("y",&m_y);
-	t+=dbg_decl("w",&m_w);
-	t+=dbg_decl("h",&m_h);
-	t+=dbg_decl("middle_x",&m_middle_x);
-	t+=dbg_decl("middle_y",&m_middle_y);
-	t+=dbg_decl("found",&m_found);
 	return t;
 }
 c_List::c_List(){
@@ -8020,14 +7743,6 @@ int c_List::p_Clear(){
 	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<37>");
 	gc_assign(m__head->m__pred,m__head);
 	return 0;
-}
-c_Enumerator2* c_List::p_ObjectEnumerator(){
-	DBG_ENTER("List.ObjectEnumerator")
-	c_List *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<186>");
-	c_Enumerator2* t_=(new c_Enumerator2)->m_new(this);
-	return t_;
 }
 void c_List::mark(){
 	Object::mark();
@@ -8113,136 +7828,6 @@ int bb_input_KeyHit(int t_key){
 }
 c_Stream::c_Stream(){
 }
-c_Stream* c_Stream::m_new(){
-	DBG_ENTER("Stream.new")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<31>");
-	return this;
-}
-void c_Stream::p_ReadError(){
-	DBG_ENTER("Stream.ReadError")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<188>");
-	throw (new c_StreamReadError)->m_new(this);
-}
-void c_Stream::p_ReadAll(c_DataBuffer* t_buffer,int t_offset,int t_count){
-	DBG_ENTER("Stream.ReadAll")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_buffer,"buffer")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<48>");
-	while(t_count>0){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<49>");
-		int t_n=p_Read(t_buffer,t_offset,t_count);
-		DBG_LOCAL(t_n,"n")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<50>");
-		if(t_n<=0){
-			DBG_BLOCK();
-			p_ReadError();
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<51>");
-		t_offset+=t_n;
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<52>");
-		t_count-=t_n;
-	}
-}
-c_DataBuffer* c_Stream::p_ReadAll2(){
-	DBG_ENTER("Stream.ReadAll")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<57>");
-	c_Stack2* t_bufs=(new c_Stack2)->m_new();
-	DBG_LOCAL(t_bufs,"bufs")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<58>");
-	c_DataBuffer* t_buf=(new c_DataBuffer)->m_new(4096);
-	int t_off=0;
-	int t_len=0;
-	DBG_LOCAL(t_buf,"buf")
-	DBG_LOCAL(t_off,"off")
-	DBG_LOCAL(t_len,"len")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<59>");
-	do{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<60>");
-		int t_n=p_Read(t_buf,t_off,4096-t_off);
-		DBG_LOCAL(t_n,"n")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<61>");
-		if(t_n<=0){
-			DBG_BLOCK();
-			break;
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<62>");
-		t_off+=t_n;
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<63>");
-		t_len+=t_n;
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<64>");
-		if(t_off==4096){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<65>");
-			t_off=0;
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<66>");
-			t_bufs->p_Push4(t_buf);
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<67>");
-			t_buf=(new c_DataBuffer)->m_new(4096);
-		}
-	}while(!(false));
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<70>");
-	c_DataBuffer* t_data=(new c_DataBuffer)->m_new(t_len);
-	DBG_LOCAL(t_data,"data")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<71>");
-	t_off=0;
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<72>");
-	c_Enumerator* t_=t_bufs->p_ObjectEnumerator();
-	while(t_->p_HasNext()){
-		DBG_BLOCK();
-		c_DataBuffer* t_tbuf=t_->p_NextObject();
-		DBG_LOCAL(t_tbuf,"tbuf")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<73>");
-		t_tbuf->p_CopyBytes(0,t_data,t_off,4096);
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<74>");
-		t_tbuf->Discard();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<75>");
-		t_off+=4096;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<77>");
-	t_buf->p_CopyBytes(0,t_data,t_off,t_len-t_off);
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<78>");
-	t_buf->Discard();
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<79>");
-	return t_data;
-}
-String c_Stream::p_ReadString(int t_count,String t_encoding){
-	DBG_ENTER("Stream.ReadString")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_count,"count")
-	DBG_LOCAL(t_encoding,"encoding")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<120>");
-	c_DataBuffer* t_buf=(new c_DataBuffer)->m_new(t_count);
-	DBG_LOCAL(t_buf,"buf")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<121>");
-	p_ReadAll(t_buf,0,t_count);
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<122>");
-	String t_=t_buf->p_PeekString2(0,t_encoding);
-	return t_;
-}
-String c_Stream::p_ReadString2(String t_encoding){
-	DBG_ENTER("Stream.ReadString")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_encoding,"encoding")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<126>");
-	c_DataBuffer* t_buf=p_ReadAll2();
-	DBG_LOCAL(t_buf,"buf")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<127>");
-	String t_=t_buf->p_PeekString2(0,t_encoding);
-	return t_;
-}
 void c_Stream::mark(){
 	Object::mark();
 }
@@ -8251,704 +7836,14 @@ String c_Stream::debug(){
 	return t;
 }
 c_FileStream::c_FileStream(){
-	m__stream=0;
-}
-BBFileStream* c_FileStream::m_OpenStream(String t_path,String t_mode){
-	DBG_ENTER("FileStream.OpenStream")
-	DBG_LOCAL(t_path,"path")
-	DBG_LOCAL(t_mode,"mode")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<79>");
-	BBFileStream* t_stream=(new BBFileStream);
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<80>");
-	String t_fmode=t_mode;
-	DBG_LOCAL(t_fmode,"fmode")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<81>");
-	if(t_fmode==String(L"a",1)){
-		DBG_BLOCK();
-		t_fmode=String(L"u",1);
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<82>");
-	if(!t_stream->Open(t_path,t_fmode)){
-		DBG_BLOCK();
-		return 0;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<83>");
-	if(t_mode==String(L"a",1)){
-		DBG_BLOCK();
-		t_stream->Seek(t_stream->Length());
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<84>");
-	return t_stream;
-}
-c_FileStream* c_FileStream::m_new(String t_path,String t_mode){
-	DBG_ENTER("FileStream.new")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_path,"path")
-	DBG_LOCAL(t_mode,"mode")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<31>");
-	c_Stream::m_new();
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<32>");
-	gc_assign(m__stream,m_OpenStream(t_path,t_mode));
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<33>");
-	if(!((m__stream)!=0)){
-		DBG_BLOCK();
-		bbError(String(L"Failed to open stream",21));
-	}
-	return this;
-}
-c_FileStream* c_FileStream::m_new2(BBFileStream* t_stream){
-	DBG_ENTER("FileStream.new")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<74>");
-	c_Stream::m_new();
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<75>");
-	gc_assign(m__stream,t_stream);
-	return this;
-}
-c_FileStream* c_FileStream::m_new3(){
-	DBG_ENTER("FileStream.new")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<29>");
-	c_Stream::m_new();
-	return this;
-}
-c_FileStream* c_FileStream::m_Open(String t_path,String t_mode){
-	DBG_ENTER("FileStream.Open")
-	DBG_LOCAL(t_path,"path")
-	DBG_LOCAL(t_mode,"mode")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<67>");
-	BBFileStream* t_stream=m_OpenStream(t_path,t_mode);
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<68>");
-	if((t_stream)!=0){
-		DBG_BLOCK();
-		c_FileStream* t_=(new c_FileStream)->m_new2(t_stream);
-		return t_;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<69>");
-	return 0;
-}
-void c_FileStream::p_Close(){
-	DBG_ENTER("FileStream.Close")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<37>");
-	if(!((m__stream)!=0)){
-		DBG_BLOCK();
-		return;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<38>");
-	m__stream->Close();
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<39>");
-	m__stream=0;
-}
-int c_FileStream::p_Read(c_DataBuffer* t_buffer,int t_offset,int t_count){
-	DBG_ENTER("FileStream.Read")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_buffer,"buffer")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<59>");
-	int t_=m__stream->Read(t_buffer,t_offset,t_count);
-	return t_;
 }
 void c_FileStream::mark(){
 	c_Stream::mark();
-	gc_mark_q(m__stream);
 }
 String c_FileStream::debug(){
 	String t="(FileStream)\n";
 	t=c_Stream::debug()+t;
-	t+=dbg_decl("_stream",&m__stream);
 	return t;
-}
-c_DataBuffer::c_DataBuffer(){
-}
-c_DataBuffer* c_DataBuffer::m_new(int t_length){
-	DBG_ENTER("DataBuffer.new")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_length,"length")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<94>");
-	if(!_New(t_length)){
-		DBG_BLOCK();
-		bbError(String(L"Allocate DataBuffer failed",26));
-	}
-	return this;
-}
-c_DataBuffer* c_DataBuffer::m_new2(){
-	DBG_ENTER("DataBuffer.new")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<91>");
-	return this;
-}
-void c_DataBuffer::p_CopyBytes(int t_address,c_DataBuffer* t_dst,int t_dstaddress,int t_count){
-	DBG_ENTER("DataBuffer.CopyBytes")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_dst,"dst")
-	DBG_LOCAL(t_dstaddress,"dstaddress")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<114>");
-	if(t_address+t_count>Length()){
-		DBG_BLOCK();
-		t_count=Length()-t_address;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<115>");
-	if(t_dstaddress+t_count>t_dst->Length()){
-		DBG_BLOCK();
-		t_count=t_dst->Length()-t_dstaddress;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<117>");
-	if(t_dstaddress<=t_address){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<118>");
-		for(int t_i=0;t_i<t_count;t_i=t_i+1){
-			DBG_BLOCK();
-			DBG_LOCAL(t_i,"i")
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<119>");
-			t_dst->PokeByte(t_dstaddress+t_i,PeekByte(t_address+t_i));
-		}
-	}else{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<122>");
-		for(int t_i2=t_count-1;t_i2>=0;t_i2=t_i2+-1){
-			DBG_BLOCK();
-			DBG_LOCAL(t_i2,"i")
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<123>");
-			t_dst->PokeByte(t_dstaddress+t_i2,PeekByte(t_address+t_i2));
-		}
-	}
-}
-void c_DataBuffer::p_PeekBytes(int t_address,Array<int > t_bytes,int t_offset,int t_count){
-	DBG_ENTER("DataBuffer.PeekBytes")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_bytes,"bytes")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<137>");
-	if(t_address+t_count>Length()){
-		DBG_BLOCK();
-		t_count=Length()-t_address;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<138>");
-	if(t_offset+t_count>t_bytes.Length()){
-		DBG_BLOCK();
-		t_count=t_bytes.Length()-t_offset;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<139>");
-	for(int t_i=0;t_i<t_count;t_i=t_i+1){
-		DBG_BLOCK();
-		DBG_LOCAL(t_i,"i")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<140>");
-		t_bytes.At(t_offset+t_i)=PeekByte(t_address+t_i);
-	}
-}
-Array<int > c_DataBuffer::p_PeekBytes2(int t_address,int t_count){
-	DBG_ENTER("DataBuffer.PeekBytes")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<130>");
-	if(t_address+t_count>Length()){
-		DBG_BLOCK();
-		t_count=Length()-t_address;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<131>");
-	Array<int > t_bytes=Array<int >(t_count);
-	DBG_LOCAL(t_bytes,"bytes")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<132>");
-	p_PeekBytes(t_address,t_bytes,0,t_count);
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<133>");
-	return t_bytes;
-}
-String c_DataBuffer::p_PeekString(int t_address,int t_count,String t_encoding){
-	DBG_ENTER("DataBuffer.PeekString")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_count,"count")
-	DBG_LOCAL(t_encoding,"encoding")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<206>");
-	String t_1=t_encoding;
-	DBG_LOCAL(t_1,"1")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<207>");
-	if(t_1==String(L"utf8",4)){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<208>");
-		Array<int > t_p=p_PeekBytes2(t_address,t_count);
-		DBG_LOCAL(t_p,"p")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<209>");
-		int t_i=0;
-		int t_e=t_p.Length();
-		bool t_err=false;
-		DBG_LOCAL(t_i,"i")
-		DBG_LOCAL(t_e,"e")
-		DBG_LOCAL(t_err,"err")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<210>");
-		Array<int > t_q=Array<int >(t_e);
-		int t_j=0;
-		DBG_LOCAL(t_q,"q")
-		DBG_LOCAL(t_j,"j")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<211>");
-		while(t_i<t_e){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<212>");
-			int t_c=t_p.At(t_i)&255;
-			DBG_LOCAL(t_c,"c")
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<213>");
-			t_i+=1;
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<214>");
-			if((t_c&128)!=0){
-				DBG_BLOCK();
-				DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<215>");
-				if((t_c&224)==192){
-					DBG_BLOCK();
-					DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<216>");
-					if(t_i>=t_e || (t_p.At(t_i)&192)!=128){
-						DBG_BLOCK();
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<217>");
-						t_err=true;
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<218>");
-						break;
-					}
-					DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<220>");
-					t_c=(t_c&31)<<6|t_p.At(t_i)&63;
-					DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<221>");
-					t_i+=1;
-				}else{
-					DBG_BLOCK();
-					DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<222>");
-					if((t_c&240)==224){
-						DBG_BLOCK();
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<223>");
-						if(t_i+1>=t_e || (t_p.At(t_i)&192)!=128 || (t_p.At(t_i+1)&192)!=128){
-							DBG_BLOCK();
-							DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<224>");
-							t_err=true;
-							DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<225>");
-							break;
-						}
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<227>");
-						t_c=(t_c&15)<<12|(t_p.At(t_i)&63)<<6|t_p.At(t_i+1)&63;
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<228>");
-						t_i+=2;
-					}else{
-						DBG_BLOCK();
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<230>");
-						t_err=true;
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<231>");
-						break;
-					}
-				}
-			}
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<234>");
-			t_q.At(t_j)=t_c;
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<235>");
-			t_j+=1;
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<237>");
-		if(t_err){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<239>");
-			String t_=String::FromChars(t_p);
-			return t_;
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<241>");
-		if(t_j<t_e){
-			DBG_BLOCK();
-			t_q=t_q.Slice(0,t_j);
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<242>");
-		String t_2=String::FromChars(t_q);
-		return t_2;
-	}else{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<243>");
-		if(t_1==String(L"ascii",5)){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<244>");
-			Array<int > t_p2=p_PeekBytes2(t_address,t_count);
-			DBG_LOCAL(t_p2,"p")
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<245>");
-			for(int t_i2=0;t_i2<t_p2.Length();t_i2=t_i2+1){
-				DBG_BLOCK();
-				DBG_LOCAL(t_i2,"i")
-				DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<246>");
-				t_p2.At(t_i2)&=255;
-			}
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<248>");
-			String t_3=String::FromChars(t_p2);
-			return t_3;
-		}
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<251>");
-	bbError(String(L"Invalid string encoding:",24)+t_encoding);
-	return String();
-}
-String c_DataBuffer::p_PeekString2(int t_address,String t_encoding){
-	DBG_ENTER("DataBuffer.PeekString")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_encoding,"encoding")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<201>");
-	String t_=p_PeekString(t_address,Length()-t_address,t_encoding);
-	return t_;
-}
-void c_DataBuffer::mark(){
-	BBDataBuffer::mark();
-}
-String c_DataBuffer::debug(){
-	String t="(DataBuffer)\n";
-	return t;
-}
-c_StreamError::c_StreamError(){
-	m__stream=0;
-}
-c_StreamError* c_StreamError::m_new(c_Stream* t_stream){
-	DBG_ENTER("StreamError.new")
-	c_StreamError *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<200>");
-	gc_assign(m__stream,t_stream);
-	return this;
-}
-c_StreamError* c_StreamError::m_new2(){
-	DBG_ENTER("StreamError.new")
-	c_StreamError *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<197>");
-	return this;
-}
-void c_StreamError::mark(){
-	ThrowableObject::mark();
-	gc_mark_q(m__stream);
-}
-String c_StreamError::debug(){
-	String t="(StreamError)\n";
-	t+=dbg_decl("_stream",&m__stream);
-	return t;
-}
-c_StreamReadError::c_StreamReadError(){
-}
-c_StreamReadError* c_StreamReadError::m_new(c_Stream* t_stream){
-	DBG_ENTER("StreamReadError.new")
-	c_StreamReadError *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<217>");
-	c_StreamError::m_new(t_stream);
-	return this;
-}
-c_StreamReadError* c_StreamReadError::m_new2(){
-	DBG_ENTER("StreamReadError.new")
-	c_StreamReadError *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<214>");
-	c_StreamError::m_new2();
-	return this;
-}
-void c_StreamReadError::mark(){
-	c_StreamError::mark();
-}
-String c_StreamReadError::debug(){
-	String t="(StreamReadError)\n";
-	t=c_StreamError::debug()+t;
-	return t;
-}
-c_Stack2::c_Stack2(){
-	m_data=Array<c_DataBuffer* >();
-	m_length=0;
-}
-c_Stack2* c_Stack2::m_new(){
-	DBG_ENTER("Stack.new")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	return this;
-}
-c_Stack2* c_Stack2::m_new2(Array<c_DataBuffer* > t_data){
-	DBG_ENTER("Stack.new")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_data,"data")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<13>");
-	gc_assign(this->m_data,t_data.Slice(0));
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<14>");
-	this->m_length=t_data.Length();
-	return this;
-}
-void c_Stack2::p_Push4(c_DataBuffer* t_value){
-	DBG_ENTER("Stack.Push")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_value,"value")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<71>");
-	if(m_length==m_data.Length()){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<72>");
-		gc_assign(m_data,m_data.Resize(m_length*2+10));
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<74>");
-	gc_assign(m_data.At(m_length),t_value);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<75>");
-	m_length+=1;
-}
-void c_Stack2::p_Push5(Array<c_DataBuffer* > t_values,int t_offset,int t_count){
-	DBG_ENTER("Stack.Push")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_values,"values")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<83>");
-	for(int t_i=0;t_i<t_count;t_i=t_i+1){
-		DBG_BLOCK();
-		DBG_LOCAL(t_i,"i")
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<84>");
-		p_Push4(t_values.At(t_offset+t_i));
-	}
-}
-void c_Stack2::p_Push6(Array<c_DataBuffer* > t_values,int t_offset){
-	DBG_ENTER("Stack.Push")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_values,"values")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<79>");
-	p_Push5(t_values,t_offset,t_values.Length()-t_offset);
-}
-c_Enumerator* c_Stack2::p_ObjectEnumerator(){
-	DBG_ENTER("Stack.ObjectEnumerator")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<188>");
-	c_Enumerator* t_=(new c_Enumerator)->m_new(this);
-	return t_;
-}
-c_DataBuffer* c_Stack2::m_NIL;
-void c_Stack2::p_Length(int t_newlength){
-	DBG_ENTER("Stack.Length")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_newlength,"newlength")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<45>");
-	if(t_newlength<m_length){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<46>");
-		for(int t_i=t_newlength;t_i<m_length;t_i=t_i+1){
-			DBG_BLOCK();
-			DBG_LOCAL(t_i,"i")
-			DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<47>");
-			gc_assign(m_data.At(t_i),m_NIL);
-		}
-	}else{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<49>");
-		if(t_newlength>m_data.Length()){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<50>");
-			gc_assign(m_data,m_data.Resize(bb_math_Max(m_length*2+10,t_newlength)));
-		}
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<52>");
-	m_length=t_newlength;
-}
-int c_Stack2::p_Length2(){
-	DBG_ENTER("Stack.Length")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<56>");
-	return m_length;
-}
-void c_Stack2::mark(){
-	Object::mark();
-	gc_mark_q(m_data);
-}
-String c_Stack2::debug(){
-	String t="(Stack)\n";
-	t+=dbg_decl("NIL",&c_Stack2::m_NIL);
-	t+=dbg_decl("data",&m_data);
-	t+=dbg_decl("length",&m_length);
-	return t;
-}
-c_Enumerator::c_Enumerator(){
-	m_stack=0;
-	m_index=0;
-}
-c_Enumerator* c_Enumerator::m_new(c_Stack2* t_stack){
-	DBG_ENTER("Enumerator.new")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_stack,"stack")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<259>");
-	gc_assign(this->m_stack,t_stack);
-	return this;
-}
-c_Enumerator* c_Enumerator::m_new2(){
-	DBG_ENTER("Enumerator.new")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<256>");
-	return this;
-}
-bool c_Enumerator::p_HasNext(){
-	DBG_ENTER("Enumerator.HasNext")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<263>");
-	bool t_=m_index<m_stack->p_Length2();
-	return t_;
-}
-c_DataBuffer* c_Enumerator::p_NextObject(){
-	DBG_ENTER("Enumerator.NextObject")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<267>");
-	m_index+=1;
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<268>");
-	c_DataBuffer* t_=m_stack->m_data.At(m_index-1);
-	return t_;
-}
-void c_Enumerator::mark(){
-	Object::mark();
-	gc_mark_q(m_stack);
-}
-String c_Enumerator::debug(){
-	String t="(Enumerator)\n";
-	t+=dbg_decl("stack",&m_stack);
-	t+=dbg_decl("index",&m_index);
-	return t;
-}
-int bb_math_Max(int t_x,int t_y){
-	DBG_ENTER("Max")
-	DBG_LOCAL(t_x,"x")
-	DBG_LOCAL(t_y,"y")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/math.monkey<56>");
-	if(t_x>t_y){
-		DBG_BLOCK();
-		return t_x;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/math.monkey<57>");
-	return t_y;
-}
-Float bb_math_Max2(Float t_x,Float t_y){
-	DBG_ENTER("Max")
-	DBG_LOCAL(t_x,"x")
-	DBG_LOCAL(t_y,"y")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/math.monkey<83>");
-	if(t_x>t_y){
-		DBG_BLOCK();
-		return t_x;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/math.monkey<84>");
-	return t_y;
-}
-c_Enumerator2::c_Enumerator2(){
-	m__list=0;
-	m__curr=0;
-}
-c_Enumerator2* c_Enumerator2::m_new(c_List* t_list){
-	DBG_ENTER("Enumerator.new")
-	c_Enumerator2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_list,"list")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<326>");
-	gc_assign(m__list,t_list);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<327>");
-	gc_assign(m__curr,t_list->m__head->m__succ);
-	return this;
-}
-c_Enumerator2* c_Enumerator2::m_new2(){
-	DBG_ENTER("Enumerator.new")
-	c_Enumerator2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<323>");
-	return this;
-}
-bool c_Enumerator2::p_HasNext(){
-	DBG_ENTER("Enumerator.HasNext")
-	c_Enumerator2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<331>");
-	while(m__curr->m__succ->m__pred!=m__curr){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<332>");
-		gc_assign(m__curr,m__curr->m__succ);
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<334>");
-	bool t_=m__curr!=m__list->m__head;
-	return t_;
-}
-c_Difference_area* c_Enumerator2::p_NextObject(){
-	DBG_ENTER("Enumerator.NextObject")
-	c_Enumerator2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<338>");
-	c_Difference_area* t_data=m__curr->m__data;
-	DBG_LOCAL(t_data,"data")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<339>");
-	gc_assign(m__curr,m__curr->m__succ);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<340>");
-	return t_data;
-}
-void c_Enumerator2::mark(){
-	Object::mark();
-	gc_mark_q(m__list);
-	gc_mark_q(m__curr);
-}
-String c_Enumerator2::debug(){
-	String t="(Enumerator)\n";
-	t+=dbg_decl("_list",&m__list);
-	t+=dbg_decl("_curr",&m__curr);
-	return t;
-}
-Float bb_input_MouseX(){
-	DBG_ENTER("MouseX")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/input.monkey<58>");
-	Float t_=bb_input_device->p_MouseX();
-	return t_;
-}
-Float bb_input_MouseY(){
-	DBG_ENTER("MouseY")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/input.monkey<62>");
-	Float t_=bb_input_device->p_MouseY();
-	return t_;
-}
-bool bb_questionanswer_intersects(int t_x1,int t_y1,int t_w1,int t_h1,int t_x2,int t_y2,int t_w2,int t_h2){
-	DBG_ENTER("intersects")
-	DBG_LOCAL(t_x1,"x1")
-	DBG_LOCAL(t_y1,"y1")
-	DBG_LOCAL(t_w1,"w1")
-	DBG_LOCAL(t_h1,"h1")
-	DBG_LOCAL(t_x2,"x2")
-	DBG_LOCAL(t_y2,"y2")
-	DBG_LOCAL(t_w2,"w2")
-	DBG_LOCAL(t_h2,"h2")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>");
-	if(t_x1>=t_x2+t_w2 || t_x1+t_w1<=t_x2){
-		DBG_BLOCK();
-		return false;
-	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<133>");
-	if(t_y1>=t_y2+t_h2 || t_y1+t_h1<=t_y2){
-		DBG_BLOCK();
-		return false;
-	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>");
-	return true;
 }
 int bb_graphics_DebugRenderDevice(){
 	DBG_ENTER("DebugRenderDevice")
@@ -9216,8 +8111,6 @@ int bbInit(){
 	DBG_GLOBAL("_updateRate",&bb_app__updateRate);
 	c_Game_app::m_GameState=String(L"MENU",4);
 	DBG_GLOBAL("GameState",&c_Game_app::m_GameState);
-	c_Stack2::m_NIL=0;
-	DBG_GLOBAL("NIL",&c_Stack2::m_NIL);
 	return 0;
 }
 void gc_mark(){
@@ -9231,7 +8124,6 @@ void gc_mark(){
 	gc_mark_q(bb_app__displayModes);
 	gc_mark_q(bb_app__desktopMode);
 	gc_mark_q(bb_graphics_renderDevice);
-	gc_mark_q(c_Stack2::m_NIL);
 }
 //${TRANSCODE_END}
 

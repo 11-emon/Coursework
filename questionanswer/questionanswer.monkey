@@ -18,14 +18,13 @@ Class Game_app Extends App
 	Field won:Bool
 	Field complete:Image
 	Field difference_collection:List<Difference_area>
-	    Field image:Image
+	Field image:Image
     Global balloony: Int = 0
     
    Field balloon : Balloon
    
    
     Method OnCreate()
-        SetUpdateRate 30
      	balloon = New Balloon
      	SetUpdateRate 60
         menu = LoadImage ("background.png")
@@ -41,7 +40,12 @@ Method OnUpdate()
 		Case "MENU"
 			If KeyHit (KEY_ENTER) Then GameState="LOADGAME"
 		Case "LOADGAME"
-			GameState="PLAYING"
+			won=False
+				difference_collection.Clear
+				
+				youreballoon = LoadImage ("you'reballoon.png")
+				yourballoon = LoadImage ("yourballoon.png")
+				
 				Local level_file:FileStream
 				Local level_data:String
 				Local data_item:String[]
@@ -49,22 +53,38 @@ Method OnUpdate()
 				Local y:Int
 				Local w:Int
 				Local h:Int
-
-
-
+				
+				level_file = FileStream.Open("monkey://data/puzzle1.txt","r")
+				If level_file Then
+					level_data = level_file.ReadString()
+					level_file.Close 
+				Endif
+				data_item = level_data.Split("~n")
+				For Local counter:Int = 0 To data_item.Length-1 Step 4
+					x = Int(data_item[counter])
+					y = Int(data_item[counter+1])
+					w = Int(data_item[counter+2])
+					h = Int(data_item[counter+3])
+					difference_collection.AddLast(New Difference_area(x,y,w,h))
+				Next
+				
+				GameState="PLAYING"
 
 		Case "PLAYING"
 			If KeyHit (KEY_ESCAPE) Then GameState="MENU"
-				won=False
+				If KeyHit (KEY_LMB) Then
+					won = True
 					difference_collection.Clear
-					youreballoon = LoadImage ("you'reballoon.png")
-					yourballoon = LoadImage ("yourballoon.png")
-
-End
-End
-
-			
-			
+					'youreballoon = LoadImage ("you'reballoon.png")
+					'yourballoon = LoadImage ("yourballoon.png")
+					For Local difference := Eachin difference_collection
+						If intersects(MouseX-30,MouseY-30,60,60,difference.x, difference.y, difference.w, difference.h) Then difference.found = True
+						If difference.found = False Then won = False
+					Next
+ 				End
+		End
+	End
+		
 Method OnRender()
 	Select GameState
 		Case "MENU"
@@ -76,11 +96,16 @@ Method OnRender()
 			DrawImage youreballoon, 20,20
 			DrawImage yourballoon, 40,20
 			
-
+For Local difference := Eachin difference_collection
+					If difference.found Then
+						DrawImage circle, difference.middle_x, difference.middle_y
+						DrawImage circle, difference.middle_x+340, difference.middle_y
+					End
+				Next
+				If won Then DrawImage complete,0,0
+			End
+	End
 End
-End
-End
-
 
 Class Difference_area
 Field x:Int
@@ -100,6 +125,13 @@ middle_x = (x+w/2)-15
 middle_y = (y+h/2)-15
 found = False
 End
+End
+
+Function intersects:Bool (x1:Int, y1:Int, w1:Int, h1:Int, x2:Int, y2:Int, w2:Int, h2:Int)
+	'Bounding box collision detection algorithm
+	If x1 >= (x2 + w2) Or (x1 + w1) <= x2 Then Return False
+	If y1 >= (y2 + h2) Or (y1 + h1) <= y2 Then Return False
+    Return True
 End
 
 Class Balloon
