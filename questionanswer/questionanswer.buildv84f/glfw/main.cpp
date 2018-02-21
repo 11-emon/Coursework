@@ -5326,10 +5326,13 @@ class c_IntMap;
 class c_Stack;
 class c_Node;
 class c_BBGameEvent;
+class c_Balloon;
 class c_Difference_area;
 class c_List;
 class c_Node2;
 class c_HeadNode;
+class c_Stream;
+class c_FileStream;
 class c_App : public Object{
 	public:
 	c_App();
@@ -5349,6 +5352,7 @@ class c_App : public Object{
 String dbg_type(c_App**p){return "App";}
 class c_Game_app : public c_App{
 	public:
+	c_Balloon* m_balloon;
 	c_Image* m_menu;
 	c_List* m_difference_collection;
 	c_Image* m_circle;
@@ -5603,6 +5607,18 @@ String dbg_type(c_BBGameEvent**p){return "BBGameEvent";}
 void bb_app_EndApp();
 extern int bb_app__updateRate;
 void bb_app_SetUpdateRate(int);
+class c_Balloon : public Object{
+	public:
+	c_Image* m_image;
+	int m_balloony;
+	String m_updowndir;
+	c_Balloon();
+	c_Balloon* m_new(int);
+	int p_Move();
+	void mark();
+	String debug();
+};
+String dbg_type(c_Balloon**p){return "Balloon";}
 class c_Difference_area : public Object{
 	public:
 	c_Difference_area();
@@ -5643,6 +5659,20 @@ class c_HeadNode : public c_Node2{
 };
 String dbg_type(c_HeadNode**p){return "HeadNode";}
 int bb_input_KeyHit(int);
+class c_Stream : public Object{
+	public:
+	c_Stream();
+	void mark();
+	String debug();
+};
+String dbg_type(c_Stream**p){return "Stream";}
+class c_FileStream : public c_Stream{
+	public:
+	c_FileStream();
+	void mark();
+	String debug();
+};
+String dbg_type(c_FileStream**p){return "FileStream";}
 int bb_graphics_DebugRenderDevice();
 int bb_graphics_DrawImage(c_Image*,Float,Float,int);
 int bb_graphics_PushMatrix();
@@ -5742,6 +5772,7 @@ String c_App::debug(){
 	return t;
 }
 c_Game_app::c_Game_app(){
+	m_balloon=0;
 	m_menu=0;
 	m_difference_collection=0;
 	m_circle=0;
@@ -5762,15 +5793,19 @@ int c_Game_app::p_OnCreate(){
 	DBG_ENTER("Game_app.OnCreate")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<25>");
-	bb_app_SetUpdateRate(60);
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<26>");
-	gc_assign(m_menu,bb_graphics_LoadImage(String(L"background.png",14),1,c_Image::m_DefaultFlags));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<27>");
-	gc_assign(m_difference_collection,(new c_List)->m_new());
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<28>");
-	gc_assign(m_circle,bb_graphics_LoadImage(String(L"circle.png",10),1,c_Image::m_DefaultFlags));
+	bb_app_SetUpdateRate(30);
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<29>");
+	gc_assign(m_balloon,(new c_Balloon)->m_new(0));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<30>");
+	bb_app_SetUpdateRate(60);
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<31>");
+	gc_assign(m_menu,bb_graphics_LoadImage(String(L"background.png",14),1,c_Image::m_DefaultFlags));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<32>");
+	gc_assign(m_difference_collection,(new c_List)->m_new());
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<33>");
+	gc_assign(m_circle,bb_graphics_LoadImage(String(L"circle.png",10),1,c_Image::m_DefaultFlags));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<34>");
 	gc_assign(m_complete,bb_graphics_LoadImage(String(L"background.png",14),1,c_Image::m_DefaultFlags));
 	return 0;
 }
@@ -5779,41 +5814,61 @@ int c_Game_app::p_OnUpdate(){
 	DBG_ENTER("Game_app.OnUpdate")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<36>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<40>");
 	String t_1=m_GameState;
 	DBG_LOCAL(t_1,"1")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<37>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<41>");
 	if(t_1==String(L"MENU",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<38>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<42>");
 		if((bb_input_KeyHit(13))!=0){
 			DBG_BLOCK();
 			m_GameState=String(L"LOADGAME",8);
 		}
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<39>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<43>");
 		if(t_1==String(L"LOADGAME",8)){
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<40>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<44>");
 			m_GameState=String(L"PLAYING",7);
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<45>");
+			c_FileStream* t_level_file=0;
+			DBG_LOCAL(t_level_file,"level_file")
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<46>");
+			String t_level_data=String();
+			DBG_LOCAL(t_level_data,"level_data")
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<47>");
+			Array<String > t_data_item=Array<String >();
+			DBG_LOCAL(t_data_item,"data_item")
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<48>");
+			int t_x=0;
+			DBG_LOCAL(t_x,"x")
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<49>");
+			int t_y=0;
+			DBG_LOCAL(t_y,"y")
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<50>");
+			int t_w=0;
+			DBG_LOCAL(t_w,"w")
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<51>");
+			int t_h=0;
 		}else{
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<41>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<56>");
 			if(t_1==String(L"PLAYING",7)){
 				DBG_BLOCK();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<42>");
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<57>");
 				if((bb_input_KeyHit(27))!=0){
 					DBG_BLOCK();
 					m_GameState=String(L"MENU",4);
 				}
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<43>");
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<58>");
 				m_won=false;
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<44>");
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<59>");
 				m_difference_collection->p_Clear();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<45>");
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<60>");
 				gc_assign(m_youreballoon,bb_graphics_LoadImage(String(L"you'reballoon.png",17),1,c_Image::m_DefaultFlags));
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<46>");
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<61>");
 				gc_assign(m_yourballoon,bb_graphics_LoadImage(String(L"yourballoon.png",15),1,c_Image::m_DefaultFlags));
 			}
 		}
@@ -5824,24 +5879,26 @@ int c_Game_app::p_OnRender(){
 	DBG_ENTER("Game_app.OnRender")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<54>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<69>");
 	String t_2=m_GameState;
 	DBG_LOCAL(t_2,"2")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<55>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<70>");
 	if(t_2==String(L"MENU",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<56>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<71>");
 		bb_graphics_DrawImage(m_menu,FLOAT(0.0),FLOAT(0.0),0);
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<72>");
+		m_balloon->p_Move();
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<57>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<73>");
 		if(t_2==String(L"PLAYING",7)){
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<58>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<74>");
 			bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<59>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<75>");
 			bb_graphics_DrawImage(m_youreballoon,FLOAT(20.0),FLOAT(20.0),0);
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<60>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<76>");
 			bb_graphics_DrawImage(m_yourballoon,FLOAT(40.0),FLOAT(20.0),0);
 		}
 	}
@@ -5849,6 +5906,7 @@ int c_Game_app::p_OnRender(){
 }
 void c_Game_app::mark(){
 	c_App::mark();
+	gc_mark_q(m_balloon);
 	gc_mark_q(m_menu);
 	gc_mark_q(m_difference_collection);
 	gc_mark_q(m_circle);
@@ -5867,6 +5925,7 @@ String c_Game_app::debug(){
 	t+=dbg_decl("won",&m_won);
 	t+=dbg_decl("complete",&m_complete);
 	t+=dbg_decl("difference_collection",&m_difference_collection);
+	t+=dbg_decl("balloon",&m_balloon);
 	return t;
 }
 c_App* bb_app__app;
@@ -7579,6 +7638,60 @@ void bb_app_SetUpdateRate(int t_hertz){
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/app.monkey<225>");
 	bb_app__game->SetUpdateRate(t_hertz);
 }
+c_Balloon::c_Balloon(){
+	m_image=bb_graphics_LoadImage(String(L"hotairballoon.png",17),1,c_Image::m_DefaultFlags);
+	m_balloony=0;
+	m_updowndir=String(L"down",4);
+}
+c_Balloon* c_Balloon::m_new(int t_balloony){
+	DBG_ENTER("Balloon.new")
+	c_Balloon *self=this;
+	DBG_LOCAL(self,"Self")
+	return this;
+}
+int c_Balloon::p_Move(){
+	DBG_ENTER("Balloon.Move")
+	c_Balloon *self=this;
+	DBG_LOCAL(self,"Self")
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<115>");
+	bb_graphics_DrawImage(m_image,FLOAT(20.0),Float(m_balloony),0);
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<116>");
+	m_balloony+=1;
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<117>");
+	if(m_balloony>=278){
+		DBG_BLOCK();
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<118>");
+		m_updowndir=String(L"up",2);
+	}
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<120>");
+	if(m_balloony<0){
+		DBG_BLOCK();
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<121>");
+		m_updowndir=String(L"down",4);
+	}
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<124>");
+	if(m_updowndir==String(L"down",4)){
+		DBG_BLOCK();
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<125>");
+		m_balloony+=1;
+	}else{
+		DBG_BLOCK();
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<128>");
+		m_balloony-=2;
+	}
+	return 0;
+}
+void c_Balloon::mark(){
+	Object::mark();
+	gc_mark_q(m_image);
+}
+String c_Balloon::debug(){
+	String t="(Balloon)\n";
+	t+=dbg_decl("image",&m_image);
+	t+=dbg_decl("balloony",&m_balloony);
+	t+=dbg_decl("updowndir",&m_updowndir);
+	return t;
+}
 c_Difference_area::c_Difference_area(){
 }
 void c_Difference_area::mark(){
@@ -7715,6 +7828,25 @@ int bb_input_KeyHit(int t_key){
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/input.monkey<44>");
 	int t_=bb_input_device->p_KeyHit(t_key);
 	return t_;
+}
+c_Stream::c_Stream(){
+}
+void c_Stream::mark(){
+	Object::mark();
+}
+String c_Stream::debug(){
+	String t="(Stream)\n";
+	return t;
+}
+c_FileStream::c_FileStream(){
+}
+void c_FileStream::mark(){
+	c_Stream::mark();
+}
+String c_FileStream::debug(){
+	String t="(FileStream)\n";
+	t=c_Stream::debug()+t;
+	return t;
 }
 int bb_graphics_DebugRenderDevice(){
 	DBG_ENTER("DebugRenderDevice")
