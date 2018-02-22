@@ -19,7 +19,7 @@ Class Game_app Extends App
 	Field complete:Image
 	Field difference_collection:List<Difference_area>
 	Field image:Image
-    Global balloony: Int = 0
+    Global balloony: Int = 0 
     
    Field balloon : Balloon
    
@@ -54,7 +54,7 @@ Method OnUpdate()
 				Local w:Int
 				Local h:Int
 				
-				level_file = FileStream.Open("monkey://data/puzzle1.txt","r")
+				level_file = FileStream.Open("monkey://data/youranswer.txt","r")
 				If level_file Then
 					level_data = level_file.ReadString()
 					level_file.Close 
