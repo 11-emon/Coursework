@@ -6068,11 +6068,11 @@ int c_Game_app::p_OnRender(){
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<94>");
 			bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<95>");
-			bb_graphics_DrawText(String(L"Choose the answer fill the gap: I love _____ dog!",49),FLOAT(20.0),FLOAT(40.0),FLOAT(0.0),FLOAT(0.0));
+			bb_graphics_DrawText(String(L"Choose the answer to fill the gap: I love _____ dog!",52),FLOAT(140.0),FLOAT(100.0),FLOAT(0.0),FLOAT(0.0));
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>");
-			bb_graphics_DrawImage(m_youreballoon,FLOAT(20.0),FLOAT(20.0),0);
+			bb_graphics_DrawImage(m_youreballoon,FLOAT(200.0),FLOAT(230.0),0);
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<97>");
-			bb_graphics_DrawImage(m_yourballoon,FLOAT(40.0),FLOAT(20.0),0);
+			bb_graphics_DrawImage(m_yourballoon,FLOAT(350.0),FLOAT(230.0),0);
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<99>");
 			c_Enumerator2* t_=m_difference_collection->p_ObjectEnumerator();
 			while(t_->p_HasNext()){

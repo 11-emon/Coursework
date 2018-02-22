@@ -92,9 +92,9 @@ Method OnRender()
 			balloon.Move()
 		Case "PLAYING"
 			Cls 0, 191, 255
-			DrawText "Choose the answer fill the gap: I love _____ dog!", 20, 40
-			DrawImage youreballoon, 20,20
-			DrawImage yourballoon, 40,20
+			DrawText "Choose the answer to fill the gap: I love _____ dog!", 140, 100
+			DrawImage youreballoon,200,230
+			DrawImage yourballoon, 350,230
 			
 For Local difference := Eachin difference_collection
 					If difference.found Then
