@@ -4719,7 +4719,7 @@ String c_App::debug(){
 	return t;
 }
 c_MyApp::c_MyApp(){
-	m_result=String(L"Choice (1 to 3)?",16);
+	m_result=String(L"Input your name:",16);
 }
 c_MyApp* c_MyApp::m_new(){
 	DBG_ENTER("MyApp.new")
@@ -4757,44 +4757,36 @@ int c_MyApp::p_OnUpdate(){
 		int t_1=t_char;
 		DBG_LOCAL(t_1,"1")
 		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<24>");
-		if(t_1==49){
+		if(t_1==67){
 			DBG_BLOCK();
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<25>");
-			m_result=String(L"ONE!",4);
+			m_result=String(L"OK!",3);
 		}else{
 			DBG_BLOCK();
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<26>");
-			if(t_1==50){
+			if(t_1==69){
 				DBG_BLOCK();
 				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<27>");
-				m_result=String(L"TWO!",4);
+				m_result=String(L"OK!",3);
 			}else{
 				DBG_BLOCK();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<28>");
-				if(t_1==51){
-					DBG_BLOCK();
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<29>");
-					m_result=String(L"THREE!",6);
-				}else{
-					DBG_BLOCK();
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<31>");
-					m_result=String(L"NOT 1, 2 or 3!",14);
-				}
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<31>");
+				m_result=String(L"You are not in this class! Check your spelling!",47);
 			}
 		}
 	}while(!(false));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<34>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<50>");
 	return 0;
 }
 int c_MyApp::p_OnRender(){
 	DBG_ENTER("MyApp.OnRender")
 	c_MyApp *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<38>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<54>");
 	bb_graphics_Cls(FLOAT(0.0),FLOAT(0.0),FLOAT(0.0));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<39>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<55>");
 	bb_graphics_DrawText(m_result,FLOAT(10.0),FLOAT(10.0),FLOAT(0.0),FLOAT(0.0));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<40>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<56>");
 	return 0;
 }
 void c_MyApp::mark(){
