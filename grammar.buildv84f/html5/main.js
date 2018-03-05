@@ -1,7 +1,9 @@
 
 //${CONFIG_BEGIN}
 CFG_BINARY_FILES="*.bin|*.dat";
+CFG_BRL_DATABUFFER_IMPLEMENTED="1";
 CFG_BRL_GAMETARGET_IMPLEMENTED="1";
+CFG_BRL_STREAM_IMPLEMENTED="1";
 CFG_BRL_THREAD_IMPLEMENTED="1";
 CFG_CD="";
 CFG_CONFIG="debug";
@@ -21,7 +23,7 @@ CFG_TEXT_FILES="*.txt|*.xml|*.json";
 //${CONFIG_END}
 
 //${METADATA_BEGIN}
-var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n[hotairballoon.png];type=image/png;width=162;height=200;\n[hotairballoon2.png];type=image/png;width=528;height=746;\n";
+var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n[background.png];type=image/png;width=640;height=480;\n[hotairballoon.png];type=image/png;width=162;height=200;\n[hotairballoon2.png];type=image/png;width=528;height=746;\n[login.png];type=image/png;width=640;height=480;\n[question.png];type=image/png;width=640;height=480;\n[theirballoon.png];type=image/png;width=351;height=496;\n[thereballoon.png];type=image/png;width=330;height=467;\n[they'reballoon.png];type=image/png;width=341;height=483;\n[you'reballoon.png];type=image/png;width=365;height=516;\n[yourballoon.png];type=image/png;width=369;height=523;\n";
 //${METADATA_END}
 
 //${TRANSCODE_BEGIN}
@@ -2088,6 +2090,190 @@ BBAsyncSoundLoaderThread.prototype.IsRunning=function(){
 	return this._running;
 }
 
+
+function BBDataBuffer(){
+	this.arrayBuffer=null;
+	this.length=0;
+}
+
+BBDataBuffer.tbuf=new ArrayBuffer(4);
+BBDataBuffer.tbytes=new Int8Array( BBDataBuffer.tbuf );
+BBDataBuffer.tshorts=new Int16Array( BBDataBuffer.tbuf );
+BBDataBuffer.tints=new Int32Array( BBDataBuffer.tbuf );
+BBDataBuffer.tfloats=new Float32Array( BBDataBuffer.tbuf );
+
+BBDataBuffer.prototype._Init=function( buffer ){
+	this.arrayBuffer=buffer;
+	this.length=buffer.byteLength;
+	this.bytes=new Int8Array( buffer );	
+	this.shorts=new Int16Array( buffer,0,this.length/2 );	
+	this.ints=new Int32Array( buffer,0,this.length/4 );	
+	this.floats=new Float32Array( buffer,0,this.length/4 );
+}
+
+BBDataBuffer.prototype._New=function( length ){
+	if( this.arrayBuffer ) return false;
+	
+	var buf=new ArrayBuffer( length );
+	if( !buf ) return false;
+	
+	this._Init( buf );
+	return true;
+}
+
+BBDataBuffer.prototype._Load=function( path ){
+	if( this.arrayBuffer ) return false;
+	
+	var buf=BBGame.Game().LoadData( path );
+	if( !buf ) return false;
+	
+	this._Init( buf );
+	return true;
+}
+
+BBDataBuffer.prototype._LoadAsync=function( path,thread ){
+
+	var buf=this;
+	
+	var xhr=new XMLHttpRequest();
+	xhr.open( "GET",BBGame.Game().PathToUrl( path ),true );
+	xhr.responseType="arraybuffer";
+	
+	xhr.onload=function(e){
+		if( this.status==200 || this.status==0 ){
+			buf._Init( xhr.response );
+			thread.result=buf;
+		}
+		thread.running=false;
+	}
+	
+	xhr.onerror=function(e){
+		thread.running=false;
+	}
+	
+	xhr.send();
+}
+
+
+BBDataBuffer.prototype.GetArrayBuffer=function(){
+	return this.arrayBuffer;
+}
+
+BBDataBuffer.prototype.Length=function(){
+	return this.length;
+}
+
+BBDataBuffer.prototype.Discard=function(){
+	if( this.arrayBuffer ){
+		this.arrayBuffer=null;
+		this.length=0;
+	}
+}
+
+BBDataBuffer.prototype.PokeByte=function( addr,value ){
+	this.bytes[addr]=value;
+}
+
+BBDataBuffer.prototype.PokeShort=function( addr,value ){
+	if( addr&1 ){
+		BBDataBuffer.tshorts[0]=value;
+		this.bytes[addr]=BBDataBuffer.tbytes[0];
+		this.bytes[addr+1]=BBDataBuffer.tbytes[1];
+		return;
+	}
+	this.shorts[addr>>1]=value;
+}
+
+BBDataBuffer.prototype.PokeInt=function( addr,value ){
+	if( addr&3 ){
+		BBDataBuffer.tints[0]=value;
+		this.bytes[addr]=BBDataBuffer.tbytes[0];
+		this.bytes[addr+1]=BBDataBuffer.tbytes[1];
+		this.bytes[addr+2]=BBDataBuffer.tbytes[2];
+		this.bytes[addr+3]=BBDataBuffer.tbytes[3];
+		return;
+	}
+	this.ints[addr>>2]=value;
+}
+
+BBDataBuffer.prototype.PokeFloat=function( addr,value ){
+	if( addr&3 ){
+		BBDataBuffer.tfloats[0]=value;
+		this.bytes[addr]=BBDataBuffer.tbytes[0];
+		this.bytes[addr+1]=BBDataBuffer.tbytes[1];
+		this.bytes[addr+2]=BBDataBuffer.tbytes[2];
+		this.bytes[addr+3]=BBDataBuffer.tbytes[3];
+		return;
+	}
+	this.floats[addr>>2]=value;
+}
+
+BBDataBuffer.prototype.PeekByte=function( addr ){
+	return this.bytes[addr];
+}
+
+BBDataBuffer.prototype.PeekShort=function( addr ){
+	if( addr&1 ){
+		BBDataBuffer.tbytes[0]=this.bytes[addr];
+		BBDataBuffer.tbytes[1]=this.bytes[addr+1];
+		return BBDataBuffer.tshorts[0];
+	}
+	return this.shorts[addr>>1];
+}
+
+BBDataBuffer.prototype.PeekInt=function( addr ){
+	if( addr&3 ){
+		BBDataBuffer.tbytes[0]=this.bytes[addr];
+		BBDataBuffer.tbytes[1]=this.bytes[addr+1];
+		BBDataBuffer.tbytes[2]=this.bytes[addr+2];
+		BBDataBuffer.tbytes[3]=this.bytes[addr+3];
+		return BBDataBuffer.tints[0];
+	}
+	return this.ints[addr>>2];
+}
+
+BBDataBuffer.prototype.PeekFloat=function( addr ){
+	if( addr&3 ){
+		BBDataBuffer.tbytes[0]=this.bytes[addr];
+		BBDataBuffer.tbytes[1]=this.bytes[addr+1];
+		BBDataBuffer.tbytes[2]=this.bytes[addr+2];
+		BBDataBuffer.tbytes[3]=this.bytes[addr+3];
+		return BBDataBuffer.tfloats[0];
+	}
+	return this.floats[addr>>2];
+}
+
+
+function BBStream(){
+}
+
+BBStream.prototype.Eof=function(){
+	return 0;
+}
+
+BBStream.prototype.Close=function(){
+}
+
+BBStream.prototype.Length=function(){
+	return 0;
+}
+
+BBStream.prototype.Position=function(){
+	return 0;
+}
+
+BBStream.prototype.Seek=function( position ){
+	return 0;
+}
+
+BBStream.prototype.Read=function( buffer,offset,count ){
+	return 0;
+}
+
+BBStream.prototype.Write=function( buffer,offset,count ){
+	return 0;
+}
+
 function c_App(){
 	Object.call(this);
 }
@@ -2156,34 +2342,102 @@ c_App.prototype.p_OnBack=function(){
 	pop_err();
 	return 0;
 }
-function c_Game(){
+function c_Game_app(){
 	c_App.call(this);
-	this.m_balloon=null;
+	this.m_menu=null;
+	this.m_airballoon=null;
 }
-c_Game.prototype=extend_class(c_App);
-c_Game.m_new=function(){
+c_Game_app.prototype=extend_class(c_App);
+c_Game_app.m_new=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<3>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<17>";
 	c_App.m_new.call(this);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<3>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<17>";
 	pop_err();
 	return this;
 }
-c_Game.prototype.p_OnCreate=function(){
+c_Game_app.prototype.p_OnCreate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<12>";
-	bb_app_SetUpdateRate(30);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<13>";
-	this.m_balloon=c_Balloon.m_new.call(new c_Balloon,0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<25>";
+	bb_app_SetUpdateRate(60);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<26>";
+	this.m_menu=bb_graphics_LoadImage("login.png",1,c_Image.m_DefaultFlags);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<27>";
+	this.m_airballoon=bb_graphics_LoadImage("hotairballoon.png",1,c_Image.m_DefaultFlags);
 	pop_err();
 	return 0;
 }
-c_Game.prototype.p_OnRender=function(){
+c_Game_app.m_GameState="";
+c_Game_app.prototype.p_OnUpdate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<18>";
-	bb_graphics_Cls(0.0,191.0,255.0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<19>";
-	this.m_balloon.p_Move();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<35>";
+	var t_1=c_Game_app.m_GameState;
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<36>";
+	if(t_1=="MENU"){
+		err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<37>";
+		if((bb_input_KeyHit(13))!=0){
+			err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<37>";
+			c_Game_app.m_GameState="INITIALISE";
+		}
+	}else{
+		err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<38>";
+		if(t_1=="INITIALISE"){
+			err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<39>";
+			c_Game_app.m_GameState="PLAYING";
+		}else{
+			err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<40>";
+			if(t_1=="PLAYING"){
+				err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<41>";
+				for(var t_i=0;t_i<bb_grammar_movementspeed;t_i=t_i+1){
+					err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<42>";
+					var t_2=bb_grammar_currentdir;
+					err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<43>";
+					if(t_2=="down"){
+						err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<44>";
+						bb_grammar_py+=1;
+					}else{
+						err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<45>";
+						if(t_2=="up"){
+							err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<46>";
+							bb_grammar_py-=1;
+						}
+					}
+					err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<49>";
+					if(bb_grammar_py<0){
+						err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<49>";
+						bb_grammar_currentdir="down";
+					}
+					err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<50>";
+					if(bb_grammar_py>464){
+						err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<50>";
+						bb_grammar_currentdir="up";
+					}
+				}
+			}
+		}
+	}
+	pop_err();
+	return 0;
+}
+c_Game_app.prototype.p_OnRender=function(){
+	push_err();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<57>";
+	var t_3=c_Game_app.m_GameState;
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<58>";
+	if(t_3=="MENU"){
+		err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<59>";
+		bb_graphics_DrawImage(this.m_menu,0.0,0.0,0);
+	}else{
+		err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<60>";
+		if(t_3=="PLAYING"){
+			err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<61>";
+			bb_graphics_Cls(0.0,191.0,255.0);
+			err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<62>";
+			bb_graphics_DrawImage(this.m_airballoon,17.0,270.0,0);
+			err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<64>";
+			bb_graphics_DrawRect((bb_grammar_px),(bb_grammar_py),16.0,16.0);
+		}
+	}
 	pop_err();
 	return 0;
 }
@@ -2331,10 +2585,11 @@ c_GameDelegate.prototype.DiscardGraphics=function(){
 }
 var bb_app__delegate=null;
 var bb_app__game=null;
+var bb_grammar_Game=null;
 function bbMain(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<27>";
-	c_Game.m_new.call(new c_Game);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/grammar.monkey<14>";
+	bb_grammar_Game=c_Game_app.m_new.call(new c_Game_app);
 	pop_err();
 	return 0;
 }
@@ -2884,6 +3139,18 @@ c_InputDevice.prototype.p_MotionEvent=function(t_event,t_data,t_x,t_y,t_z){
 	err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<185>";
 	this.m__accelZ=t_z;
 	pop_err();
+}
+c_InputDevice.prototype.p_KeyHit=function(t_key){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<52>";
+	if(t_key>0 && t_key<512){
+		err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<52>";
+		pop_err();
+		return dbg_array(this.m__keyHit,t_key)[dbg_index];
+	}
+	err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<53>";
+	pop_err();
+	return 0;
 }
 function c_JoyState(){
 	Object.call(this);
@@ -3475,44 +3742,16 @@ function bb_app_SetUpdateRate(t_hertz){
 	bb_app__game.SetUpdateRate(t_hertz);
 	pop_err();
 }
-function c_Balloon(){
-	Object.call(this);
-	this.m_image=bb_graphics_LoadImage("hotairballoon.png",1,c_Image.m_DefaultFlags);
-	this.m_balloony=0;
-	this.m_updowndir="down";
-}
-c_Balloon.m_new=function(t_balloony){
+function bb_input_KeyHit(t_key){
 	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/input.monkey<44>";
+	var t_=bb_input_device.p_KeyHit(t_key);
 	pop_err();
-	return this;
+	return t_;
 }
-c_Balloon.prototype.p_Move=function(){
-	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<42>";
-	bb_graphics_DrawImage(this.m_image,20.0,(this.m_balloony),0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<43>";
-	this.m_balloony+=1;
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<44>";
-	if(this.m_balloony>=278){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<45>";
-		this.m_updowndir="up";
-	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<47>";
-	if(this.m_balloony<0){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<48>";
-		this.m_updowndir="down";
-	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<51>";
-	if(this.m_updowndir=="down"){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<52>";
-		this.m_balloony+=1;
-	}else{
-		err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<55>";
-		this.m_balloony-=2;
-	}
-	pop_err();
-	return 0;
-}
+var bb_grammar_movementspeed=0;
+var bb_grammar_currentdir="";
+var bb_grammar_py=0;
 function bb_graphics_DebugRenderDevice(){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<53>";
@@ -3520,15 +3759,6 @@ function bb_graphics_DebugRenderDevice(){
 		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<53>";
 		error("Rendering operations can only be performed inside OnRender");
 	}
-	pop_err();
-	return 0;
-}
-function bb_graphics_Cls(t_r,t_g,t_b){
-	push_err();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<378>";
-	bb_graphics_DebugRenderDevice();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<380>";
-	bb_graphics_renderDevice.Cls(t_r,t_g,t_b);
 	pop_err();
 	return 0;
 }
@@ -3676,10 +3906,32 @@ function bb_graphics_DrawImage2(t_image,t_x,t_y,t_rotation,t_scaleX,t_scaleY,t_f
 	pop_err();
 	return 0;
 }
+function bb_graphics_Cls(t_r,t_g,t_b){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<378>";
+	bb_graphics_DebugRenderDevice();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<380>";
+	bb_graphics_renderDevice.Cls(t_r,t_g,t_b);
+	pop_err();
+	return 0;
+}
+var bb_grammar_px=0;
+function bb_graphics_DrawRect(t_x,t_y,t_w,t_h){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<393>";
+	bb_graphics_DebugRenderDevice();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<395>";
+	bb_graphics_context.p_Validate();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<396>";
+	bb_graphics_renderDevice.DrawRect(t_x,t_y,t_w,t_h);
+	pop_err();
+	return 0;
+}
 function bbInit(){
 	bb_app__app=null;
 	bb_app__delegate=null;
 	bb_app__game=BBGame.Game();
+	bb_grammar_Game=null;
 	bb_graphics_device=null;
 	bb_graphics_context=c_GraphicsContext.m_new.call(new c_GraphicsContext);
 	c_Image.m_DefaultFlags=0;
@@ -3691,5 +3943,10 @@ function bbInit(){
 	bb_app__desktopMode=null;
 	bb_graphics_renderDevice=null;
 	bb_app__updateRate=0;
+	c_Game_app.m_GameState="MENU";
+	bb_grammar_movementspeed=1;
+	bb_grammar_currentdir="up";
+	bb_grammar_py=270;
+	bb_grammar_px=17;
 }
 //${TRANSCODE_END}

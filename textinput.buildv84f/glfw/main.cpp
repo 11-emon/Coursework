@@ -4719,7 +4719,7 @@ String c_App::debug(){
 	return t;
 }
 c_MyApp::c_MyApp(){
-	m_result=String(L"Input your name:",16);
+	m_result=String(L"Input your name (Case sensitive):",33);
 }
 c_MyApp* c_MyApp::m_new(){
 	DBG_ENTER("MyApp.new")
@@ -4748,45 +4748,45 @@ int c_MyApp::p_OnUpdate(){
 		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<21>");
 		int t_char=bb_input_GetChar();
 		DBG_LOCAL(t_char,"char")
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<22>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<23>");
 		if(!((t_char)!=0)){
 			DBG_BLOCK();
 			break;
 		}
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<23>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<24>");
 		int t_1=t_char;
 		DBG_LOCAL(t_1,"1")
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<24>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<25>");
 		if(t_1==67){
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<25>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<26>");
 			m_result=String(L"OK!",3);
 		}else{
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<26>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<27>");
 			if(t_1==69){
 				DBG_BLOCK();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<27>");
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<28>");
 				m_result=String(L"OK!",3);
 			}else{
 				DBG_BLOCK();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<31>");
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<32>");
 				m_result=String(L"You are not in this class! Check your spelling!",47);
 			}
 		}
 	}while(!(false));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<50>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<51>");
 	return 0;
 }
 int c_MyApp::p_OnRender(){
 	DBG_ENTER("MyApp.OnRender")
 	c_MyApp *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<54>");
-	bb_graphics_Cls(FLOAT(0.0),FLOAT(0.0),FLOAT(0.0));
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<55>");
-	bb_graphics_DrawText(m_result,FLOAT(10.0),FLOAT(10.0),FLOAT(0.0),FLOAT(0.0));
+	bb_graphics_Cls(FLOAT(20.0),FLOAT(100.0),FLOAT(84.0));
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<56>");
+	bb_graphics_DrawText(m_result,FLOAT(270.0),FLOAT(220.0),FLOAT(0.0),FLOAT(0.0));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<57>");
 	return 0;
 }
 void c_MyApp::mark(){

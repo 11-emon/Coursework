@@ -21,7 +21,7 @@ CFG_TEXT_FILES="*.txt|*.xml|*.json";
 //${CONFIG_END}
 
 //${METADATA_BEGIN}
-var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n[hotairballoon.png];type=image/png;width=162;height=200;\n[hotairballoon2.png];type=image/png;width=528;height=746;\n";
+var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n";
 //${METADATA_END}
 
 //${TRANSCODE_BEGIN}
@@ -2156,34 +2156,66 @@ c_App.prototype.p_OnBack=function(){
 	pop_err();
 	return 0;
 }
-function c_Game(){
+function c_MyApp(){
 	c_App.call(this);
-	this.m_balloon=null;
+	this.m_result="Input your name (Case sensitive):";
 }
-c_Game.prototype=extend_class(c_App);
-c_Game.m_new=function(){
+c_MyApp.prototype=extend_class(c_App);
+c_MyApp.m_new=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<3>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<10>";
 	c_App.m_new.call(this);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<3>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<10>";
 	pop_err();
 	return this;
 }
-c_Game.prototype.p_OnCreate=function(){
+c_MyApp.prototype.p_OnCreate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<12>";
-	bb_app_SetUpdateRate(30);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<13>";
-	this.m_balloon=c_Balloon.m_new.call(new c_Balloon,0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<15>";
+	bb_app_SetUpdateRate(60);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<16>";
 	pop_err();
 	return 0;
 }
-c_Game.prototype.p_OnRender=function(){
+c_MyApp.prototype.p_OnUpdate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<18>";
-	bb_graphics_Cls(0.0,191.0,255.0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<19>";
-	this.m_balloon.p_Move();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<20>";
+	do{
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<21>";
+		var t_char=bb_input_GetChar();
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<23>";
+		if(!((t_char)!=0)){
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<23>";
+			break;
+		}
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<24>";
+		var t_1=t_char;
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<25>";
+		if(t_1==67){
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<26>";
+			this.m_result="OK!";
+		}else{
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<27>";
+			if(t_1==69){
+				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<28>";
+				this.m_result="OK!";
+			}else{
+				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<32>";
+				this.m_result="You are not in this class! Check your spelling!";
+			}
+		}
+	}while(!(false));
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<51>";
+	pop_err();
+	return 0;
+}
+c_MyApp.prototype.p_OnRender=function(){
+	push_err();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<55>";
+	bb_graphics_Cls(20.0,100.0,84.0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<56>";
+	bb_graphics_DrawText(this.m_result,270.0,220.0,0.0,0.0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<57>";
 	pop_err();
 	return 0;
 }
@@ -2333,8 +2365,9 @@ var bb_app__delegate=null;
 var bb_app__game=null;
 function bbMain(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<27>";
-	c_Game.m_new.call(new c_Game);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<6>";
+	c_MyApp.m_new.call(new c_MyApp);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput.monkey<7>";
 	pop_err();
 	return 0;
 }
@@ -2501,6 +2534,25 @@ c_Image.prototype.p_Init2=function(t_surf,t_x,t_y,t_iwidth,t_iheight,t_nframes,t
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<183>";
 	pop_err();
 	return this;
+}
+c_Image.prototype.p_Width=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<81>";
+	pop_err();
+	return this.m_width;
+}
+c_Image.prototype.p_Height=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<85>";
+	pop_err();
+	return this.m_height;
+}
+c_Image.prototype.p_Frames=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<93>";
+	var t_=this.m_frames.length;
+	pop_err();
+	return t_;
 }
 function c_GraphicsContext(){
 	Object.call(this);
@@ -2884,6 +2936,22 @@ c_InputDevice.prototype.p_MotionEvent=function(t_event,t_data,t_x,t_y,t_z){
 	err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<185>";
 	this.m__accelZ=t_z;
 	pop_err();
+}
+c_InputDevice.prototype.p_GetChar=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<57>";
+	if(this.m__charGet==this.m__charPut){
+		err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<57>";
+		pop_err();
+		return 0;
+	}
+	err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<58>";
+	var t_chr=dbg_array(this.m__charQueue,this.m__charGet)[dbg_index];
+	err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<59>";
+	this.m__charGet+=1;
+	err_info="C:/MonkeyXFree84f/modules/mojo/inputdevice.monkey<60>";
+	pop_err();
+	return t_chr;
 }
 function c_JoyState(){
 	Object.call(this);
@@ -3475,43 +3543,12 @@ function bb_app_SetUpdateRate(t_hertz){
 	bb_app__game.SetUpdateRate(t_hertz);
 	pop_err();
 }
-function c_Balloon(){
-	Object.call(this);
-	this.m_image=bb_graphics_LoadImage("hotairballoon.png",1,c_Image.m_DefaultFlags);
-	this.m_balloony=0;
-	this.m_updowndir="down";
-}
-c_Balloon.m_new=function(t_balloony){
+function bb_input_GetChar(){
 	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/input.monkey<48>";
+	var t_=bb_input_device.p_GetChar();
 	pop_err();
-	return this;
-}
-c_Balloon.prototype.p_Move=function(){
-	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<42>";
-	bb_graphics_DrawImage(this.m_image,20.0,(this.m_balloony),0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<43>";
-	this.m_balloony+=1;
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<44>";
-	if(this.m_balloony>=278){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<45>";
-		this.m_updowndir="up";
-	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<47>";
-	if(this.m_balloony<0){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<48>";
-		this.m_updowndir="down";
-	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<51>";
-	if(this.m_updowndir=="down"){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<52>";
-		this.m_balloony+=1;
-	}else{
-		err_info="C:/Users/User/Documents/GitHub/Coursework/balloonmove/balloonmove.monkey<55>";
-		this.m_balloony-=2;
-	}
-	pop_err();
-	return 0;
+	return t_;
 }
 function bb_graphics_DebugRenderDevice(){
 	push_err();
@@ -3673,6 +3710,37 @@ function bb_graphics_DrawImage2(t_image,t_x,t_y,t_rotation,t_scaleX,t_scaleY,t_f
 	}
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<492>";
 	bb_graphics_PopMatrix();
+	pop_err();
+	return 0;
+}
+function bb_graphics_DrawText(t_text,t_x,t_y,t_xalign,t_yalign){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<577>";
+	bb_graphics_DebugRenderDevice();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<579>";
+	if(!((dbg_object(bb_graphics_context).m_font)!=null)){
+		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<579>";
+		pop_err();
+		return 0;
+	}
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<581>";
+	var t_w=dbg_object(bb_graphics_context).m_font.p_Width();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<582>";
+	var t_h=dbg_object(bb_graphics_context).m_font.p_Height();
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<584>";
+	t_x-=Math.floor((t_w*t_text.length)*t_xalign);
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<585>";
+	t_y-=Math.floor((t_h)*t_yalign);
+	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<587>";
+	for(var t_i=0;t_i<t_text.length;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<588>";
+		var t_ch=dbg_charCodeAt(t_text,t_i)-dbg_object(bb_graphics_context).m_firstChar;
+		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<589>";
+		if(t_ch>=0 && t_ch<dbg_object(bb_graphics_context).m_font.p_Frames()){
+			err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<590>";
+			bb_graphics_DrawImage(dbg_object(bb_graphics_context).m_font,t_x+(t_i*t_w),t_y,t_ch);
+		}
+	}
 	pop_err();
 	return 0;
 }

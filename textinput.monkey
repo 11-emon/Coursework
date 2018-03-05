@@ -9,7 +9,7 @@ End
 
 Class MyApp Extends App
 
-	Field result:String = "Input your name:"
+	Field result:String = "Input your name (Case sensitive):"
 
     Method OnCreate:Int()
         SetUpdateRate 60
@@ -19,11 +19,12 @@ Class MyApp Extends App
     Method OnUpdate:Int()
         Repeat
             Local char:Int = GetChar()
+            'Local str:string = GetChar()
             If Not char Then Exit
             Select char
-            	Case KEY_C 'name on list --> move to next, playing screen
+            	Case KEY_C '"Chloe" 'name on list --> move to next, playing screen
             		result = "OK!"
-            	Case KEY_E 'name not on list --> ask again, stay on start screen
+            	Case KEY_E '"Eleanor" 'name not on list --> ask again, stay on start screen
 		            result = "OK!"
 		        'Case KEY_3
 		            'result = "THREE!"
@@ -31,7 +32,7 @@ Class MyApp Extends App
 		        	result = "You are not in this class! Check your spelling!"
             End
         Forever
-        'level_file = FileStream.Open("monkey://data/classlist.txt","r")
+        'level_file = FileStream.Open("monkey://data/classlist.txt","r") 'Text file related code taken from question answer code
 				'If level_file Then
 					'level_data = level_file.ReadString()
 					'level_file.Close 
@@ -51,8 +52,8 @@ Class MyApp Extends App
     End
     
     Method OnRender:Int()
-        Cls(0, 0, 0)
-		DrawText result, 10, 10
+        Cls(20, 100, 84)
+		DrawText result, 270, 220
         Return 0
     End
 End
