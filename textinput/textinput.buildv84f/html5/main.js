@@ -21,7 +21,7 @@ CFG_TEXT_FILES="*.txt|*.xml|*.json";
 //${CONFIG_END}
 
 //${METADATA_BEGIN}
-var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n";
+var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n[Alphabet font.png];type=image/png;width=660;height=440;\n";
 //${METADATA_END}
 
 //${TRANSCODE_BEGIN}
@@ -2158,64 +2158,82 @@ c_App.prototype.p_OnBack=function(){
 }
 function c_MyApp(){
 	c_App.call(this);
-	this.m_result="Input your name (Case sensitive):";
+	this.m_result="Input your name:";
 }
 c_MyApp.prototype=extend_class(c_App);
 c_MyApp.m_new=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<10>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<11>";
 	c_App.m_new.call(this);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<10>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<11>";
 	pop_err();
 	return this;
 }
 c_MyApp.prototype.p_OnCreate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<67>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<17>";
 	bb_app_SetUpdateRate(60);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<85>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<18>";
 	pop_err();
 	return 0;
 }
 c_MyApp.prototype.p_OnUpdate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<89>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<22>";
 	do{
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<90>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<24>";
 		var t_char=bb_input_GetChar();
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<92>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<25>";
 		if(!((t_char)!=0)){
-			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<92>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<25>";
 			break;
 		}
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<93>";
-		var t_2=t_char;
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<94>";
-		if(t_2==67){
-			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<95>";
-			this.m_result="OK!";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<26>";
+		var t_1=t_char;
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<27>";
+		if(t_1==49){
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<28>";
+			this.m_result="ONE!";
 		}else{
-			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<96>";
-			if(t_2==69){
-				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<97>";
-				this.m_result="OK!";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<29>";
+			if(t_1==50){
+				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<30>";
+				this.m_result="TWO!";
 			}else{
-				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<101>";
-				this.m_result="You are not in this class! Check your spelling!";
+				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<31>";
+				if(t_1==51){
+					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<32>";
+					this.m_result="THREE!";
+				}else{
+					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<33>";
+					if(t_1==67){
+						err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<34>";
+						this.m_result="OK!";
+					}else{
+						err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<35>";
+						if(t_1==69){
+							err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<36>";
+							this.m_result="OK!";
+						}else{
+							err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<41>";
+							this.m_result="You are not in this class! Check your spelling!";
+						}
+					}
+				}
 			}
 		}
 	}while(!(false));
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<120>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<60>";
 	pop_err();
 	return 0;
 }
 c_MyApp.prototype.p_OnRender=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<124>";
-	bb_graphics_Cls(20.0,100.0,84.0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<125>";
-	bb_graphics_DrawText(this.m_result,270.0,220.0,0.0,0.0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<126>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<64>";
+	bb_graphics_Cls(500.0,0.0,500.0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<65>";
+	bb_graphics_DrawText(this.m_result,10.0,10.0,0.0,0.0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<66>";
 	pop_err();
 	return 0;
 }
@@ -2365,9 +2383,9 @@ var bb_app__delegate=null;
 var bb_app__game=null;
 function bbMain(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<6>";
-	c_MyApp.m_new.call(new c_MyApp);
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<7>";
+	c_MyApp.m_new.call(new c_MyApp);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<8>";
 	pop_err();
 	return 0;
 }
