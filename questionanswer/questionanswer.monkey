@@ -46,27 +46,27 @@ Method OnUpdate()
 				youreballoon = LoadImage ("you'reballoon.png")
 				yourballoon = LoadImage ("yourballoon.png")
 				
-				Local level_file:FileStream
-				Local level_data:String
-				Local data_item:String[]
-				Local x:Int
-				Local y:Int
-				Local w:Int
-				Local h:Int
+				'Local level_file:FileStream
+				'Local level_data:String
+				'Local data_item:String[]
+				'Local x:Int
+				'Local y:Int
+				'Local w:Int
+				'Local h:Int
 				
-				level_file = FileStream.Open("monkey://data/youranswer.txt","r")
-				If level_file Then
-					level_data = level_file.ReadString()
-					level_file.Close 
-				Endif
-				data_item = level_data.Split("~n")
-				For Local counter:Int = 0 To data_item.Length-1 Step 4
-					x = Int(data_item[counter])
-					y = Int(data_item[counter+1])
-					w = Int(data_item[counter+2])
-					h = Int(data_item[counter+3])
-					difference_collection.AddLast(New Difference_area(x,y,w,h))
-				Next
+				'level_file = FileStream.Open("monkey://data/youranswer.txt","r")
+				'If level_file Then
+					'level_data = level_file.ReadString()
+					'level_file.Close 
+				'Endif
+				'data_item = level_data.Split("~n")
+				'For Local counter:Int = 0 To data_item.Length-1 Step 4
+					'x = Int(data_item[counter])
+					'y = Int(data_item[counter+1])
+					'w = Int(data_item[counter+2])
+					'h = Int(data_item[counter+3])
+					'difference_collection.AddLast(New Difference_area(x,y,w,h))
+				'Next
 				
 				GameState="PLAYING"
 
