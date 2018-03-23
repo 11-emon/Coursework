@@ -1,20 +1,29 @@
 Strict 
  
-Import mojo
-'Import fantomEngine
+'Import mojo
+Import fantomEngine
+
+Global g:game
 
 Function Main:int()
-    New MyApp
+    g = New game
     Return 0
 End
 
-Class MyApp Extends App
+Class game Extends App
 
 	'Field result:String = "Choice (1 to 3)?"
 	Field result:String = "Input your name:"
+	
+	Method CreateInfoText.Int()
+		txtScore = eng.CreateText (font1, "Input your name")
+		txtScore.SetLayer(layerUI)
+		Return 0
+	End
 
     Method OnCreate:Int()
         SetUpdateRate 60
+        eng = New engine
         Return 0
     End
         
@@ -65,4 +74,11 @@ Class MyApp Extends App
     	DrawText result, 10, 10
     	Return 0
     End
+   End
+   
+   Class engine Extends ftEngine 
+   Field font1: ftFont 'will hold the instance of the bitmap font
+  	 Method OnLayerUpdate:Int(layer:ftLayer)    
+  		 Return 0  
+  	 End 
    End

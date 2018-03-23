@@ -14,6 +14,7 @@ CFG_MOJO_AUTO_SUSPEND_ENABLED="1";
 CFG_MOJO_DRIVER_IMPLEMENTED="1";
 CFG_MUSIC_FILES="*.wav|*.ogg|*.mp3|*.m4a";
 CFG_OPENGL_GLES20_ENABLED="0";
+CFG_REFLECTION_FILTER="|fantomEngine*";
 CFG_SAFEMODE="0";
 CFG_SOUND_FILES="*.wav|*.ogg|*.mp3|*.m4a";
 CFG_TARGET="html5";
@@ -21,7 +22,7 @@ CFG_TEXT_FILES="*.txt|*.xml|*.json";
 //${CONFIG_END}
 
 //${METADATA_BEGIN}
-var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n[Alphabet font.png];type=image/png;width=660;height=440;\n";
+var META_DATA="[mojo_font.png];type=image/png;width=864;height=13;\n[Alphabet font.png];type=image/png;width=660;height=440;\n[cc_font.png];type=image/png;width=256;height=128;\n[cctiles.png];type=image/png;width=128;height=128;\n";
 //${METADATA_END}
 
 //${TRANSCODE_BEGIN}
@@ -2088,6 +2089,716 @@ BBAsyncSoundLoaderThread.prototype.IsRunning=function(){
 	return this._running;
 }
 
+function c_BoolObject(){
+	Object.call(this);
+	this.m_value=false;
+}
+c_BoolObject.m_new=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<11>";
+	dbg_object(this).m_value=t_value;
+	pop_err();
+	return this;
+}
+c_BoolObject.prototype.p_ToBool=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<15>";
+	pop_err();
+	return this.m_value;
+}
+c_BoolObject.prototype.p_Equals=function(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<19>";
+	var t_=this.m_value==dbg_object(t_box).m_value;
+	pop_err();
+	return t_;
+}
+c_BoolObject.m_new2=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<7>";
+	pop_err();
+	return this;
+}
+function c_IntObject(){
+	Object.call(this);
+	this.m_value=0;
+}
+c_IntObject.m_new=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<27>";
+	dbg_object(this).m_value=t_value;
+	pop_err();
+	return this;
+}
+c_IntObject.m_new2=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<31>";
+	dbg_object(this).m_value=((t_value)|0);
+	pop_err();
+	return this;
+}
+c_IntObject.prototype.p_ToInt=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<35>";
+	pop_err();
+	return this.m_value;
+}
+c_IntObject.prototype.p_ToFloat=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<39>";
+	var t_=(this.m_value);
+	pop_err();
+	return t_;
+}
+c_IntObject.prototype.p_ToString=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<43>";
+	var t_=String(this.m_value);
+	pop_err();
+	return t_;
+}
+c_IntObject.prototype.p_Equals2=function(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<47>";
+	var t_=this.m_value==dbg_object(t_box).m_value;
+	pop_err();
+	return t_;
+}
+c_IntObject.prototype.p_Compare=function(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<51>";
+	var t_=this.m_value-dbg_object(t_box).m_value;
+	pop_err();
+	return t_;
+}
+c_IntObject.m_new3=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<23>";
+	pop_err();
+	return this;
+}
+function c_FloatObject(){
+	Object.call(this);
+	this.m_value=.0;
+}
+c_FloatObject.m_new=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<59>";
+	dbg_object(this).m_value=(t_value);
+	pop_err();
+	return this;
+}
+c_FloatObject.m_new2=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<63>";
+	dbg_object(this).m_value=t_value;
+	pop_err();
+	return this;
+}
+c_FloatObject.prototype.p_ToInt=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<67>";
+	var t_=((this.m_value)|0);
+	pop_err();
+	return t_;
+}
+c_FloatObject.prototype.p_ToFloat=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<71>";
+	pop_err();
+	return this.m_value;
+}
+c_FloatObject.prototype.p_ToString=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<75>";
+	var t_=String(this.m_value);
+	pop_err();
+	return t_;
+}
+c_FloatObject.prototype.p_Equals3=function(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<79>";
+	var t_=this.m_value==dbg_object(t_box).m_value;
+	pop_err();
+	return t_;
+}
+c_FloatObject.prototype.p_Compare2=function(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<83>";
+	if(this.m_value<dbg_object(t_box).m_value){
+		err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<83>";
+		pop_err();
+		return -1;
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<84>";
+	var t_=((this.m_value>dbg_object(t_box).m_value)?1:0);
+	pop_err();
+	return t_;
+}
+c_FloatObject.m_new3=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<55>";
+	pop_err();
+	return this;
+}
+function c_StringObject(){
+	Object.call(this);
+	this.m_value="";
+}
+c_StringObject.m_new=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<92>";
+	dbg_object(this).m_value=String(t_value);
+	pop_err();
+	return this;
+}
+c_StringObject.m_new2=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<96>";
+	dbg_object(this).m_value=String(t_value);
+	pop_err();
+	return this;
+}
+c_StringObject.m_new3=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<100>";
+	dbg_object(this).m_value=t_value;
+	pop_err();
+	return this;
+}
+c_StringObject.prototype.p_ToString=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<104>";
+	pop_err();
+	return this.m_value;
+}
+c_StringObject.prototype.p_Equals4=function(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<108>";
+	var t_=this.m_value==dbg_object(t_box).m_value;
+	pop_err();
+	return t_;
+}
+c_StringObject.prototype.p_Compare3=function(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<112>";
+	var t_=string_compare(this.m_value,dbg_object(t_box).m_value);
+	pop_err();
+	return t_;
+}
+c_StringObject.m_new4=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<88>";
+	pop_err();
+	return this;
+}
+function bb_boxes_BoxBool(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<139>";
+	var t_=(c_BoolObject.m_new.call(new c_BoolObject,t_value));
+	pop_err();
+	return t_;
+}
+function bb_boxes_BoxInt(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<143>";
+	var t_=(c_IntObject.m_new.call(new c_IntObject,t_value));
+	pop_err();
+	return t_;
+}
+function bb_boxes_BoxFloat(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<147>";
+	var t_=(c_FloatObject.m_new2.call(new c_FloatObject,t_value));
+	pop_err();
+	return t_;
+}
+function bb_boxes_BoxString(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<151>";
+	var t_=(c_StringObject.m_new3.call(new c_StringObject,t_value));
+	pop_err();
+	return t_;
+}
+function bb_boxes_UnboxBool(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<155>";
+	var t_=dbg_object(object_downcast((t_box),c_BoolObject)).m_value;
+	pop_err();
+	return t_;
+}
+function bb_boxes_UnboxInt(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<159>";
+	var t_=dbg_object(object_downcast((t_box),c_IntObject)).m_value;
+	pop_err();
+	return t_;
+}
+function bb_boxes_UnboxFloat(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<163>";
+	var t_=dbg_object(object_downcast((t_box),c_FloatObject)).m_value;
+	pop_err();
+	return t_;
+}
+function bb_boxes_UnboxString(t_box){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/boxes.monkey<167>";
+	var t_=dbg_object(object_downcast((t_box),c_StringObject)).m_value;
+	pop_err();
+	return t_;
+}
+function c_ClassInfo(){
+	Object.call(this);
+	this.m__name="";
+	this.m__attrs=0;
+	this.m__sclass=null;
+	this.m__ifaces=[];
+	this.m__rconsts=[];
+	this.m__consts=[];
+	this.m__rfields=[];
+	this.m__fields=[];
+	this.m__rglobals=[];
+	this.m__globals=[];
+	this.m__rmethods=[];
+	this.m__methods=[];
+	this.m__rfunctions=[];
+	this.m__functions=[];
+	this.m__ctors=[];
+}
+c_ClassInfo.m_new=function(t_name,t_attrs,t_sclass,t_ifaces){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<215>";
+	this.m__name=t_name;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<216>";
+	this.m__attrs=t_attrs;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<217>";
+	this.m__sclass=t_sclass;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<218>";
+	this.m__ifaces=t_ifaces;
+	pop_err();
+	return this;
+}
+c_ClassInfo.m_new2=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<212>";
+	pop_err();
+	return this;
+}
+c_ClassInfo.prototype.p_Init=function(){
+	push_err();
+	pop_err();
+	return 0;
+}
+c_ClassInfo.prototype.p_InitR=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<421>";
+	if((this.m__sclass)!=null){
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<422>";
+		var t_consts=c_Stack.m_new2.call(new c_Stack,dbg_object(this.m__sclass).m__rconsts);
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<423>";
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<423>";
+		var t_=this.m__consts;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<423>";
+		var t_2=0;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<423>";
+		while(t_2<t_.length){
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<423>";
+			var t_t=dbg_array(t_,t_2)[dbg_index];
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<423>";
+			t_2=t_2+1;
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<424>";
+			t_consts.p_Push(t_t);
+		}
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<426>";
+		this.m__rconsts=t_consts.p_ToArray();
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<427>";
+		var t_fields=c_Stack2.m_new2.call(new c_Stack2,dbg_object(this.m__sclass).m__rfields);
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<428>";
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<428>";
+		var t_3=this.m__fields;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<428>";
+		var t_4=0;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<428>";
+		while(t_4<t_3.length){
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<428>";
+			var t_t2=dbg_array(t_3,t_4)[dbg_index];
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<428>";
+			t_4=t_4+1;
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<429>";
+			t_fields.p_Push4(t_t2);
+		}
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<431>";
+		this.m__rfields=t_fields.p_ToArray();
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<432>";
+		var t_globals=c_Stack3.m_new2.call(new c_Stack3,dbg_object(this.m__sclass).m__rglobals);
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<433>";
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<433>";
+		var t_5=this.m__globals;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<433>";
+		var t_6=0;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<433>";
+		while(t_6<t_5.length){
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<433>";
+			var t_t3=dbg_array(t_5,t_6)[dbg_index];
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<433>";
+			t_6=t_6+1;
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<434>";
+			t_globals.p_Push7(t_t3);
+		}
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<436>";
+		this.m__rglobals=t_globals.p_ToArray();
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<437>";
+		var t_methods=c_Stack4.m_new2.call(new c_Stack4,dbg_object(this.m__sclass).m__rmethods);
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<438>";
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<438>";
+		var t_7=this.m__methods;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<438>";
+		var t_8=0;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<438>";
+		while(t_8<t_7.length){
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<438>";
+			var t_t4=dbg_array(t_7,t_8)[dbg_index];
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<438>";
+			t_8=t_8+1;
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<439>";
+			t_methods.p_Push10(t_t4);
+		}
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<441>";
+		this.m__rmethods=t_methods.p_ToArray();
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<442>";
+		var t_functions=c_Stack5.m_new2.call(new c_Stack5,dbg_object(this.m__sclass).m__rfunctions);
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<443>";
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<443>";
+		var t_9=this.m__functions;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<443>";
+		var t_10=0;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<443>";
+		while(t_10<t_9.length){
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<443>";
+			var t_t5=dbg_array(t_9,t_10)[dbg_index];
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<443>";
+			t_10=t_10+1;
+			err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<444>";
+			t_functions.p_Push13(t_t5);
+		}
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<446>";
+		this.m__rfunctions=t_functions.p_ToArray();
+	}else{
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<448>";
+		this.m__rconsts=this.m__consts;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<449>";
+		this.m__rfields=this.m__fields;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<450>";
+		this.m__rglobals=this.m__globals;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<451>";
+		this.m__rmethods=this.m__methods;
+		err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<452>";
+		this.m__rfunctions=this.m__functions;
+	}
+	pop_err();
+	return 0;
+}
+var bb_reflection__classes=[];
+function c_R16(){
+	c_ClassInfo.call(this);
+}
+c_R16.prototype=extend_class(c_ClassInfo);
+c_R16.m_new=function(){
+	c_ClassInfo.m_new.call(this,"monkey.lang.Object",1,null,[]);
+	return this;
+}
+c_R16.prototype.p_Init=function(){
+	this.p_InitR();
+	return 0;
+}
+function c_R17(){
+	c_ClassInfo.call(this);
+}
+c_R17.prototype=extend_class(c_ClassInfo);
+c_R17.m_new=function(){
+	c_ClassInfo.m_new.call(this,"monkey.boxes.BoolObject",0,dbg_array(bb_reflection__classes,0)[dbg_index],[]);
+	bb_reflection__boolClass=(this);
+	return this;
+}
+c_R17.prototype.p_Init=function(){
+	this.m__fields=new_object_array(1);
+	dbg_array(this.m__fields,0)[dbg_index]=(c_R18.m_new.call(new c_R18));
+	this.m__methods=new_object_array(2);
+	dbg_array(this.m__methods,0)[dbg_index]=(c_R20.m_new.call(new c_R20));
+	dbg_array(this.m__methods,1)[dbg_index]=(c_R21.m_new.call(new c_R21));
+	this.m__ctors=new_object_array(2);
+	dbg_array(this.m__ctors,0)[dbg_index]=(c_R19.m_new.call(new c_R19));
+	dbg_array(this.m__ctors,1)[dbg_index]=(c_R22.m_new.call(new c_R22));
+	this.p_InitR();
+	return 0;
+}
+var bb_reflection__boolClass=null;
+function c_R23(){
+	c_ClassInfo.call(this);
+}
+c_R23.prototype=extend_class(c_ClassInfo);
+c_R23.m_new=function(){
+	c_ClassInfo.m_new.call(this,"monkey.boxes.IntObject",0,dbg_array(bb_reflection__classes,0)[dbg_index],[]);
+	bb_reflection__intClass=(this);
+	return this;
+}
+c_R23.prototype.p_Init=function(){
+	this.m__fields=new_object_array(1);
+	dbg_array(this.m__fields,0)[dbg_index]=(c_R24.m_new.call(new c_R24));
+	this.m__methods=new_object_array(5);
+	dbg_array(this.m__methods,0)[dbg_index]=(c_R27.m_new.call(new c_R27));
+	dbg_array(this.m__methods,1)[dbg_index]=(c_R28.m_new.call(new c_R28));
+	dbg_array(this.m__methods,2)[dbg_index]=(c_R29.m_new.call(new c_R29));
+	dbg_array(this.m__methods,3)[dbg_index]=(c_R30.m_new.call(new c_R30));
+	dbg_array(this.m__methods,4)[dbg_index]=(c_R31.m_new.call(new c_R31));
+	this.m__ctors=new_object_array(3);
+	dbg_array(this.m__ctors,0)[dbg_index]=(c_R25.m_new.call(new c_R25));
+	dbg_array(this.m__ctors,1)[dbg_index]=(c_R26.m_new.call(new c_R26));
+	dbg_array(this.m__ctors,2)[dbg_index]=(c_R32.m_new.call(new c_R32));
+	this.p_InitR();
+	return 0;
+}
+var bb_reflection__intClass=null;
+function c_R33(){
+	c_ClassInfo.call(this);
+}
+c_R33.prototype=extend_class(c_ClassInfo);
+c_R33.m_new=function(){
+	c_ClassInfo.m_new.call(this,"monkey.boxes.FloatObject",0,dbg_array(bb_reflection__classes,0)[dbg_index],[]);
+	bb_reflection__floatClass=(this);
+	return this;
+}
+c_R33.prototype.p_Init=function(){
+	this.m__fields=new_object_array(1);
+	dbg_array(this.m__fields,0)[dbg_index]=(c_R34.m_new.call(new c_R34));
+	this.m__methods=new_object_array(5);
+	dbg_array(this.m__methods,0)[dbg_index]=(c_R37.m_new.call(new c_R37));
+	dbg_array(this.m__methods,1)[dbg_index]=(c_R38.m_new.call(new c_R38));
+	dbg_array(this.m__methods,2)[dbg_index]=(c_R39.m_new.call(new c_R39));
+	dbg_array(this.m__methods,3)[dbg_index]=(c_R40.m_new.call(new c_R40));
+	dbg_array(this.m__methods,4)[dbg_index]=(c_R41.m_new.call(new c_R41));
+	this.m__ctors=new_object_array(3);
+	dbg_array(this.m__ctors,0)[dbg_index]=(c_R35.m_new.call(new c_R35));
+	dbg_array(this.m__ctors,1)[dbg_index]=(c_R36.m_new.call(new c_R36));
+	dbg_array(this.m__ctors,2)[dbg_index]=(c_R42.m_new.call(new c_R42));
+	this.p_InitR();
+	return 0;
+}
+var bb_reflection__floatClass=null;
+function c_R43(){
+	c_ClassInfo.call(this);
+}
+c_R43.prototype=extend_class(c_ClassInfo);
+c_R43.m_new=function(){
+	c_ClassInfo.m_new.call(this,"monkey.boxes.StringObject",0,dbg_array(bb_reflection__classes,0)[dbg_index],[]);
+	bb_reflection__stringClass=(this);
+	return this;
+}
+c_R43.prototype.p_Init=function(){
+	this.m__fields=new_object_array(1);
+	dbg_array(this.m__fields,0)[dbg_index]=(c_R44.m_new.call(new c_R44));
+	this.m__methods=new_object_array(3);
+	dbg_array(this.m__methods,0)[dbg_index]=(c_R48.m_new.call(new c_R48));
+	dbg_array(this.m__methods,1)[dbg_index]=(c_R49.m_new.call(new c_R49));
+	dbg_array(this.m__methods,2)[dbg_index]=(c_R50.m_new.call(new c_R50));
+	this.m__ctors=new_object_array(4);
+	dbg_array(this.m__ctors,0)[dbg_index]=(c_R45.m_new.call(new c_R45));
+	dbg_array(this.m__ctors,1)[dbg_index]=(c_R46.m_new.call(new c_R46));
+	dbg_array(this.m__ctors,2)[dbg_index]=(c_R47.m_new.call(new c_R47));
+	dbg_array(this.m__ctors,3)[dbg_index]=(c_R51.m_new.call(new c_R51));
+	this.p_InitR();
+	return 0;
+}
+var bb_reflection__stringClass=null;
+function c_R52(){
+	c_ClassInfo.call(this);
+}
+c_R52.prototype=extend_class(c_ClassInfo);
+c_R52.m_new=function(){
+	c_ClassInfo.m_new.call(this,"monkey.lang.Throwable",33,dbg_array(bb_reflection__classes,0)[dbg_index],[]);
+	return this;
+}
+c_R52.prototype.p_Init=function(){
+	this.p_InitR();
+	return 0;
+}
+function c_FunctionInfo(){
+	Object.call(this);
+	this.m__name="";
+	this.m__attrs=0;
+	this.m__retType=null;
+	this.m__argTypes=[];
+}
+c_FunctionInfo.m_new=function(t_name,t_attrs,t_retType,t_argTypes){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<179>";
+	this.m__name=t_name;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<180>";
+	this.m__attrs=t_attrs;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<181>";
+	this.m__retType=t_retType;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<182>";
+	this.m__argTypes=t_argTypes;
+	pop_err();
+	return this;
+}
+c_FunctionInfo.m_new2=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<176>";
+	pop_err();
+	return this;
+}
+var bb_reflection__functions=[];
+function c_R4(){
+	c_FunctionInfo.call(this);
+}
+c_R4.prototype=extend_class(c_FunctionInfo);
+c_R4.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.boxes.BoxBool",0,dbg_array(bb_reflection__classes,0)[dbg_index],[bb_reflection__boolClass]);
+	return this;
+}
+function c_R5(){
+	c_FunctionInfo.call(this);
+}
+c_R5.prototype=extend_class(c_FunctionInfo);
+c_R5.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.boxes.BoxInt",0,dbg_array(bb_reflection__classes,0)[dbg_index],[bb_reflection__intClass]);
+	return this;
+}
+function c_R6(){
+	c_FunctionInfo.call(this);
+}
+c_R6.prototype=extend_class(c_FunctionInfo);
+c_R6.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.boxes.BoxFloat",0,dbg_array(bb_reflection__classes,0)[dbg_index],[bb_reflection__floatClass]);
+	return this;
+}
+function c_R7(){
+	c_FunctionInfo.call(this);
+}
+c_R7.prototype=extend_class(c_FunctionInfo);
+c_R7.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.boxes.BoxString",0,dbg_array(bb_reflection__classes,0)[dbg_index],[bb_reflection__stringClass]);
+	return this;
+}
+function c_R8(){
+	c_FunctionInfo.call(this);
+}
+c_R8.prototype=extend_class(c_FunctionInfo);
+c_R8.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.boxes.UnboxBool",0,bb_reflection__boolClass,[dbg_array(bb_reflection__classes,0)[dbg_index]]);
+	return this;
+}
+function c_R9(){
+	c_FunctionInfo.call(this);
+}
+c_R9.prototype=extend_class(c_FunctionInfo);
+c_R9.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.boxes.UnboxInt",0,bb_reflection__intClass,[dbg_array(bb_reflection__classes,0)[dbg_index]]);
+	return this;
+}
+function c_R10(){
+	c_FunctionInfo.call(this);
+}
+c_R10.prototype=extend_class(c_FunctionInfo);
+c_R10.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.boxes.UnboxFloat",0,bb_reflection__floatClass,[dbg_array(bb_reflection__classes,0)[dbg_index]]);
+	return this;
+}
+function c_R11(){
+	c_FunctionInfo.call(this);
+}
+c_R11.prototype=extend_class(c_FunctionInfo);
+c_R11.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.boxes.UnboxString",0,bb_reflection__stringClass,[dbg_array(bb_reflection__classes,0)[dbg_index]]);
+	return this;
+}
+function c_R12(){
+	c_FunctionInfo.call(this);
+}
+c_R12.prototype=extend_class(c_FunctionInfo);
+c_R12.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.lang.Print",1,bb_reflection__intClass,[bb_reflection__stringClass]);
+	return this;
+}
+function c_R13(){
+	c_FunctionInfo.call(this);
+}
+c_R13.prototype=extend_class(c_FunctionInfo);
+c_R13.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.lang.Error",1,bb_reflection__intClass,[bb_reflection__stringClass]);
+	return this;
+}
+function c_R14(){
+	c_FunctionInfo.call(this);
+}
+c_R14.prototype=extend_class(c_FunctionInfo);
+c_R14.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.lang.DebugLog",1,bb_reflection__intClass,[bb_reflection__stringClass]);
+	return this;
+}
+function c_R15(){
+	c_FunctionInfo.call(this);
+}
+c_R15.prototype=extend_class(c_FunctionInfo);
+c_R15.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"monkey.lang.DebugStop",1,bb_reflection__intClass,[]);
+	return this;
+}
+function c__GetClass(){
+	Object.call(this);
+}
+c__GetClass.m_new=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<608>";
+	pop_err();
+	return this;
+}
+function c___GetClass(){
+	c__GetClass.call(this);
+}
+c___GetClass.prototype=extend_class(c__GetClass);
+c___GetClass.m_new=function(){
+	push_err();
+	err_info="$SOURCE<494>";
+	c__GetClass.m_new.call(this);
+	err_info="$SOURCE<494>";
+	pop_err();
+	return this;
+}
+var bb_reflection__getClass=null;
+function bb_reflection___init(){
+	bb_reflection__classes=new_object_array(6);
+	dbg_array(bb_reflection__classes,0)[dbg_index]=(c_R16.m_new.call(new c_R16));
+	dbg_array(bb_reflection__classes,1)[dbg_index]=(c_R17.m_new.call(new c_R17));
+	dbg_array(bb_reflection__classes,2)[dbg_index]=(c_R23.m_new.call(new c_R23));
+	dbg_array(bb_reflection__classes,3)[dbg_index]=(c_R33.m_new.call(new c_R33));
+	dbg_array(bb_reflection__classes,4)[dbg_index]=(c_R43.m_new.call(new c_R43));
+	dbg_array(bb_reflection__classes,5)[dbg_index]=(c_R52.m_new.call(new c_R52));
+	dbg_array(bb_reflection__classes,0)[dbg_index].p_Init();
+	dbg_array(bb_reflection__classes,1)[dbg_index].p_Init();
+	dbg_array(bb_reflection__classes,2)[dbg_index].p_Init();
+	dbg_array(bb_reflection__classes,3)[dbg_index].p_Init();
+	dbg_array(bb_reflection__classes,4)[dbg_index].p_Init();
+	dbg_array(bb_reflection__classes,5)[dbg_index].p_Init();
+	bb_reflection__functions=new_object_array(12);
+	dbg_array(bb_reflection__functions,0)[dbg_index]=(c_R4.m_new.call(new c_R4));
+	dbg_array(bb_reflection__functions,1)[dbg_index]=(c_R5.m_new.call(new c_R5));
+	dbg_array(bb_reflection__functions,2)[dbg_index]=(c_R6.m_new.call(new c_R6));
+	dbg_array(bb_reflection__functions,3)[dbg_index]=(c_R7.m_new.call(new c_R7));
+	dbg_array(bb_reflection__functions,4)[dbg_index]=(c_R8.m_new.call(new c_R8));
+	dbg_array(bb_reflection__functions,5)[dbg_index]=(c_R9.m_new.call(new c_R9));
+	dbg_array(bb_reflection__functions,6)[dbg_index]=(c_R10.m_new.call(new c_R10));
+	dbg_array(bb_reflection__functions,7)[dbg_index]=(c_R11.m_new.call(new c_R11));
+	dbg_array(bb_reflection__functions,8)[dbg_index]=(c_R12.m_new.call(new c_R12));
+	dbg_array(bb_reflection__functions,9)[dbg_index]=(c_R13.m_new.call(new c_R13));
+	dbg_array(bb_reflection__functions,10)[dbg_index]=(c_R14.m_new.call(new c_R14));
+	dbg_array(bb_reflection__functions,11)[dbg_index]=(c_R15.m_new.call(new c_R15));
+	bb_reflection__getClass=(c___GetClass.m_new.call(new c___GetClass));
+	return 0;
+}
+var bb_reflection__init=0;
 function c_App(){
 	Object.call(this);
 }
@@ -2156,66 +2867,66 @@ c_App.prototype.p_OnBack=function(){
 	pop_err();
 	return 0;
 }
-function c_MyApp(){
+function c_game(){
 	c_App.call(this);
 	this.m_result="Input your name:";
 }
-c_MyApp.prototype=extend_class(c_App);
-c_MyApp.m_new=function(){
+c_game.prototype=extend_class(c_App);
+c_game.m_new=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<11>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<13>";
 	c_App.m_new.call(this);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<11>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<13>";
 	pop_err();
 	return this;
 }
-c_MyApp.prototype.p_OnCreate=function(){
+c_game.prototype.p_OnCreate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<17>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<19>";
 	bb_app_SetUpdateRate(60);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<18>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<20>";
 	pop_err();
 	return 0;
 }
-c_MyApp.prototype.p_OnUpdate=function(){
+c_game.prototype.p_OnUpdate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<22>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<24>";
 	do{
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<24>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<26>";
 		var t_char=bb_input_GetChar();
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<25>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<27>";
 		if(!((t_char)!=0)){
-			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<25>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<27>";
 			break;
 		}
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<26>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<28>";
 		var t_1=t_char;
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<27>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<29>";
 		if(t_1==49){
-			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<28>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<30>";
 			this.m_result="ONE!";
 		}else{
-			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<29>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<31>";
 			if(t_1==50){
-				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<30>";
+				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<32>";
 				this.m_result="TWO!";
 			}else{
-				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<31>";
+				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<33>";
 				if(t_1==51){
-					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<32>";
+					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<34>";
 					this.m_result="THREE!";
 				}else{
-					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<33>";
+					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<35>";
 					if(t_1==67){
-						err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<34>";
+						err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<36>";
 						this.m_result="OK!";
 					}else{
-						err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<35>";
+						err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<37>";
 						if(t_1==69){
-							err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<36>";
+							err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<38>";
 							this.m_result="OK!";
 						}else{
-							err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<41>";
+							err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<43>";
 							this.m_result="You are not in this class! Check your spelling!";
 						}
 					}
@@ -2223,17 +2934,17 @@ c_MyApp.prototype.p_OnUpdate=function(){
 			}
 		}
 	}while(!(false));
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<60>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<62>";
 	pop_err();
 	return 0;
 }
-c_MyApp.prototype.p_OnRender=function(){
+c_game.prototype.p_OnRender=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<64>";
-	bb_graphics_Cls(500.0,0.0,500.0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<65>";
-	bb_graphics_DrawText(this.m_result,10.0,10.0,0.0,0.0);
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<66>";
+	bb_graphics_Cls(500.0,0.0,500.0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<67>";
+	bb_graphics_DrawText(this.m_result,10.0,10.0,0.0,0.0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<68>";
 	pop_err();
 	return 0;
 }
@@ -2381,13 +3092,617 @@ c_GameDelegate.prototype.DiscardGraphics=function(){
 }
 var bb_app__delegate=null;
 var bb_app__game=null;
+var bb_textinput_g=null;
 function bbMain(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<7>";
-	c_MyApp.m_new.call(new c_MyApp);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<8>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<9>";
+	bb_textinput_g=c_game.m_new.call(new c_game);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<10>";
 	pop_err();
 	return 0;
+}
+function c_ConstInfo(){
+	Object.call(this);
+}
+function c_Stack(){
+	Object.call(this);
+	this.m_data=[];
+	this.m_length=0;
+}
+c_Stack.m_new=function(){
+	push_err();
+	pop_err();
+	return this;
+}
+c_Stack.m_new2=function(t_data){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<13>";
+	dbg_object(this).m_data=t_data.slice(0);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<14>";
+	dbg_object(this).m_length=t_data.length;
+	pop_err();
+	return this;
+}
+c_Stack.prototype.p_Push=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<71>";
+	if(this.m_length==this.m_data.length){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<72>";
+		this.m_data=resize_object_array(this.m_data,this.m_length*2+10);
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<74>";
+	dbg_array(this.m_data,this.m_length)[dbg_index]=t_value;
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<75>";
+	this.m_length+=1;
+	pop_err();
+}
+c_Stack.prototype.p_Push2=function(t_values,t_offset,t_count){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<83>";
+	for(var t_i=0;t_i<t_count;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<84>";
+		this.p_Push(dbg_array(t_values,t_offset+t_i)[dbg_index]);
+	}
+	pop_err();
+}
+c_Stack.prototype.p_Push3=function(t_values,t_offset){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<79>";
+	this.p_Push2(t_values,t_offset,t_values.length-t_offset);
+	pop_err();
+}
+c_Stack.prototype.p_ToArray=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<18>";
+	var t_t=new_object_array(this.m_length);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<19>";
+	for(var t_i=0;t_i<this.m_length;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<20>";
+		dbg_array(t_t,t_i)[dbg_index]=dbg_array(this.m_data,t_i)[dbg_index];
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<22>";
+	pop_err();
+	return t_t;
+}
+function c_FieldInfo(){
+	Object.call(this);
+	this.m__name="";
+	this.m__attrs=0;
+	this.m__type=null;
+}
+c_FieldInfo.m_new=function(t_name,t_attrs,t_type){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<111>";
+	this.m__name=t_name;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<112>";
+	this.m__attrs=t_attrs;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<113>";
+	this.m__type=t_type;
+	pop_err();
+	return this;
+}
+c_FieldInfo.m_new2=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<108>";
+	pop_err();
+	return this;
+}
+function c_Stack2(){
+	Object.call(this);
+	this.m_data=[];
+	this.m_length=0;
+}
+c_Stack2.m_new=function(){
+	push_err();
+	pop_err();
+	return this;
+}
+c_Stack2.m_new2=function(t_data){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<13>";
+	dbg_object(this).m_data=t_data.slice(0);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<14>";
+	dbg_object(this).m_length=t_data.length;
+	pop_err();
+	return this;
+}
+c_Stack2.prototype.p_Push4=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<71>";
+	if(this.m_length==this.m_data.length){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<72>";
+		this.m_data=resize_object_array(this.m_data,this.m_length*2+10);
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<74>";
+	dbg_array(this.m_data,this.m_length)[dbg_index]=t_value;
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<75>";
+	this.m_length+=1;
+	pop_err();
+}
+c_Stack2.prototype.p_Push5=function(t_values,t_offset,t_count){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<83>";
+	for(var t_i=0;t_i<t_count;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<84>";
+		this.p_Push4(dbg_array(t_values,t_offset+t_i)[dbg_index]);
+	}
+	pop_err();
+}
+c_Stack2.prototype.p_Push6=function(t_values,t_offset){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<79>";
+	this.p_Push5(t_values,t_offset,t_values.length-t_offset);
+	pop_err();
+}
+c_Stack2.prototype.p_ToArray=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<18>";
+	var t_t=new_object_array(this.m_length);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<19>";
+	for(var t_i=0;t_i<this.m_length;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<20>";
+		dbg_array(t_t,t_i)[dbg_index]=dbg_array(this.m_data,t_i)[dbg_index];
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<22>";
+	pop_err();
+	return t_t;
+}
+function c_GlobalInfo(){
+	Object.call(this);
+}
+function c_Stack3(){
+	Object.call(this);
+	this.m_data=[];
+	this.m_length=0;
+}
+c_Stack3.m_new=function(){
+	push_err();
+	pop_err();
+	return this;
+}
+c_Stack3.m_new2=function(t_data){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<13>";
+	dbg_object(this).m_data=t_data.slice(0);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<14>";
+	dbg_object(this).m_length=t_data.length;
+	pop_err();
+	return this;
+}
+c_Stack3.prototype.p_Push7=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<71>";
+	if(this.m_length==this.m_data.length){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<72>";
+		this.m_data=resize_object_array(this.m_data,this.m_length*2+10);
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<74>";
+	dbg_array(this.m_data,this.m_length)[dbg_index]=t_value;
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<75>";
+	this.m_length+=1;
+	pop_err();
+}
+c_Stack3.prototype.p_Push8=function(t_values,t_offset,t_count){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<83>";
+	for(var t_i=0;t_i<t_count;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<84>";
+		this.p_Push7(dbg_array(t_values,t_offset+t_i)[dbg_index]);
+	}
+	pop_err();
+}
+c_Stack3.prototype.p_Push9=function(t_values,t_offset){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<79>";
+	this.p_Push8(t_values,t_offset,t_values.length-t_offset);
+	pop_err();
+}
+c_Stack3.prototype.p_ToArray=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<18>";
+	var t_t=new_object_array(this.m_length);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<19>";
+	for(var t_i=0;t_i<this.m_length;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<20>";
+		dbg_array(t_t,t_i)[dbg_index]=dbg_array(this.m_data,t_i)[dbg_index];
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<22>";
+	pop_err();
+	return t_t;
+}
+function c_MethodInfo(){
+	Object.call(this);
+	this.m__name="";
+	this.m__attrs=0;
+	this.m__retType=null;
+	this.m__argTypes=[];
+}
+c_MethodInfo.m_new=function(t_name,t_attrs,t_retType,t_argTypes){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<143>";
+	this.m__name=t_name;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<144>";
+	this.m__attrs=t_attrs;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<145>";
+	this.m__retType=t_retType;
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<146>";
+	this.m__argTypes=t_argTypes;
+	pop_err();
+	return this;
+}
+c_MethodInfo.m_new2=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/reflection/reflection.monkey<140>";
+	pop_err();
+	return this;
+}
+function c_Stack4(){
+	Object.call(this);
+	this.m_data=[];
+	this.m_length=0;
+}
+c_Stack4.m_new=function(){
+	push_err();
+	pop_err();
+	return this;
+}
+c_Stack4.m_new2=function(t_data){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<13>";
+	dbg_object(this).m_data=t_data.slice(0);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<14>";
+	dbg_object(this).m_length=t_data.length;
+	pop_err();
+	return this;
+}
+c_Stack4.prototype.p_Push10=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<71>";
+	if(this.m_length==this.m_data.length){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<72>";
+		this.m_data=resize_object_array(this.m_data,this.m_length*2+10);
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<74>";
+	dbg_array(this.m_data,this.m_length)[dbg_index]=t_value;
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<75>";
+	this.m_length+=1;
+	pop_err();
+}
+c_Stack4.prototype.p_Push11=function(t_values,t_offset,t_count){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<83>";
+	for(var t_i=0;t_i<t_count;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<84>";
+		this.p_Push10(dbg_array(t_values,t_offset+t_i)[dbg_index]);
+	}
+	pop_err();
+}
+c_Stack4.prototype.p_Push12=function(t_values,t_offset){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<79>";
+	this.p_Push11(t_values,t_offset,t_values.length-t_offset);
+	pop_err();
+}
+c_Stack4.prototype.p_ToArray=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<18>";
+	var t_t=new_object_array(this.m_length);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<19>";
+	for(var t_i=0;t_i<this.m_length;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<20>";
+		dbg_array(t_t,t_i)[dbg_index]=dbg_array(this.m_data,t_i)[dbg_index];
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<22>";
+	pop_err();
+	return t_t;
+}
+function c_Stack5(){
+	Object.call(this);
+	this.m_data=[];
+	this.m_length=0;
+}
+c_Stack5.m_new=function(){
+	push_err();
+	pop_err();
+	return this;
+}
+c_Stack5.m_new2=function(t_data){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<13>";
+	dbg_object(this).m_data=t_data.slice(0);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<14>";
+	dbg_object(this).m_length=t_data.length;
+	pop_err();
+	return this;
+}
+c_Stack5.prototype.p_Push13=function(t_value){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<71>";
+	if(this.m_length==this.m_data.length){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<72>";
+		this.m_data=resize_object_array(this.m_data,this.m_length*2+10);
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<74>";
+	dbg_array(this.m_data,this.m_length)[dbg_index]=t_value;
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<75>";
+	this.m_length+=1;
+	pop_err();
+}
+c_Stack5.prototype.p_Push14=function(t_values,t_offset,t_count){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<83>";
+	for(var t_i=0;t_i<t_count;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<84>";
+		this.p_Push13(dbg_array(t_values,t_offset+t_i)[dbg_index]);
+	}
+	pop_err();
+}
+c_Stack5.prototype.p_Push15=function(t_values,t_offset){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<79>";
+	this.p_Push14(t_values,t_offset,t_values.length-t_offset);
+	pop_err();
+}
+c_Stack5.prototype.p_ToArray=function(){
+	push_err();
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<18>";
+	var t_t=new_object_array(this.m_length);
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<19>";
+	for(var t_i=0;t_i<this.m_length;t_i=t_i+1){
+		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<20>";
+		dbg_array(t_t,t_i)[dbg_index]=dbg_array(this.m_data,t_i)[dbg_index];
+	}
+	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<22>";
+	pop_err();
+	return t_t;
+}
+function c_R18(){
+	c_FieldInfo.call(this);
+}
+c_R18.prototype=extend_class(c_FieldInfo);
+c_R18.m_new=function(){
+	c_FieldInfo.m_new.call(this,"value",0,bb_reflection__boolClass);
+	return this;
+}
+function c_R20(){
+	c_MethodInfo.call(this);
+}
+c_R20.prototype=extend_class(c_MethodInfo);
+c_R20.m_new=function(){
+	c_MethodInfo.m_new.call(this,"ToBool",0,bb_reflection__boolClass,[]);
+	return this;
+}
+function c_R21(){
+	c_MethodInfo.call(this);
+}
+c_R21.prototype=extend_class(c_MethodInfo);
+c_R21.m_new=function(){
+	c_MethodInfo.m_new.call(this,"Equals",0,bb_reflection__boolClass,[dbg_array(bb_reflection__classes,1)[dbg_index]]);
+	return this;
+}
+function c_R19(){
+	c_FunctionInfo.call(this);
+}
+c_R19.prototype=extend_class(c_FunctionInfo);
+c_R19.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,1)[dbg_index],[bb_reflection__boolClass]);
+	return this;
+}
+function c_R22(){
+	c_FunctionInfo.call(this);
+}
+c_R22.prototype=extend_class(c_FunctionInfo);
+c_R22.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,1)[dbg_index],[]);
+	return this;
+}
+function c_R24(){
+	c_FieldInfo.call(this);
+}
+c_R24.prototype=extend_class(c_FieldInfo);
+c_R24.m_new=function(){
+	c_FieldInfo.m_new.call(this,"value",0,bb_reflection__intClass);
+	return this;
+}
+function c_R27(){
+	c_MethodInfo.call(this);
+}
+c_R27.prototype=extend_class(c_MethodInfo);
+c_R27.m_new=function(){
+	c_MethodInfo.m_new.call(this,"ToInt",0,bb_reflection__intClass,[]);
+	return this;
+}
+function c_R28(){
+	c_MethodInfo.call(this);
+}
+c_R28.prototype=extend_class(c_MethodInfo);
+c_R28.m_new=function(){
+	c_MethodInfo.m_new.call(this,"ToFloat",0,bb_reflection__floatClass,[]);
+	return this;
+}
+function c_R29(){
+	c_MethodInfo.call(this);
+}
+c_R29.prototype=extend_class(c_MethodInfo);
+c_R29.m_new=function(){
+	c_MethodInfo.m_new.call(this,"ToString",0,bb_reflection__stringClass,[]);
+	return this;
+}
+function c_R30(){
+	c_MethodInfo.call(this);
+}
+c_R30.prototype=extend_class(c_MethodInfo);
+c_R30.m_new=function(){
+	c_MethodInfo.m_new.call(this,"Equals",0,bb_reflection__boolClass,[dbg_array(bb_reflection__classes,2)[dbg_index]]);
+	return this;
+}
+function c_R31(){
+	c_MethodInfo.call(this);
+}
+c_R31.prototype=extend_class(c_MethodInfo);
+c_R31.m_new=function(){
+	c_MethodInfo.m_new.call(this,"Compare",0,bb_reflection__intClass,[dbg_array(bb_reflection__classes,2)[dbg_index]]);
+	return this;
+}
+function c_R25(){
+	c_FunctionInfo.call(this);
+}
+c_R25.prototype=extend_class(c_FunctionInfo);
+c_R25.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,2)[dbg_index],[bb_reflection__intClass]);
+	return this;
+}
+function c_R26(){
+	c_FunctionInfo.call(this);
+}
+c_R26.prototype=extend_class(c_FunctionInfo);
+c_R26.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,2)[dbg_index],[bb_reflection__floatClass]);
+	return this;
+}
+function c_R32(){
+	c_FunctionInfo.call(this);
+}
+c_R32.prototype=extend_class(c_FunctionInfo);
+c_R32.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,2)[dbg_index],[]);
+	return this;
+}
+function c_R34(){
+	c_FieldInfo.call(this);
+}
+c_R34.prototype=extend_class(c_FieldInfo);
+c_R34.m_new=function(){
+	c_FieldInfo.m_new.call(this,"value",0,bb_reflection__floatClass);
+	return this;
+}
+function c_R37(){
+	c_MethodInfo.call(this);
+}
+c_R37.prototype=extend_class(c_MethodInfo);
+c_R37.m_new=function(){
+	c_MethodInfo.m_new.call(this,"ToInt",0,bb_reflection__intClass,[]);
+	return this;
+}
+function c_R38(){
+	c_MethodInfo.call(this);
+}
+c_R38.prototype=extend_class(c_MethodInfo);
+c_R38.m_new=function(){
+	c_MethodInfo.m_new.call(this,"ToFloat",0,bb_reflection__floatClass,[]);
+	return this;
+}
+function c_R39(){
+	c_MethodInfo.call(this);
+}
+c_R39.prototype=extend_class(c_MethodInfo);
+c_R39.m_new=function(){
+	c_MethodInfo.m_new.call(this,"ToString",0,bb_reflection__stringClass,[]);
+	return this;
+}
+function c_R40(){
+	c_MethodInfo.call(this);
+}
+c_R40.prototype=extend_class(c_MethodInfo);
+c_R40.m_new=function(){
+	c_MethodInfo.m_new.call(this,"Equals",0,bb_reflection__boolClass,[dbg_array(bb_reflection__classes,3)[dbg_index]]);
+	return this;
+}
+function c_R41(){
+	c_MethodInfo.call(this);
+}
+c_R41.prototype=extend_class(c_MethodInfo);
+c_R41.m_new=function(){
+	c_MethodInfo.m_new.call(this,"Compare",0,bb_reflection__intClass,[dbg_array(bb_reflection__classes,3)[dbg_index]]);
+	return this;
+}
+function c_R35(){
+	c_FunctionInfo.call(this);
+}
+c_R35.prototype=extend_class(c_FunctionInfo);
+c_R35.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,3)[dbg_index],[bb_reflection__intClass]);
+	return this;
+}
+function c_R36(){
+	c_FunctionInfo.call(this);
+}
+c_R36.prototype=extend_class(c_FunctionInfo);
+c_R36.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,3)[dbg_index],[bb_reflection__floatClass]);
+	return this;
+}
+function c_R42(){
+	c_FunctionInfo.call(this);
+}
+c_R42.prototype=extend_class(c_FunctionInfo);
+c_R42.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,3)[dbg_index],[]);
+	return this;
+}
+function c_R44(){
+	c_FieldInfo.call(this);
+}
+c_R44.prototype=extend_class(c_FieldInfo);
+c_R44.m_new=function(){
+	c_FieldInfo.m_new.call(this,"value",0,bb_reflection__stringClass);
+	return this;
+}
+function c_R48(){
+	c_MethodInfo.call(this);
+}
+c_R48.prototype=extend_class(c_MethodInfo);
+c_R48.m_new=function(){
+	c_MethodInfo.m_new.call(this,"ToString",0,bb_reflection__stringClass,[]);
+	return this;
+}
+function c_R49(){
+	c_MethodInfo.call(this);
+}
+c_R49.prototype=extend_class(c_MethodInfo);
+c_R49.m_new=function(){
+	c_MethodInfo.m_new.call(this,"Equals",0,bb_reflection__boolClass,[dbg_array(bb_reflection__classes,4)[dbg_index]]);
+	return this;
+}
+function c_R50(){
+	c_MethodInfo.call(this);
+}
+c_R50.prototype=extend_class(c_MethodInfo);
+c_R50.m_new=function(){
+	c_MethodInfo.m_new.call(this,"Compare",0,bb_reflection__intClass,[dbg_array(bb_reflection__classes,4)[dbg_index]]);
+	return this;
+}
+function c_R45(){
+	c_FunctionInfo.call(this);
+}
+c_R45.prototype=extend_class(c_FunctionInfo);
+c_R45.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,4)[dbg_index],[bb_reflection__intClass]);
+	return this;
+}
+function c_R46(){
+	c_FunctionInfo.call(this);
+}
+c_R46.prototype=extend_class(c_FunctionInfo);
+c_R46.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,4)[dbg_index],[bb_reflection__floatClass]);
+	return this;
+}
+function c_R47(){
+	c_FunctionInfo.call(this);
+}
+c_R47.prototype=extend_class(c_FunctionInfo);
+c_R47.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,4)[dbg_index],[bb_reflection__stringClass]);
+	return this;
+}
+function c_R51(){
+	c_FunctionInfo.call(this);
+}
+c_R51.prototype=extend_class(c_FunctionInfo);
+c_R51.m_new=function(){
+	c_FunctionInfo.m_new.call(this,"new",0,dbg_array(bb_reflection__classes,4)[dbg_index],[]);
+	return this;
 }
 var bb_graphics_device=null;
 function bb_graphics_SetGraphicsDevice(t_dev){
@@ -2481,7 +3796,7 @@ c_Image.prototype.p_ApplyFlags=function(t_iflags){
 	pop_err();
 	return 0;
 }
-c_Image.prototype.p_Init=function(t_surf,t_nframes,t_iflags){
+c_Image.prototype.p_Init2=function(t_surf,t_nframes,t_iflags){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<143>";
 	if((this.m_surface)!=null){
@@ -2507,7 +3822,7 @@ c_Image.prototype.p_Init=function(t_surf,t_nframes,t_iflags){
 	pop_err();
 	return this;
 }
-c_Image.prototype.p_Init2=function(t_surf,t_x,t_y,t_iwidth,t_iheight,t_nframes,t_iflags,t_src,t_srcx,t_srcy,t_srcw,t_srch){
+c_Image.prototype.p_Init3=function(t_surf,t_x,t_y,t_iwidth,t_iheight,t_nframes,t_iflags,t_src,t_srcx,t_srcy,t_srcw,t_srch){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<159>";
 	if((this.m_surface)!=null){
@@ -2664,7 +3979,7 @@ function bb_graphics_LoadImage(t_path,t_frameCount,t_flags){
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<240>";
 	if((t_surf)!=null){
 		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<240>";
-		var t_=(c_Image.m_new.call(new c_Image)).p_Init(t_surf,t_frameCount,t_flags);
+		var t_=(c_Image.m_new.call(new c_Image)).p_Init2(t_surf,t_frameCount,t_flags);
 		pop_err();
 		return t_;
 	}
@@ -2678,7 +3993,7 @@ function bb_graphics_LoadImage2(t_path,t_frameWidth,t_frameHeight,t_frameCount,t
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<245>";
 	if((t_surf)!=null){
 		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<245>";
-		var t_=(c_Image.m_new.call(new c_Image)).p_Init2(t_surf,0,0,t_frameWidth,t_frameHeight,t_frameCount,t_flags,null,0,0,t_surf.Width(),t_surf.Height());
+		var t_=(c_Image.m_new.call(new c_Image)).p_Init3(t_surf,0,0,t_frameWidth,t_frameHeight,t_frameCount,t_flags,null,0,0,t_surf.Width(),t_surf.Height());
 		pop_err();
 		return t_;
 	}
@@ -3046,7 +4361,7 @@ c_Map.m_new=function(){
 	pop_err();
 	return this;
 }
-c_Map.prototype.p_Compare=function(t_lhs,t_rhs){
+c_Map.prototype.p_Compare4=function(t_lhs,t_rhs){
 }
 c_Map.prototype.p_FindNode=function(t_key){
 	push_err();
@@ -3055,7 +4370,7 @@ c_Map.prototype.p_FindNode=function(t_key){
 	err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<159>";
 	while((t_node)!=null){
 		err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<160>";
-		var t_cmp=this.p_Compare(t_key,dbg_object(t_node).m_key);
+		var t_cmp=this.p_Compare4(t_key,dbg_object(t_node).m_key);
 		err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<161>";
 		if(t_cmp>0){
 			err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<162>";
@@ -3232,7 +4547,7 @@ c_Map.prototype.p_Set=function(t_key,t_value){
 		err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<33>";
 		t_parent=t_node;
 		err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<34>";
-		t_cmp=this.p_Compare(t_key,dbg_object(t_node).m_key);
+		t_cmp=this.p_Compare4(t_key,dbg_object(t_node).m_key);
 		err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<35>";
 		if(t_cmp>0){
 			err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<36>";
@@ -3292,24 +4607,24 @@ c_IntMap.m_new=function(){
 	pop_err();
 	return this;
 }
-c_IntMap.prototype.p_Compare=function(t_lhs,t_rhs){
+c_IntMap.prototype.p_Compare4=function(t_lhs,t_rhs){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/monkey/map.monkey<537>";
 	var t_=t_lhs-t_rhs;
 	pop_err();
 	return t_;
 }
-function c_Stack(){
+function c_Stack6(){
 	Object.call(this);
 	this.m_data=[];
 	this.m_length=0;
 }
-c_Stack.m_new=function(){
+c_Stack6.m_new=function(){
 	push_err();
 	pop_err();
 	return this;
 }
-c_Stack.m_new2=function(t_data){
+c_Stack6.m_new2=function(t_data){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<13>";
 	dbg_object(this).m_data=t_data.slice(0);
@@ -3318,7 +4633,7 @@ c_Stack.m_new2=function(t_data){
 	pop_err();
 	return this;
 }
-c_Stack.prototype.p_Push=function(t_value){
+c_Stack6.prototype.p_Push16=function(t_value){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<71>";
 	if(this.m_length==this.m_data.length){
@@ -3331,22 +4646,22 @@ c_Stack.prototype.p_Push=function(t_value){
 	this.m_length+=1;
 	pop_err();
 }
-c_Stack.prototype.p_Push2=function(t_values,t_offset,t_count){
+c_Stack6.prototype.p_Push17=function(t_values,t_offset,t_count){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<83>";
 	for(var t_i=0;t_i<t_count;t_i=t_i+1){
 		err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<84>";
-		this.p_Push(dbg_array(t_values,t_offset+t_i)[dbg_index]);
+		this.p_Push16(dbg_array(t_values,t_offset+t_i)[dbg_index]);
 	}
 	pop_err();
 }
-c_Stack.prototype.p_Push3=function(t_values,t_offset){
+c_Stack6.prototype.p_Push18=function(t_values,t_offset){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<79>";
-	this.p_Push2(t_values,t_offset,t_values.length-t_offset);
+	this.p_Push17(t_values,t_offset,t_values.length-t_offset);
 	pop_err();
 }
-c_Stack.prototype.p_ToArray=function(){
+c_Stack6.prototype.p_ToArray=function(){
 	push_err();
 	err_info="C:/MonkeyXFree84f/modules/monkey/stack.monkey<18>";
 	var t_t=new_object_array(this.m_length);
@@ -3408,7 +4723,7 @@ function bb_app_EnumDisplayModes(){
 	err_info="C:/MonkeyXFree84f/modules/mojo/app.monkey<34>";
 	var t_mmap=c_IntMap.m_new.call(new c_IntMap);
 	err_info="C:/MonkeyXFree84f/modules/mojo/app.monkey<35>";
-	var t_mstack=c_Stack.m_new.call(new c_Stack);
+	var t_mstack=c_Stack6.m_new.call(new c_Stack6);
 	err_info="C:/MonkeyXFree84f/modules/mojo/app.monkey<36>";
 	for(var t_i=0;t_i<t_modes.length;t_i=t_i+1){
 		err_info="C:/MonkeyXFree84f/modules/mojo/app.monkey<37>";
@@ -3425,7 +4740,7 @@ function bb_app_EnumDisplayModes(){
 			err_info="C:/MonkeyXFree84f/modules/mojo/app.monkey<43>";
 			t_mmap.p_Insert(t_size,t_mode);
 			err_info="C:/MonkeyXFree84f/modules/mojo/app.monkey<44>";
-			t_mstack.p_Push(t_mode);
+			t_mstack.p_Push16(t_mode);
 		}
 	}
 	err_info="C:/MonkeyXFree84f/modules/mojo/app.monkey<47>";
@@ -3763,9 +5078,18 @@ function bb_graphics_DrawText(t_text,t_x,t_y,t_xalign,t_yalign){
 	return 0;
 }
 function bbInit(){
+	bb_reflection__classes=[];
+	bb_reflection__boolClass=null;
+	bb_reflection__intClass=null;
+	bb_reflection__floatClass=null;
+	bb_reflection__stringClass=null;
+	bb_reflection__functions=[];
+	bb_reflection__getClass=null;
+	bb_reflection__init=bb_reflection___init();
 	bb_app__app=null;
 	bb_app__delegate=null;
 	bb_app__game=BBGame.Game();
+	bb_textinput_g=null;
 	bb_graphics_device=null;
 	bb_graphics_context=c_GraphicsContext.m_new.call(new c_GraphicsContext);
 	c_Image.m_DefaultFlags=0;
