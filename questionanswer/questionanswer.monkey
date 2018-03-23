@@ -82,7 +82,24 @@ Method OnUpdate()
 						If difference.found = False Then won = False
 					Next
  				End
+		'End
+	'End	
+	'End
+		
+		Case "QUESTION2"
+			If KeyHit (KEY_ESCAPE) Then GameState="MENU"
+				If KeyHit (KEY_LMB) Then
+					won = True
+					difference_collection.Clear
+					'youreballoon = LoadImage ("you'reballoon.png")
+					'yourballoon = LoadImage ("yourballoon.png")
+					For Local difference := Eachin difference_collection
+						If intersects(MouseX-30,MouseY-30,60,60,difference.x, difference.y, difference.w, difference.h) Then difference.found = True
+						If difference.found = False Then won = False
+					Next
+ 				End
 		End
+		
 	End
 		
 Method OnRender()
@@ -95,6 +112,22 @@ Method OnRender()
 			DrawText "Choose the answer to fill the gap: I love _____ dog!", 140, 100
 			DrawImage youreballoon,200,230
 			DrawImage yourballoon, 350,230
+			'For Local difference := Eachin difference_collection
+					'If difference.found Then
+						'DrawImage circle, difference.middle_x, difference.middle_y
+						'DrawImage circle, difference.middle_x+340, difference.middle_y
+					'End
+				'Next
+			'If won Then DrawImage complete,0,0
+			'End
+			'End
+	End
+
+		'Case "QUESTION2"
+			'Cls 0, 191, 255
+			'DrawText "Choose the answer to fill the gap: Max is eating _____ ice cream!", 140, 100
+			'DrawImage youreballoon,200,230
+			'DrawImage yourballoon, 350,230
 			
 For Local difference := Eachin difference_collection
 					If difference.found Then
@@ -105,7 +138,7 @@ For Local difference := Eachin difference_collection
 				If won Then DrawImage complete,0,0
 			End
 	End
-End
+'End
 
 Class Difference_area
 Field x:Int

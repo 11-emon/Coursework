@@ -15,11 +15,11 @@ Class game Extends App
 	'Field result:String = "Choice (1 to 3)?"
 	Field result:String = "Input your name:"
 	
-	Method CreateInfoText.Int()
-		txtScore = eng.CreateText (font1, "Input your name")
-		txtScore.SetLayer(layerUI)
-		Return 0
-	End
+'	Method CreateInfoText.Int()
+		'txtScore = eng.CreateText (font1, "Input your name")
+		'txtScore.SetLayer(layerUI)
+		'Return 0
+	'End
 
     Method OnCreate:Int()
         SetUpdateRate 60

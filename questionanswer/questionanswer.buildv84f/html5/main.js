@@ -2437,6 +2437,40 @@ c_Game_app.prototype.p_OnUpdate=function(){
 						}
 					}
 				}
+			}else{
+				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<89>";
+				if(t_1=="QUESTION2"){
+					err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<90>";
+					if((bb_input_KeyHit(27))!=0){
+						err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<90>";
+						c_Game_app.m_GameState="MENU";
+					}
+					err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<91>";
+					if((bb_input_KeyHit(1))!=0){
+						err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<92>";
+						this.m_won=true;
+						err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<93>";
+						this.m_difference_collection.p_Clear();
+						err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>";
+						err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>";
+						var t_2=this.m_difference_collection.p_ObjectEnumerator();
+						err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>";
+						while(t_2.p_HasNext()){
+							err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>";
+							var t_difference2=t_2.p_NextObject();
+							err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<97>";
+							if(bb_questionanswer_intersects(((bb_input_MouseX()-30.0)|0),((bb_input_MouseY()-30.0)|0),60,60,dbg_object(t_difference2).m_x,dbg_object(t_difference2).m_y,dbg_object(t_difference2).m_w,dbg_object(t_difference2).m_h)){
+								err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<97>";
+								dbg_object(t_difference2).m_found=true;
+							}
+							err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<98>";
+							if(dbg_object(t_difference2).m_found==false){
+								err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<98>";
+								this.m_won=false;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2445,46 +2479,46 @@ c_Game_app.prototype.p_OnUpdate=function(){
 }
 c_Game_app.prototype.p_OnRender=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<89>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<106>";
 	var t_2=c_Game_app.m_GameState;
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<90>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<107>";
 	if(t_2=="MENU"){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<91>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<108>";
 		bb_graphics_DrawImage(this.m_menu,0.0,0.0,0);
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<92>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<109>";
 		this.m_balloon.p_Move();
 	}else{
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<93>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<110>";
 		if(t_2=="PLAYING"){
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<94>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<111>";
 			bb_graphics_Cls(0.0,191.0,255.0);
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<95>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<112>";
 			bb_graphics_DrawText("Choose the answer to fill the gap: I love _____ dog!",140.0,100.0,0.0,0.0);
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<113>";
 			bb_graphics_DrawImage(this.m_youreballoon,200.0,230.0,0);
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<97>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<114>";
 			bb_graphics_DrawImage(this.m_yourballoon,350.0,230.0,0);
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<99>";
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<99>";
-			var t_=this.m_difference_collection.p_ObjectEnumerator();
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<99>";
-			while(t_.p_HasNext()){
-				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<99>";
-				var t_difference=t_.p_NextObject();
-				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<100>";
-				if(dbg_object(t_difference).m_found){
-					err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<101>";
-					bb_graphics_DrawImage(this.m_circle,(dbg_object(t_difference).m_middle_x),(dbg_object(t_difference).m_middle_y),0);
-					err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<102>";
-					bb_graphics_DrawImage(this.m_circle,(dbg_object(t_difference).m_middle_x+340),(dbg_object(t_difference).m_middle_y),0);
-				}
-			}
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<105>";
-			if(this.m_won){
-				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<105>";
-				bb_graphics_DrawImage(this.m_complete,0.0,0.0,0);
-			}
 		}
+	}
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>";
+	var t_=this.m_difference_collection.p_ObjectEnumerator();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>";
+	while(t_.p_HasNext()){
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>";
+		var t_difference=t_.p_NextObject();
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<133>";
+		if(dbg_object(t_difference).m_found){
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>";
+			bb_graphics_DrawImage(this.m_circle,(dbg_object(t_difference).m_middle_x),(dbg_object(t_difference).m_middle_y),0);
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<135>";
+			bb_graphics_DrawImage(this.m_circle,(dbg_object(t_difference).m_middle_x+340),(dbg_object(t_difference).m_middle_y),0);
+		}
+	}
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<138>";
+	if(this.m_won){
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<138>";
+		bb_graphics_DrawImage(this.m_complete,0.0,0.0,0);
 	}
 	pop_err();
 	return 0;
@@ -3825,26 +3859,26 @@ c_Balloon.m_new=function(t_balloony){
 }
 c_Balloon.prototype.p_Move=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<148>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<181>";
 	bb_graphics_DrawImage(this.m_image,20.0,(this.m_balloony),0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<149>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<182>";
 	this.m_balloony+=1;
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<150>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<183>";
 	if(this.m_balloony>=278){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<151>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<184>";
 		this.m_updowndir="up";
 	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<153>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<186>";
 	if(this.m_balloony<0){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<154>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<187>";
 		this.m_updowndir="down";
 	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<157>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<190>";
 	if(this.m_updowndir=="down"){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<158>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<191>";
 		this.m_balloony+=1;
 	}else{
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<161>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<194>";
 		this.m_balloony-=2;
 	}
 	pop_err();
@@ -4027,19 +4061,19 @@ function bb_input_MouseY(){
 }
 function bb_questionanswer_intersects(t_x1,t_y1,t_w1,t_h1,t_x2,t_y2,t_w2,t_h2){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<165>";
 	if(t_x1>=t_x2+t_w2 || t_x1+t_w1<=t_x2){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<165>";
 		pop_err();
 		return false;
 	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<133>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<166>";
 	if(t_y1>=t_y2+t_h2 || t_y1+t_h1<=t_y2){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<133>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<166>";
 		pop_err();
 		return false;
 	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<167>";
 	pop_err();
 	return true;
 }
