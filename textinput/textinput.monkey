@@ -35,8 +35,6 @@ Class game Extends App
             		result = "OK!"
             	Case KEY_E 'name not on list --> ask again, stay on start screen
 		            result = "OK!"
-		        Case KEY_3
-		            result = "THREE!"
 		        Default 
 		        	result = "You are not in this class! Check your spelling!"
             Return 0
