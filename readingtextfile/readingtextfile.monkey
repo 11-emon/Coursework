@@ -1,4 +1,13 @@
 Import brl
+'Import mojo
+
+'Global Game:Game_app
+
+'Function Main ()
+	'Game = New Game_app
+'End
+
+'Class Game_app Extends App	
 
 
 Local level_file:FileStream
