@@ -5331,14 +5331,7 @@ class c_Difference_area;
 class c_List;
 class c_Node2;
 class c_HeadNode;
-class c_Stream;
-class c_FileStream;
-class c_DataBuffer;
-class c_StreamError;
-class c_StreamReadError;
-class c_Stack2;
 class c_Enumerator;
-class c_Enumerator2;
 class c_App : public Object{
 	public:
 	c_App();
@@ -5636,12 +5629,10 @@ class c_Difference_area : public Object{
 	int m_y;
 	int m_w;
 	int m_h;
+	bool m_found;
 	int m_middle_x;
 	int m_middle_y;
-	bool m_found;
 	c_Difference_area();
-	c_Difference_area* m_new(int,int,int,int);
-	c_Difference_area* m_new2();
 	void mark();
 	String debug();
 };
@@ -5654,7 +5645,7 @@ class c_List : public Object{
 	c_Node2* p_AddLast(c_Difference_area*);
 	c_List* m_new2(Array<c_Difference_area* >);
 	int p_Clear();
-	c_Enumerator2* p_ObjectEnumerator();
+	c_Enumerator* p_ObjectEnumerator();
 	void mark();
 	String debug();
 };
@@ -5680,115 +5671,19 @@ class c_HeadNode : public c_Node2{
 };
 String dbg_type(c_HeadNode**p){return "HeadNode";}
 int bb_input_KeyHit(int);
-class c_Stream : public Object{
-	public:
-	c_Stream();
-	c_Stream* m_new();
-	virtual int p_Read(c_DataBuffer*,int,int)=0;
-	void p_ReadError();
-	void p_ReadAll(c_DataBuffer*,int,int);
-	c_DataBuffer* p_ReadAll2();
-	String p_ReadString(int,String);
-	String p_ReadString2(String);
-	virtual void p_Close()=0;
-	void mark();
-	String debug();
-};
-String dbg_type(c_Stream**p){return "Stream";}
-class c_FileStream : public c_Stream{
-	public:
-	BBFileStream* m__stream;
-	c_FileStream();
-	static BBFileStream* m_OpenStream(String,String);
-	c_FileStream* m_new(String,String);
-	c_FileStream* m_new2(BBFileStream*);
-	c_FileStream* m_new3();
-	static c_FileStream* m_Open(String,String);
-	void p_Close();
-	int p_Read(c_DataBuffer*,int,int);
-	void mark();
-	String debug();
-};
-String dbg_type(c_FileStream**p){return "FileStream";}
-class c_DataBuffer : public BBDataBuffer{
-	public:
-	c_DataBuffer();
-	c_DataBuffer* m_new(int);
-	c_DataBuffer* m_new2();
-	void p_CopyBytes(int,c_DataBuffer*,int,int);
-	void p_PeekBytes(int,Array<int >,int,int);
-	Array<int > p_PeekBytes2(int,int);
-	String p_PeekString(int,int,String);
-	String p_PeekString2(int,String);
-	void mark();
-	String debug();
-};
-String dbg_type(c_DataBuffer**p){return "DataBuffer";}
-class c_StreamError : public ThrowableObject{
-	public:
-	c_Stream* m__stream;
-	c_StreamError();
-	c_StreamError* m_new(c_Stream*);
-	c_StreamError* m_new2();
-	void mark();
-	String debug();
-};
-String dbg_type(c_StreamError**p){return "StreamError";}
-class c_StreamReadError : public c_StreamError{
-	public:
-	c_StreamReadError();
-	c_StreamReadError* m_new(c_Stream*);
-	c_StreamReadError* m_new2();
-	void mark();
-	String debug();
-};
-String dbg_type(c_StreamReadError**p){return "StreamReadError";}
-class c_Stack2 : public Object{
-	public:
-	Array<c_DataBuffer* > m_data;
-	int m_length;
-	c_Stack2();
-	c_Stack2* m_new();
-	c_Stack2* m_new2(Array<c_DataBuffer* >);
-	void p_Push4(c_DataBuffer*);
-	void p_Push5(Array<c_DataBuffer* >,int,int);
-	void p_Push6(Array<c_DataBuffer* >,int);
-	c_Enumerator* p_ObjectEnumerator();
-	static c_DataBuffer* m_NIL;
-	void p_Length(int);
-	int p_Length2();
-	void mark();
-	String debug();
-};
-String dbg_type(c_Stack2**p){return "Stack";}
 class c_Enumerator : public Object{
-	public:
-	c_Stack2* m_stack;
-	int m_index;
-	c_Enumerator();
-	c_Enumerator* m_new(c_Stack2*);
-	c_Enumerator* m_new2();
-	bool p_HasNext();
-	c_DataBuffer* p_NextObject();
-	void mark();
-	String debug();
-};
-String dbg_type(c_Enumerator**p){return "Enumerator";}
-int bb_math_Max(int,int);
-Float bb_math_Max2(Float,Float);
-class c_Enumerator2 : public Object{
 	public:
 	c_List* m__list;
 	c_Node2* m__curr;
-	c_Enumerator2();
-	c_Enumerator2* m_new(c_List*);
-	c_Enumerator2* m_new2();
+	c_Enumerator();
+	c_Enumerator* m_new(c_List*);
+	c_Enumerator* m_new2();
 	bool p_HasNext();
 	c_Difference_area* p_NextObject();
 	void mark();
 	String debug();
 };
-String dbg_type(c_Enumerator2**p){return "Enumerator";}
+String dbg_type(c_Enumerator**p){return "Enumerator";}
 Float bb_input_MouseX();
 Float bb_input_MouseY();
 bool bb_questionanswer_intersects(int,int,int,int,int,int,int,int);
@@ -5956,54 +5851,6 @@ int c_Game_app::p_OnUpdate(){
 			gc_assign(m_youreballoon,bb_graphics_LoadImage(String(L"you'reballoon.png",17),1,c_Image::m_DefaultFlags));
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<47>");
 			gc_assign(m_yourballoon,bb_graphics_LoadImage(String(L"yourballoon.png",15),1,c_Image::m_DefaultFlags));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<49>");
-			c_FileStream* t_level_file=0;
-			DBG_LOCAL(t_level_file,"level_file")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<50>");
-			String t_level_data=String();
-			DBG_LOCAL(t_level_data,"level_data")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<51>");
-			Array<String > t_data_item=Array<String >();
-			DBG_LOCAL(t_data_item,"data_item")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<52>");
-			int t_x=0;
-			DBG_LOCAL(t_x,"x")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<53>");
-			int t_y=0;
-			DBG_LOCAL(t_y,"y")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<54>");
-			int t_w=0;
-			DBG_LOCAL(t_w,"w")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<55>");
-			int t_h=0;
-			DBG_LOCAL(t_h,"h")
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<57>");
-			t_level_file=c_FileStream::m_Open(String(L"monkey://data/youranswer.txt",28),String(L"r",1));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<58>");
-			if((t_level_file)!=0){
-				DBG_BLOCK();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<59>");
-				t_level_data=t_level_file->p_ReadString2(String(L"utf8",4));
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<60>");
-				t_level_file->p_Close();
-			}
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<62>");
-			t_data_item=t_level_data.Split(String(L"\n",1));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<63>");
-			for(int t_counter=0;t_counter<=t_data_item.Length()-1;t_counter=t_counter+4){
-				DBG_BLOCK();
-				DBG_LOCAL(t_counter,"counter")
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<64>");
-				t_x=(t_data_item.At(t_counter)).ToInt();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<65>");
-				t_y=(t_data_item.At(t_counter+1)).ToInt();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<66>");
-				t_w=(t_data_item.At(t_counter+2)).ToInt();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<67>");
-				t_h=(t_data_item.At(t_counter+3)).ToInt();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<68>");
-				m_difference_collection->p_AddLast((new c_Difference_area)->m_new(t_x,t_y,t_w,t_h));
-			}
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<71>");
 			m_GameState=String(L"PLAYING",7);
 		}else{
@@ -6024,7 +5871,7 @@ int c_Game_app::p_OnUpdate(){
 					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<77>");
 					m_difference_collection->p_Clear();
 					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<80>");
-					c_Enumerator2* t_=m_difference_collection->p_ObjectEnumerator();
+					c_Enumerator* t_=m_difference_collection->p_ObjectEnumerator();
 					while(t_->p_HasNext()){
 						DBG_BLOCK();
 						c_Difference_area* t_difference=t_->p_NextObject();
@@ -6041,6 +5888,42 @@ int c_Game_app::p_OnUpdate(){
 						}
 					}
 				}
+			}else{
+				DBG_BLOCK();
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<89>");
+				if(t_1==String(L"QUESTION2",9)){
+					DBG_BLOCK();
+					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<90>");
+					if((bb_input_KeyHit(27))!=0){
+						DBG_BLOCK();
+						m_GameState=String(L"MENU",4);
+					}
+					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<91>");
+					if((bb_input_KeyHit(1))!=0){
+						DBG_BLOCK();
+						DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<92>");
+						m_won=true;
+						DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<93>");
+						m_difference_collection->p_Clear();
+						DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>");
+						c_Enumerator* t_2=m_difference_collection->p_ObjectEnumerator();
+						while(t_2->p_HasNext()){
+							DBG_BLOCK();
+							c_Difference_area* t_difference2=t_2->p_NextObject();
+							DBG_LOCAL(t_difference2,"difference")
+							DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<97>");
+							if(bb_questionanswer_intersects(int(bb_input_MouseX()-FLOAT(30.0)),int(bb_input_MouseY()-FLOAT(30.0)),60,60,t_difference2->m_x,t_difference2->m_y,t_difference2->m_w,t_difference2->m_h)){
+								DBG_BLOCK();
+								t_difference2->m_found=true;
+							}
+							DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<98>");
+							if(t_difference2->m_found==false){
+								DBG_BLOCK();
+								m_won=false;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -6050,50 +5933,50 @@ int c_Game_app::p_OnRender(){
 	DBG_ENTER("Game_app.OnRender")
 	c_Game_app *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<89>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<106>");
 	String t_2=m_GameState;
 	DBG_LOCAL(t_2,"2")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<90>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<107>");
 	if(t_2==String(L"MENU",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<91>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<108>");
 		bb_graphics_DrawImage(m_menu,FLOAT(0.0),FLOAT(0.0),0);
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<92>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<109>");
 		m_balloon->p_Move();
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<93>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<110>");
 		if(t_2==String(L"PLAYING",7)){
 			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<94>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<111>");
 			bb_graphics_Cls(FLOAT(0.0),FLOAT(191.0),FLOAT(255.0));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<95>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<112>");
 			bb_graphics_DrawText(String(L"Choose the answer to fill the gap: I love _____ dog!",52),FLOAT(140.0),FLOAT(100.0),FLOAT(0.0),FLOAT(0.0));
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<96>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<113>");
 			bb_graphics_DrawImage(m_youreballoon,FLOAT(200.0),FLOAT(230.0),0);
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<97>");
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<114>");
 			bb_graphics_DrawImage(m_yourballoon,FLOAT(350.0),FLOAT(230.0),0);
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<99>");
-			c_Enumerator2* t_=m_difference_collection->p_ObjectEnumerator();
-			while(t_->p_HasNext()){
-				DBG_BLOCK();
-				c_Difference_area* t_difference=t_->p_NextObject();
-				DBG_LOCAL(t_difference,"difference")
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<100>");
-				if(t_difference->m_found){
-					DBG_BLOCK();
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<101>");
-					bb_graphics_DrawImage(m_circle,Float(t_difference->m_middle_x),Float(t_difference->m_middle_y),0);
-					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<102>");
-					bb_graphics_DrawImage(m_circle,Float(t_difference->m_middle_x+340),Float(t_difference->m_middle_y),0);
-				}
-			}
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<105>");
-			if(m_won){
-				DBG_BLOCK();
-				bb_graphics_DrawImage(m_complete,FLOAT(0.0),FLOAT(0.0),0);
-			}
 		}
+	}
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>");
+	c_Enumerator* t_=m_difference_collection->p_ObjectEnumerator();
+	while(t_->p_HasNext()){
+		DBG_BLOCK();
+		c_Difference_area* t_difference=t_->p_NextObject();
+		DBG_LOCAL(t_difference,"difference")
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<133>");
+		if(t_difference->m_found){
+			DBG_BLOCK();
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>");
+			bb_graphics_DrawImage(m_circle,Float(t_difference->m_middle_x),Float(t_difference->m_middle_y),0);
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<135>");
+			bb_graphics_DrawImage(m_circle,Float(t_difference->m_middle_x+340),Float(t_difference->m_middle_y),0);
+		}
+	}
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<138>");
+	if(m_won){
+		DBG_BLOCK();
+		bb_graphics_DrawImage(m_complete,FLOAT(0.0),FLOAT(0.0),0);
 	}
 	return 0;
 }
@@ -7873,30 +7756,30 @@ int c_Balloon::p_Move(){
 	DBG_ENTER("Balloon.Move")
 	c_Balloon *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<148>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<181>");
 	bb_graphics_DrawImage(m_image,FLOAT(20.0),Float(m_balloony),0);
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<149>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<182>");
 	m_balloony+=1;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<150>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<183>");
 	if(m_balloony>=278){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<151>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<184>");
 		m_updowndir=String(L"up",2);
 	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<153>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<186>");
 	if(m_balloony<0){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<154>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<187>");
 		m_updowndir=String(L"down",4);
 	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<157>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<190>");
 	if(m_updowndir==String(L"down",4)){
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<158>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<191>");
 		m_balloony+=1;
 	}else{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<161>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<194>");
 		m_balloony-=2;
 	}
 	return 0;
@@ -7926,40 +7809,9 @@ c_Difference_area::c_Difference_area(){
 	m_y=0;
 	m_w=0;
 	m_h=0;
+	m_found=false;
 	m_middle_x=0;
 	m_middle_y=0;
-	m_found=false;
-}
-c_Difference_area* c_Difference_area::m_new(int t_diff_x,int t_diff_y,int t_diff_w,int t_diff_h){
-	DBG_ENTER("Difference_area.new")
-	c_Difference_area *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_diff_x,"diff_x")
-	DBG_LOCAL(t_diff_y,"diff_y")
-	DBG_LOCAL(t_diff_w,"diff_w")
-	DBG_LOCAL(t_diff_h,"diff_h")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<120>");
-	m_x=t_diff_x;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<121>");
-	m_y=t_diff_y;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<122>");
-	m_w=t_diff_w;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<123>");
-	m_h=t_diff_h;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<124>");
-	m_middle_x=m_x+m_w/2-15;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<125>");
-	m_middle_y=m_y+m_h/2-15;
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<126>");
-	m_found=false;
-	return this;
-}
-c_Difference_area* c_Difference_area::m_new2(){
-	DBG_ENTER("Difference_area.new")
-	c_Difference_area *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<110>");
-	return this;
 }
 void c_Difference_area::mark(){
 	Object::mark();
@@ -8021,12 +7873,12 @@ int c_List::p_Clear(){
 	gc_assign(m__head->m__pred,m__head);
 	return 0;
 }
-c_Enumerator2* c_List::p_ObjectEnumerator(){
+c_Enumerator* c_List::p_ObjectEnumerator(){
 	DBG_ENTER("List.ObjectEnumerator")
 	c_List *self=this;
 	DBG_LOCAL(self,"Self")
 	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<186>");
-	c_Enumerator2* t_=(new c_Enumerator2)->m_new(this);
+	c_Enumerator* t_=(new c_Enumerator)->m_new(this);
 	return t_;
 }
 void c_List::mark(){
@@ -8111,758 +7963,13 @@ int bb_input_KeyHit(int t_key){
 	int t_=bb_input_device->p_KeyHit(t_key);
 	return t_;
 }
-c_Stream::c_Stream(){
-}
-c_Stream* c_Stream::m_new(){
-	DBG_ENTER("Stream.new")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<31>");
-	return this;
-}
-void c_Stream::p_ReadError(){
-	DBG_ENTER("Stream.ReadError")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<188>");
-	throw (new c_StreamReadError)->m_new(this);
-}
-void c_Stream::p_ReadAll(c_DataBuffer* t_buffer,int t_offset,int t_count){
-	DBG_ENTER("Stream.ReadAll")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_buffer,"buffer")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<48>");
-	while(t_count>0){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<49>");
-		int t_n=p_Read(t_buffer,t_offset,t_count);
-		DBG_LOCAL(t_n,"n")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<50>");
-		if(t_n<=0){
-			DBG_BLOCK();
-			p_ReadError();
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<51>");
-		t_offset+=t_n;
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<52>");
-		t_count-=t_n;
-	}
-}
-c_DataBuffer* c_Stream::p_ReadAll2(){
-	DBG_ENTER("Stream.ReadAll")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<57>");
-	c_Stack2* t_bufs=(new c_Stack2)->m_new();
-	DBG_LOCAL(t_bufs,"bufs")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<58>");
-	c_DataBuffer* t_buf=(new c_DataBuffer)->m_new(4096);
-	int t_off=0;
-	int t_len=0;
-	DBG_LOCAL(t_buf,"buf")
-	DBG_LOCAL(t_off,"off")
-	DBG_LOCAL(t_len,"len")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<59>");
-	do{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<60>");
-		int t_n=p_Read(t_buf,t_off,4096-t_off);
-		DBG_LOCAL(t_n,"n")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<61>");
-		if(t_n<=0){
-			DBG_BLOCK();
-			break;
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<62>");
-		t_off+=t_n;
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<63>");
-		t_len+=t_n;
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<64>");
-		if(t_off==4096){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<65>");
-			t_off=0;
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<66>");
-			t_bufs->p_Push4(t_buf);
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<67>");
-			t_buf=(new c_DataBuffer)->m_new(4096);
-		}
-	}while(!(false));
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<70>");
-	c_DataBuffer* t_data=(new c_DataBuffer)->m_new(t_len);
-	DBG_LOCAL(t_data,"data")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<71>");
-	t_off=0;
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<72>");
-	c_Enumerator* t_=t_bufs->p_ObjectEnumerator();
-	while(t_->p_HasNext()){
-		DBG_BLOCK();
-		c_DataBuffer* t_tbuf=t_->p_NextObject();
-		DBG_LOCAL(t_tbuf,"tbuf")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<73>");
-		t_tbuf->p_CopyBytes(0,t_data,t_off,4096);
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<74>");
-		t_tbuf->Discard();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<75>");
-		t_off+=4096;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<77>");
-	t_buf->p_CopyBytes(0,t_data,t_off,t_len-t_off);
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<78>");
-	t_buf->Discard();
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<79>");
-	return t_data;
-}
-String c_Stream::p_ReadString(int t_count,String t_encoding){
-	DBG_ENTER("Stream.ReadString")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_count,"count")
-	DBG_LOCAL(t_encoding,"encoding")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<120>");
-	c_DataBuffer* t_buf=(new c_DataBuffer)->m_new(t_count);
-	DBG_LOCAL(t_buf,"buf")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<121>");
-	p_ReadAll(t_buf,0,t_count);
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<122>");
-	String t_=t_buf->p_PeekString2(0,t_encoding);
-	return t_;
-}
-String c_Stream::p_ReadString2(String t_encoding){
-	DBG_ENTER("Stream.ReadString")
-	c_Stream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_encoding,"encoding")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<126>");
-	c_DataBuffer* t_buf=p_ReadAll2();
-	DBG_LOCAL(t_buf,"buf")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<127>");
-	String t_=t_buf->p_PeekString2(0,t_encoding);
-	return t_;
-}
-void c_Stream::mark(){
-	Object::mark();
-}
-String c_Stream::debug(){
-	String t="(Stream)\n";
-	return t;
-}
-c_FileStream::c_FileStream(){
-	m__stream=0;
-}
-BBFileStream* c_FileStream::m_OpenStream(String t_path,String t_mode){
-	DBG_ENTER("FileStream.OpenStream")
-	DBG_LOCAL(t_path,"path")
-	DBG_LOCAL(t_mode,"mode")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<79>");
-	BBFileStream* t_stream=(new BBFileStream);
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<80>");
-	String t_fmode=t_mode;
-	DBG_LOCAL(t_fmode,"fmode")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<81>");
-	if(t_fmode==String(L"a",1)){
-		DBG_BLOCK();
-		t_fmode=String(L"u",1);
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<82>");
-	if(!t_stream->Open(t_path,t_fmode)){
-		DBG_BLOCK();
-		return 0;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<83>");
-	if(t_mode==String(L"a",1)){
-		DBG_BLOCK();
-		t_stream->Seek(t_stream->Length());
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<84>");
-	return t_stream;
-}
-c_FileStream* c_FileStream::m_new(String t_path,String t_mode){
-	DBG_ENTER("FileStream.new")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_path,"path")
-	DBG_LOCAL(t_mode,"mode")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<31>");
-	c_Stream::m_new();
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<32>");
-	gc_assign(m__stream,m_OpenStream(t_path,t_mode));
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<33>");
-	if(!((m__stream)!=0)){
-		DBG_BLOCK();
-		bbError(String(L"Failed to open stream",21));
-	}
-	return this;
-}
-c_FileStream* c_FileStream::m_new2(BBFileStream* t_stream){
-	DBG_ENTER("FileStream.new")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<74>");
-	c_Stream::m_new();
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<75>");
-	gc_assign(m__stream,t_stream);
-	return this;
-}
-c_FileStream* c_FileStream::m_new3(){
-	DBG_ENTER("FileStream.new")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<29>");
-	c_Stream::m_new();
-	return this;
-}
-c_FileStream* c_FileStream::m_Open(String t_path,String t_mode){
-	DBG_ENTER("FileStream.Open")
-	DBG_LOCAL(t_path,"path")
-	DBG_LOCAL(t_mode,"mode")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<67>");
-	BBFileStream* t_stream=m_OpenStream(t_path,t_mode);
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<68>");
-	if((t_stream)!=0){
-		DBG_BLOCK();
-		c_FileStream* t_=(new c_FileStream)->m_new2(t_stream);
-		return t_;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<69>");
-	return 0;
-}
-void c_FileStream::p_Close(){
-	DBG_ENTER("FileStream.Close")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<37>");
-	if(!((m__stream)!=0)){
-		DBG_BLOCK();
-		return;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<38>");
-	m__stream->Close();
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<39>");
-	m__stream=0;
-}
-int c_FileStream::p_Read(c_DataBuffer* t_buffer,int t_offset,int t_count){
-	DBG_ENTER("FileStream.Read")
-	c_FileStream *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_buffer,"buffer")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/filestream.monkey<59>");
-	int t_=m__stream->Read(t_buffer,t_offset,t_count);
-	return t_;
-}
-void c_FileStream::mark(){
-	c_Stream::mark();
-	gc_mark_q(m__stream);
-}
-String c_FileStream::debug(){
-	String t="(FileStream)\n";
-	t=c_Stream::debug()+t;
-	t+=dbg_decl("_stream",&m__stream);
-	return t;
-}
-c_DataBuffer::c_DataBuffer(){
-}
-c_DataBuffer* c_DataBuffer::m_new(int t_length){
-	DBG_ENTER("DataBuffer.new")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_length,"length")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<94>");
-	if(!_New(t_length)){
-		DBG_BLOCK();
-		bbError(String(L"Allocate DataBuffer failed",26));
-	}
-	return this;
-}
-c_DataBuffer* c_DataBuffer::m_new2(){
-	DBG_ENTER("DataBuffer.new")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<91>");
-	return this;
-}
-void c_DataBuffer::p_CopyBytes(int t_address,c_DataBuffer* t_dst,int t_dstaddress,int t_count){
-	DBG_ENTER("DataBuffer.CopyBytes")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_dst,"dst")
-	DBG_LOCAL(t_dstaddress,"dstaddress")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<114>");
-	if(t_address+t_count>Length()){
-		DBG_BLOCK();
-		t_count=Length()-t_address;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<115>");
-	if(t_dstaddress+t_count>t_dst->Length()){
-		DBG_BLOCK();
-		t_count=t_dst->Length()-t_dstaddress;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<117>");
-	if(t_dstaddress<=t_address){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<118>");
-		for(int t_i=0;t_i<t_count;t_i=t_i+1){
-			DBG_BLOCK();
-			DBG_LOCAL(t_i,"i")
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<119>");
-			t_dst->PokeByte(t_dstaddress+t_i,PeekByte(t_address+t_i));
-		}
-	}else{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<122>");
-		for(int t_i2=t_count-1;t_i2>=0;t_i2=t_i2+-1){
-			DBG_BLOCK();
-			DBG_LOCAL(t_i2,"i")
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<123>");
-			t_dst->PokeByte(t_dstaddress+t_i2,PeekByte(t_address+t_i2));
-		}
-	}
-}
-void c_DataBuffer::p_PeekBytes(int t_address,Array<int > t_bytes,int t_offset,int t_count){
-	DBG_ENTER("DataBuffer.PeekBytes")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_bytes,"bytes")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<137>");
-	if(t_address+t_count>Length()){
-		DBG_BLOCK();
-		t_count=Length()-t_address;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<138>");
-	if(t_offset+t_count>t_bytes.Length()){
-		DBG_BLOCK();
-		t_count=t_bytes.Length()-t_offset;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<139>");
-	for(int t_i=0;t_i<t_count;t_i=t_i+1){
-		DBG_BLOCK();
-		DBG_LOCAL(t_i,"i")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<140>");
-		t_bytes.At(t_offset+t_i)=PeekByte(t_address+t_i);
-	}
-}
-Array<int > c_DataBuffer::p_PeekBytes2(int t_address,int t_count){
-	DBG_ENTER("DataBuffer.PeekBytes")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<130>");
-	if(t_address+t_count>Length()){
-		DBG_BLOCK();
-		t_count=Length()-t_address;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<131>");
-	Array<int > t_bytes=Array<int >(t_count);
-	DBG_LOCAL(t_bytes,"bytes")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<132>");
-	p_PeekBytes(t_address,t_bytes,0,t_count);
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<133>");
-	return t_bytes;
-}
-String c_DataBuffer::p_PeekString(int t_address,int t_count,String t_encoding){
-	DBG_ENTER("DataBuffer.PeekString")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_count,"count")
-	DBG_LOCAL(t_encoding,"encoding")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<206>");
-	String t_1=t_encoding;
-	DBG_LOCAL(t_1,"1")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<207>");
-	if(t_1==String(L"utf8",4)){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<208>");
-		Array<int > t_p=p_PeekBytes2(t_address,t_count);
-		DBG_LOCAL(t_p,"p")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<209>");
-		int t_i=0;
-		int t_e=t_p.Length();
-		bool t_err=false;
-		DBG_LOCAL(t_i,"i")
-		DBG_LOCAL(t_e,"e")
-		DBG_LOCAL(t_err,"err")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<210>");
-		Array<int > t_q=Array<int >(t_e);
-		int t_j=0;
-		DBG_LOCAL(t_q,"q")
-		DBG_LOCAL(t_j,"j")
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<211>");
-		while(t_i<t_e){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<212>");
-			int t_c=t_p.At(t_i)&255;
-			DBG_LOCAL(t_c,"c")
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<213>");
-			t_i+=1;
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<214>");
-			if((t_c&128)!=0){
-				DBG_BLOCK();
-				DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<215>");
-				if((t_c&224)==192){
-					DBG_BLOCK();
-					DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<216>");
-					if(t_i>=t_e || (t_p.At(t_i)&192)!=128){
-						DBG_BLOCK();
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<217>");
-						t_err=true;
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<218>");
-						break;
-					}
-					DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<220>");
-					t_c=(t_c&31)<<6|t_p.At(t_i)&63;
-					DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<221>");
-					t_i+=1;
-				}else{
-					DBG_BLOCK();
-					DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<222>");
-					if((t_c&240)==224){
-						DBG_BLOCK();
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<223>");
-						if(t_i+1>=t_e || (t_p.At(t_i)&192)!=128 || (t_p.At(t_i+1)&192)!=128){
-							DBG_BLOCK();
-							DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<224>");
-							t_err=true;
-							DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<225>");
-							break;
-						}
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<227>");
-						t_c=(t_c&15)<<12|(t_p.At(t_i)&63)<<6|t_p.At(t_i+1)&63;
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<228>");
-						t_i+=2;
-					}else{
-						DBG_BLOCK();
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<230>");
-						t_err=true;
-						DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<231>");
-						break;
-					}
-				}
-			}
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<234>");
-			t_q.At(t_j)=t_c;
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<235>");
-			t_j+=1;
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<237>");
-		if(t_err){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<239>");
-			String t_=String::FromChars(t_p);
-			return t_;
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<241>");
-		if(t_j<t_e){
-			DBG_BLOCK();
-			t_q=t_q.Slice(0,t_j);
-		}
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<242>");
-		String t_2=String::FromChars(t_q);
-		return t_2;
-	}else{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<243>");
-		if(t_1==String(L"ascii",5)){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<244>");
-			Array<int > t_p2=p_PeekBytes2(t_address,t_count);
-			DBG_LOCAL(t_p2,"p")
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<245>");
-			for(int t_i2=0;t_i2<t_p2.Length();t_i2=t_i2+1){
-				DBG_BLOCK();
-				DBG_LOCAL(t_i2,"i")
-				DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<246>");
-				t_p2.At(t_i2)&=255;
-			}
-			DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<248>");
-			String t_3=String::FromChars(t_p2);
-			return t_3;
-		}
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<251>");
-	bbError(String(L"Invalid string encoding:",24)+t_encoding);
-	return String();
-}
-String c_DataBuffer::p_PeekString2(int t_address,String t_encoding){
-	DBG_ENTER("DataBuffer.PeekString")
-	c_DataBuffer *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_address,"address")
-	DBG_LOCAL(t_encoding,"encoding")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/databuffer.monkey<201>");
-	String t_=p_PeekString(t_address,Length()-t_address,t_encoding);
-	return t_;
-}
-void c_DataBuffer::mark(){
-	BBDataBuffer::mark();
-}
-String c_DataBuffer::debug(){
-	String t="(DataBuffer)\n";
-	return t;
-}
-c_StreamError::c_StreamError(){
-	m__stream=0;
-}
-c_StreamError* c_StreamError::m_new(c_Stream* t_stream){
-	DBG_ENTER("StreamError.new")
-	c_StreamError *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<200>");
-	gc_assign(m__stream,t_stream);
-	return this;
-}
-c_StreamError* c_StreamError::m_new2(){
-	DBG_ENTER("StreamError.new")
-	c_StreamError *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<197>");
-	return this;
-}
-void c_StreamError::mark(){
-	ThrowableObject::mark();
-	gc_mark_q(m__stream);
-}
-String c_StreamError::debug(){
-	String t="(StreamError)\n";
-	t+=dbg_decl("_stream",&m__stream);
-	return t;
-}
-c_StreamReadError::c_StreamReadError(){
-}
-c_StreamReadError* c_StreamReadError::m_new(c_Stream* t_stream){
-	DBG_ENTER("StreamReadError.new")
-	c_StreamReadError *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_stream,"stream")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<217>");
-	c_StreamError::m_new(t_stream);
-	return this;
-}
-c_StreamReadError* c_StreamReadError::m_new2(){
-	DBG_ENTER("StreamReadError.new")
-	c_StreamReadError *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/brl/stream.monkey<214>");
-	c_StreamError::m_new2();
-	return this;
-}
-void c_StreamReadError::mark(){
-	c_StreamError::mark();
-}
-String c_StreamReadError::debug(){
-	String t="(StreamReadError)\n";
-	t=c_StreamError::debug()+t;
-	return t;
-}
-c_Stack2::c_Stack2(){
-	m_data=Array<c_DataBuffer* >();
-	m_length=0;
-}
-c_Stack2* c_Stack2::m_new(){
-	DBG_ENTER("Stack.new")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	return this;
-}
-c_Stack2* c_Stack2::m_new2(Array<c_DataBuffer* > t_data){
-	DBG_ENTER("Stack.new")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_data,"data")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<13>");
-	gc_assign(this->m_data,t_data.Slice(0));
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<14>");
-	this->m_length=t_data.Length();
-	return this;
-}
-void c_Stack2::p_Push4(c_DataBuffer* t_value){
-	DBG_ENTER("Stack.Push")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_value,"value")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<71>");
-	if(m_length==m_data.Length()){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<72>");
-		gc_assign(m_data,m_data.Resize(m_length*2+10));
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<74>");
-	gc_assign(m_data.At(m_length),t_value);
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<75>");
-	m_length+=1;
-}
-void c_Stack2::p_Push5(Array<c_DataBuffer* > t_values,int t_offset,int t_count){
-	DBG_ENTER("Stack.Push")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_values,"values")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_LOCAL(t_count,"count")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<83>");
-	for(int t_i=0;t_i<t_count;t_i=t_i+1){
-		DBG_BLOCK();
-		DBG_LOCAL(t_i,"i")
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<84>");
-		p_Push4(t_values.At(t_offset+t_i));
-	}
-}
-void c_Stack2::p_Push6(Array<c_DataBuffer* > t_values,int t_offset){
-	DBG_ENTER("Stack.Push")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_values,"values")
-	DBG_LOCAL(t_offset,"offset")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<79>");
-	p_Push5(t_values,t_offset,t_values.Length()-t_offset);
-}
-c_Enumerator* c_Stack2::p_ObjectEnumerator(){
-	DBG_ENTER("Stack.ObjectEnumerator")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<188>");
-	c_Enumerator* t_=(new c_Enumerator)->m_new(this);
-	return t_;
-}
-c_DataBuffer* c_Stack2::m_NIL;
-void c_Stack2::p_Length(int t_newlength){
-	DBG_ENTER("Stack.Length")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_newlength,"newlength")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<45>");
-	if(t_newlength<m_length){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<46>");
-		for(int t_i=t_newlength;t_i<m_length;t_i=t_i+1){
-			DBG_BLOCK();
-			DBG_LOCAL(t_i,"i")
-			DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<47>");
-			gc_assign(m_data.At(t_i),m_NIL);
-		}
-	}else{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<49>");
-		if(t_newlength>m_data.Length()){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<50>");
-			gc_assign(m_data,m_data.Resize(bb_math_Max(m_length*2+10,t_newlength)));
-		}
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<52>");
-	m_length=t_newlength;
-}
-int c_Stack2::p_Length2(){
-	DBG_ENTER("Stack.Length")
-	c_Stack2 *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<56>");
-	return m_length;
-}
-void c_Stack2::mark(){
-	Object::mark();
-	gc_mark_q(m_data);
-}
-String c_Stack2::debug(){
-	String t="(Stack)\n";
-	t+=dbg_decl("NIL",&c_Stack2::m_NIL);
-	t+=dbg_decl("data",&m_data);
-	t+=dbg_decl("length",&m_length);
-	return t;
-}
 c_Enumerator::c_Enumerator(){
-	m_stack=0;
-	m_index=0;
-}
-c_Enumerator* c_Enumerator::m_new(c_Stack2* t_stack){
-	DBG_ENTER("Enumerator.new")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_LOCAL(t_stack,"stack")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<259>");
-	gc_assign(this->m_stack,t_stack);
-	return this;
-}
-c_Enumerator* c_Enumerator::m_new2(){
-	DBG_ENTER("Enumerator.new")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<256>");
-	return this;
-}
-bool c_Enumerator::p_HasNext(){
-	DBG_ENTER("Enumerator.HasNext")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<263>");
-	bool t_=m_index<m_stack->p_Length2();
-	return t_;
-}
-c_DataBuffer* c_Enumerator::p_NextObject(){
-	DBG_ENTER("Enumerator.NextObject")
-	c_Enumerator *self=this;
-	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<267>");
-	m_index+=1;
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/stack.monkey<268>");
-	c_DataBuffer* t_=m_stack->m_data.At(m_index-1);
-	return t_;
-}
-void c_Enumerator::mark(){
-	Object::mark();
-	gc_mark_q(m_stack);
-}
-String c_Enumerator::debug(){
-	String t="(Enumerator)\n";
-	t+=dbg_decl("stack",&m_stack);
-	t+=dbg_decl("index",&m_index);
-	return t;
-}
-int bb_math_Max(int t_x,int t_y){
-	DBG_ENTER("Max")
-	DBG_LOCAL(t_x,"x")
-	DBG_LOCAL(t_y,"y")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/math.monkey<56>");
-	if(t_x>t_y){
-		DBG_BLOCK();
-		return t_x;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/math.monkey<57>");
-	return t_y;
-}
-Float bb_math_Max2(Float t_x,Float t_y){
-	DBG_ENTER("Max")
-	DBG_LOCAL(t_x,"x")
-	DBG_LOCAL(t_y,"y")
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/math.monkey<83>");
-	if(t_x>t_y){
-		DBG_BLOCK();
-		return t_x;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/math.monkey<84>");
-	return t_y;
-}
-c_Enumerator2::c_Enumerator2(){
 	m__list=0;
 	m__curr=0;
 }
-c_Enumerator2* c_Enumerator2::m_new(c_List* t_list){
+c_Enumerator* c_Enumerator::m_new(c_List* t_list){
 	DBG_ENTER("Enumerator.new")
-	c_Enumerator2 *self=this;
+	c_Enumerator *self=this;
 	DBG_LOCAL(self,"Self")
 	DBG_LOCAL(t_list,"list")
 	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<326>");
@@ -8871,16 +7978,16 @@ c_Enumerator2* c_Enumerator2::m_new(c_List* t_list){
 	gc_assign(m__curr,t_list->m__head->m__succ);
 	return this;
 }
-c_Enumerator2* c_Enumerator2::m_new2(){
+c_Enumerator* c_Enumerator::m_new2(){
 	DBG_ENTER("Enumerator.new")
-	c_Enumerator2 *self=this;
+	c_Enumerator *self=this;
 	DBG_LOCAL(self,"Self")
 	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<323>");
 	return this;
 }
-bool c_Enumerator2::p_HasNext(){
+bool c_Enumerator::p_HasNext(){
 	DBG_ENTER("Enumerator.HasNext")
-	c_Enumerator2 *self=this;
+	c_Enumerator *self=this;
 	DBG_LOCAL(self,"Self")
 	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<331>");
 	while(m__curr->m__succ->m__pred!=m__curr){
@@ -8892,9 +7999,9 @@ bool c_Enumerator2::p_HasNext(){
 	bool t_=m__curr!=m__list->m__head;
 	return t_;
 }
-c_Difference_area* c_Enumerator2::p_NextObject(){
+c_Difference_area* c_Enumerator::p_NextObject(){
 	DBG_ENTER("Enumerator.NextObject")
-	c_Enumerator2 *self=this;
+	c_Enumerator *self=this;
 	DBG_LOCAL(self,"Self")
 	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<338>");
 	c_Difference_area* t_data=m__curr->m__data;
@@ -8904,12 +8011,12 @@ c_Difference_area* c_Enumerator2::p_NextObject(){
 	DBG_INFO("C:/MonkeyXFree84f/modules/monkey/list.monkey<340>");
 	return t_data;
 }
-void c_Enumerator2::mark(){
+void c_Enumerator::mark(){
 	Object::mark();
 	gc_mark_q(m__list);
 	gc_mark_q(m__curr);
 }
-String c_Enumerator2::debug(){
+String c_Enumerator::debug(){
 	String t="(Enumerator)\n";
 	t+=dbg_decl("_list",&m__list);
 	t+=dbg_decl("_curr",&m__curr);
@@ -8937,17 +8044,17 @@ bool bb_questionanswer_intersects(int t_x1,int t_y1,int t_w1,int t_h1,int t_x2,i
 	DBG_LOCAL(t_y2,"y2")
 	DBG_LOCAL(t_w2,"w2")
 	DBG_LOCAL(t_h2,"h2")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<165>");
 	if(t_x1>=t_x2+t_w2 || t_x1+t_w1<=t_x2){
 		DBG_BLOCK();
 		return false;
 	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<133>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<166>");
 	if(t_y1>=t_y2+t_h2 || t_y1+t_h1<=t_y2){
 		DBG_BLOCK();
 		return false;
 	}
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<167>");
 	return true;
 }
 int bb_graphics_DebugRenderDevice(){
@@ -9216,8 +8323,6 @@ int bbInit(){
 	DBG_GLOBAL("_updateRate",&bb_app__updateRate);
 	c_Game_app::m_GameState=String(L"MENU",4);
 	DBG_GLOBAL("GameState",&c_Game_app::m_GameState);
-	c_Stack2::m_NIL=0;
-	DBG_GLOBAL("NIL",&c_Stack2::m_NIL);
 	return 0;
 }
 void gc_mark(){
@@ -9231,7 +8336,6 @@ void gc_mark(){
 	gc_mark_q(bb_app__displayModes);
 	gc_mark_q(bb_app__desktopMode);
 	gc_mark_q(bb_graphics_renderDevice);
-	gc_mark_q(c_Stack2::m_NIL);
 }
 //${TRANSCODE_END}
 

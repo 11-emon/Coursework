@@ -1,3 +1,4 @@
+'NAME INPUT SHOWS QUESTION IN FONT, ACCEPTS ONLY LETTER 
 Strict 
  
 Import fantomEngine

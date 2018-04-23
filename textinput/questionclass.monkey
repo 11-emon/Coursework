@@ -28,16 +28,11 @@ Method OnRender ()
 	Cls(255,255,255)
 	question.draw
 End
+End
 	
 Class Level
 	'Field qs:String[15][]
 	Field qs:String
-Method New()
-	qs = LoadText ("questions.txt", 0,0,0)
-	For Local i:Int = 0 To 10
-		tiles[i] = New String[15]
-	Next
-End	
 
 Method load()	
 	Local level_file:FileStream
@@ -45,6 +40,17 @@ Method load()
 	Local data_item:String[]
 	
 	level_file = FileStream.Open("monkey://data/question.txt","r")
-	level_data: 
+	level_data = level_file.ReadString()
+	level_file.Close
 	
-End 
+	data_item = level_data.Split("~n")
+		For Local y:Int = 0 To 1
+			For Local x:Int = 0 To 1
+			'quest = qs [x][y]
+			DrawText question, x*30, y*0 '*IDENTIFIER QUESTION NOT FOUND
+		Next
+	Next
+End
+End			
+	
+'End 
