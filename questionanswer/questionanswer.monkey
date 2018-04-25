@@ -1,5 +1,5 @@
 'MAIN GAME FRAME 
-Strict
+'Strict
 
 Import mojo
 Import brl
@@ -14,7 +14,7 @@ End
 Class Game_app Extends App
 	Field menu:Image
 	Global GameState:String = "MENU"
-	'Field answer:Difference_area
+	Field answer:Difference_area
 	Field youreballoon:Image
 	Field yourballoon:Image
 	Field circle:Image
@@ -56,14 +56,8 @@ Method OnUpdate:Int()
 	Select GameState
 		Case "MENU"
 			If KeyHit (KEY_ENTER) Then GameState="LOADGAME"
-		Case "LOADGAME"
-			won=False
-				difference_collection.Clear
-				
-				youreballoon = LoadImage ("you'reballoon.png")
-				yourballoon = LoadImage ("yourballoon.png")
-				
-				Repeat'CODE FROM TEXT INPUT
+			
+			Repeat'CODE FROM TEXT INPUT
             Local char:Int = GetChar()
             If Not char Then Exit
             Select char
@@ -78,8 +72,14 @@ Method OnUpdate:Int()
             Return 0
             End
         Forever'CODE FROM TEXT INPUT
+        
+		Case "LOADGAME"
+			won=False
+				difference_collection.Clear
 				
-				
+				youreballoon = LoadImage ("you'reballoon.png")
+				yourballoon = LoadImage ("yourballoon.png")
+	
 				GameState="PLAYING"
 
 		Case "PLAYING"
@@ -98,18 +98,18 @@ Method OnUpdate:Int()
 	'End	
 	'End
 		
-		Case "QUESTION2"
-			If KeyHit (KEY_ESCAPE) Then GameState="MENU"
-				If KeyHit (KEY_LMB) Then
-					won = True
-					difference_collection.Clear
+		'Case "QUESTION2"
+			'If KeyHit (KEY_ESCAPE) Then GameState="MENU"
+				'If KeyHit (KEY_LMB) Then
+					'won = True
+					'difference_collection.Clear
 					'youreballoon = LoadImage ("you'reballoon.png")
 					'yourballoon = LoadImage ("yourballoon.png")
-					For Local difference := Eachin difference_collection
-						If intersects(MouseX-30,MouseY-30,60,60,difference.x, difference.y, difference.w, difference.h) Then difference.found = True
-						If difference.found = False Then won = False
-					Next
- 				End
+					'For Local difference := Eachin difference_collection
+						'If intersects(MouseX-30,MouseY-30,60,60,difference.x, difference.y, difference.w, difference.h) Then difference.found = True
+						'If difference.found = False Then won = False
+					'Next
+ 				'End
 		End
 		
 	End
@@ -118,22 +118,44 @@ Method OnRender:Int()
 	Select GameState
 		Case "MENU"
 			DrawImage menu, 0, 0
+			eng.CreateText(font1,result, 290, 200)'By adding eng.CreateText and the font'FROM TEXT INPUT
+    		'this allows the user input (shown in the OnUpdate section above)
+    		eng.Render()'FROM TEXT INPUT
 			balloon.Move()
 		Case "PLAYING"
 			Cls 0, 191, 255
-			DrawText "Choose the answer to fill the gap: I love _____ dog!", 140, 100
+			DrawText "Choose the answer to fill the gap: I love _____ dog!", 140, 100'add layer to this
 			DrawImage youreballoon,200,230
 			DrawImage yourballoon, 350,230
-			'For Local difference := Eachin difference_collection
-					'If difference.found Then
-						'DrawImage circle, difference.middle_x, difference.middle_y
-						'DrawImage circle, difference.middle_x+340, difference.middle_y
-					'End
-				'Next
-			'If won Then DrawImage complete,0,0
-			'End
+			For Local difference := Eachin difference_collection
+					If difference.found Then
+						DrawImage circle, difference.middle_x, difference.middle_y
+						DrawImage circle, difference.middle_x+340, difference.middle_y
+					End
+				Next
+			If won Then DrawImage complete,0,0
+			End
 			'End
 	End
+	
+Method CreateLayers:Int()'FROM TEXT INPUT
+layerBackGround = eng.CreateLayer()
+	layerUI = eng.CreateLayer()
+    layerTitle = eng.CreateLayer()
+    layerScore = eng.CreateLayer()
+Return 0
+End
+ 
+Method CreateInfoText:Int ()
+txtScore = eng.CreateText(font1,"Input your name: ",100,200)'This method sets the variable 
+'txtScore' and assigns its font, text and co-ordinates
+txtScore.SetLayer(layerUI)
+ 
+Return 0
+End'FROM TEXT INPUT
+	
+	
+	
 
 		'Case "QUESTION2"
 			'Cls 0, 191, 255
@@ -141,16 +163,16 @@ Method OnRender:Int()
 			'DrawImage youreballoon,200,230
 			'DrawImage yourballoon, 350,230
 			
-For Local difference := Eachin difference_collection
-					If difference.found Then
-						DrawImage circle, difference.middle_x, difference.middle_y
-						DrawImage circle, difference.middle_x+340, difference.middle_y
-					End
-				Next
-				If won Then DrawImage complete,0,0
-			End
-	End
-'End
+'For Local difference := Eachin difference_collection
+					'If difference.found Then
+						'DrawImage circle, difference.middle_x, difference.middle_y
+						'DrawImage circle, difference.middle_x+340, difference.middle_y
+					'End
+				'Next
+				'If won Then DrawImage complete,0,0
+			'End
+	'End
+End
 
 Class Difference_area
 Field x:Int
@@ -208,3 +230,21 @@ Method Move()
 	'end of movement code
 End
 End
+
+Class engine Extends ftEngine'FROM TEXT INPUT 
+    
+  	Field eng:engine
+    Field txtScore:ftObject
+	Field txtLifes:ftObject
+	Field txtLevel:ftObject
+	Field txtComets:ftObject
+	Field txtHighScore:ftObject[10]   'Score list(array) with 10 entries
+	Field font1:ftFont
+
+	Field layerBackGround:ftLayer
+	Field layerGame:ftLayer
+	Field layerUI:ftLayer
+	Field layerFX:ftLayer
+	Field layerTitle:ftLayer
+	Field layerScore:ftLayer 
+   End'FROM TEXT INPUT
