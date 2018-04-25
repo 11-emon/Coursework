@@ -23956,96 +23956,102 @@ function c_game(){
 c_game.prototype=extend_class(c_App);
 c_game.m_new=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<7>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<8>";
 	c_App.m_new.call(this);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<7>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<8>";
 	pop_err();
 	return this;
 }
 c_game.prototype.p_CreateLayers=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<72>";
-	this.m_layerBackGround=this.m_eng.p_CreateLayer();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<73>";
-	this.m_layerUI=this.m_eng.p_CreateLayer();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<74>";
-	this.m_layerTitle=this.m_eng.p_CreateLayer();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<75>";
-	this.m_layerScore=this.m_eng.p_CreateLayer();
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<76>";
+	this.m_layerBackGround=this.m_eng.p_CreateLayer();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<77>";
+	this.m_layerUI=this.m_eng.p_CreateLayer();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<78>";
+	this.m_layerTitle=this.m_eng.p_CreateLayer();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<79>";
+	this.m_layerScore=this.m_eng.p_CreateLayer();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<80>";
 	pop_err();
 	return 0;
 }
 c_game.prototype.p_CreateInfoText=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<80>";
-	this.m_txtScore=this.m_eng.p_CreateText(this.m_font1,"Input your name: ",100.0,200.0,0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<82>";
-	this.m_txtScore.p_SetLayer(this.m_layerUI);
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<84>";
+	this.m_txtScore=this.m_eng.p_CreateText(this.m_font1,"Input your name: ",100.0,200.0,0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<86>";
+	this.m_txtScore.p_SetLayer(this.m_layerUI);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<88>";
 	pop_err();
 	return 0;
 }
 c_game.prototype.p_OnCreate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<20>";
-	bb_app_SetUpdateRate(60);
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<21>";
-	this.m_eng=c_engine.m_new.call(new c_engine);
+	bb_app_SetUpdateRate(60);
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<22>";
-	this.p_CreateLayers();
+	this.m_eng=c_engine.m_new.call(new c_engine);
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<23>";
-	this.m_font1=this.m_eng.p_LoadFont("cc_font");
+	this.p_CreateLayers();
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<24>";
+	this.m_font1=this.m_eng.p_LoadFont("cc_font");
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<25>";
 	this.p_CreateInfoText();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<26>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<27>";
 	pop_err();
 	return 0;
 }
 c_game.prototype.p_OnUpdate=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<30>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<31>";
 	do{
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<31>";
-		var t_char=bb_input_GetChar();
 		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<32>";
+		var t_char=bb_input_GetChar();
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<33>";
 		if(!((t_char)!=0)){
-			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<32>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<33>";
 			break;
 		}
-		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<33>";
-		var t_1=t_char;
 		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<34>";
-		if(t_1==67){
-			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<35>";
-			this.m_result="OK!";
-		}else{
+		var t_1=t_char;
+		err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<35>";
+		if(t_1==49){
 			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<36>";
-			if(t_1==69){
-				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<37>";
-				this.m_result="OK!";
+			this.m_result="OK! Eleanor!";
+		}else{
+			err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<37>";
+			if(t_1==50){
+				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<38>";
+				this.m_result="OK! Chloe";
 			}else{
 				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<39>";
-				this.m_result="You are not in this class! Check your spelling!";
-				err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<40>";
-				pop_err();
-				return 0;
+				if(t_1==51){
+					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<40>";
+					this.m_result="OK! Becky!";
+				}else{
+					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<42>";
+					this.m_result="You are not in this class! Check your spelling!";
+					err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<43>";
+					pop_err();
+					return 0;
+				}
 			}
 		}
 	}while(!(false));
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<43>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<46>";
 	pop_err();
 	return 0;
 }
 c_game.prototype.p_OnRender=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<64>";
-	bb_graphics_Cls(255.0,255.0,255.0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<65>";
-	bb_graphics_DrawText(this.m_result,10.0,10.0,0.0,0.0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<66>";
-	this.m_eng.p_Render2();
 	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<67>";
+	bb_graphics_Cls(255.0,255.0,255.0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<68>";
+	this.m_eng.p_CreateText(this.m_font1,this.m_result,290.0,200.0,0);
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<70>";
+	this.m_eng.p_Render2();
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<71>";
 	pop_err();
 	return 0;
 }
@@ -24195,9 +24201,9 @@ var bb_app__delegate=null;
 var bb_textinput_g=null;
 function bbMain(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<104>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<108>";
 	bb_textinput_g=c_game.m_new.call(new c_game);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<105>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<109>";
 	pop_err();
 	return 0;
 }
@@ -32410,9 +32416,9 @@ function c_engine(){
 c_engine.prototype=extend_class(c_ftEngine);
 c_engine.m_new=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<108>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<112>";
 	c_ftEngine.m_new.call(this);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<108>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<112>";
 	pop_err();
 	return this;
 }
@@ -32429,97 +32435,6 @@ function bb_graphics_Cls(t_r,t_g,t_b){
 	bb_graphics_DebugRenderDevice();
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<380>";
 	bb_graphics_renderDevice.Cls(t_r,t_g,t_b);
-	pop_err();
-	return 0;
-}
-function bb_graphics_DrawImage(t_image,t_x,t_y,t_frame){
-	push_err();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<452>";
-	bb_graphics_DebugRenderDevice();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<453>";
-	if(t_frame<0 || t_frame>=dbg_object(t_image).m_frames.length){
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<453>";
-		error("Invalid image frame");
-	}
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<456>";
-	var t_f=dbg_array(dbg_object(t_image).m_frames,t_frame)[dbg_index];
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<458>";
-	bb_graphics_context.p_Validate();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<460>";
-	if((dbg_object(t_image).m_flags&65536)!=0){
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<461>";
-		bb_graphics_renderDevice.DrawSurface(dbg_object(t_image).m_surface,t_x-dbg_object(t_image).m_tx,t_y-dbg_object(t_image).m_ty);
-	}else{
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<463>";
-		bb_graphics_renderDevice.DrawSurface2(dbg_object(t_image).m_surface,t_x-dbg_object(t_image).m_tx,t_y-dbg_object(t_image).m_ty,dbg_object(t_f).m_x,dbg_object(t_f).m_y,dbg_object(t_image).m_width,dbg_object(t_image).m_height);
-	}
-	pop_err();
-	return 0;
-}
-function bb_graphics_DrawImage2(t_image,t_x,t_y,t_rotation,t_scaleX,t_scaleY,t_frame){
-	push_err();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<470>";
-	bb_graphics_DebugRenderDevice();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<471>";
-	if(t_frame<0 || t_frame>=dbg_object(t_image).m_frames.length){
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<471>";
-		error("Invalid image frame");
-	}
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<474>";
-	var t_f=dbg_array(dbg_object(t_image).m_frames,t_frame)[dbg_index];
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<476>";
-	bb_graphics_PushMatrix();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<478>";
-	bb_graphics_Translate(t_x,t_y);
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<479>";
-	bb_graphics_Rotate(t_rotation);
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<480>";
-	bb_graphics_Scale(t_scaleX,t_scaleY);
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<482>";
-	bb_graphics_Translate(-dbg_object(t_image).m_tx,-dbg_object(t_image).m_ty);
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<484>";
-	bb_graphics_context.p_Validate();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<486>";
-	if((dbg_object(t_image).m_flags&65536)!=0){
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<487>";
-		bb_graphics_renderDevice.DrawSurface(dbg_object(t_image).m_surface,0.0,0.0);
-	}else{
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<489>";
-		bb_graphics_renderDevice.DrawSurface2(dbg_object(t_image).m_surface,0.0,0.0,dbg_object(t_f).m_x,dbg_object(t_f).m_y,dbg_object(t_image).m_width,dbg_object(t_image).m_height);
-	}
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<492>";
-	bb_graphics_PopMatrix();
-	pop_err();
-	return 0;
-}
-function bb_graphics_DrawText(t_text,t_x,t_y,t_xalign,t_yalign){
-	push_err();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<577>";
-	bb_graphics_DebugRenderDevice();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<579>";
-	if(!((dbg_object(bb_graphics_context).m_font)!=null)){
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<579>";
-		pop_err();
-		return 0;
-	}
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<581>";
-	var t_w=dbg_object(bb_graphics_context).m_font.p_Width();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<582>";
-	var t_h=dbg_object(bb_graphics_context).m_font.p_Height();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<584>";
-	t_x-=Math.floor((t_w*t_text.length)*t_xalign);
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<585>";
-	t_y-=Math.floor((t_h)*t_yalign);
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<587>";
-	for(var t_i=0;t_i<t_text.length;t_i=t_i+1){
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<588>";
-		var t_ch=dbg_charCodeAt(t_text,t_i)-dbg_object(bb_graphics_context).m_firstChar;
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<589>";
-		if(t_ch>=0 && t_ch<dbg_object(bb_graphics_context).m_font.p_Frames()){
-			err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<590>";
-			bb_graphics_DrawImage(dbg_object(bb_graphics_context).m_font,t_x+(t_i*t_w),t_y,t_ch);
-		}
-	}
 	pop_err();
 	return 0;
 }

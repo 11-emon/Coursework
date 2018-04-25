@@ -64,13 +64,13 @@ Class game Extends App
     
     
     Method OnRender:Int()
-    	Cls(255,255,255)'(0, 153, 153)
-    	'userinput = eng.CreateText(font1, 
-    	eng.CreateText(font1,result, 290, 200)
+    	Cls(255,255,255)'Defines the colour of the background 
+    	eng.CreateText(font1,result, 290, 200)'By adding eng.CreateText and the font
+    	'this allows the user input (shown in the OnUpdate section above)
     	eng.Render()
     	Return 0
     End
-   'End
+
    
   Method CreateLayers:Int()
 layerBackGround = eng.CreateLayer()

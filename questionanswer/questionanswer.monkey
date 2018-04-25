@@ -1,10 +1,13 @@
 'MAIN GAME FRAME 
+Strict
+
 Import mojo
 Import brl
+Import fantomEngine
 
 Global Game:Game_app
     
-Function Main ()
+Function Main:Int()
 	Game = New Game_app
 End
 	
@@ -23,19 +26,33 @@ Class Game_app Extends App
     
    Field balloon : Balloon
    
+    Field eng:engine'CODE FROM TEXT INPUT
+    Field txtScore:ftObject
+	Field font1:ftFont
+	Field layerBackGround:ftLayer 
+ 	Field layerUI:ftLayer 
+ 	Field layerTitle:ftLayer
+ 	Field layerScore:ftLayer  
+ 	Field result:String 'CODE FROM TEXT INPUT
    
-    Method OnCreate()
+    Method OnCreate:Int()
      	balloon = New Balloon
      	SetUpdateRate 60
         menu = LoadImage ("background.png")
         difference_collection = New List<Difference_area>
-		circle = LoadImage ("circle.png")
+		'circle = LoadImage ("circle.png")
 		complete = LoadImage ("background.png")
+		
+		eng = New engine'CODE FROM TEXT INPUT
+        CreateLayers
+		font1 = eng.LoadFont("cc_font")
+		CreateInfoText()
+		Return 0'CODE FROM TEXT INPUT
 
     End
     
 
-Method OnUpdate()
+Method OnUpdate:Int()
 	Select GameState
 		Case "MENU"
 			If KeyHit (KEY_ENTER) Then GameState="LOADGAME"
@@ -46,27 +63,22 @@ Method OnUpdate()
 				youreballoon = LoadImage ("you'reballoon.png")
 				yourballoon = LoadImage ("yourballoon.png")
 				
-				'Local level_file:FileStream
-				'Local level_data:String
-				'Local data_item:String[]
-				'Local x:Int
-				'Local y:Int
-				'Local w:Int
-				'Local h:Int
+				Repeat'CODE FROM TEXT INPUT
+            Local char:Int = GetChar()
+            If Not char Then Exit
+            Select char
+            	Case KEY_1 'name on list --> move to next, playing screen
+            		result = "OK! Eleanor!"
+            	Case KEY_2 'name not on list --> ask again, stay on start screen
+		            result = "OK! Chloe"
+		        Case KEY_3
+		        	result = "OK! Becky!"
+		        Default 
+		        	result = "You are not in this class! Check your spelling!"
+            Return 0
+            End
+        Forever'CODE FROM TEXT INPUT
 				
-				'level_file = FileStream.Open("monkey://data/youranswer.txt","r")
-				'If level_file Then
-					'level_data = level_file.ReadString()
-					'level_file.Close 
-				'Endif
-				'data_item = level_data.Split("~n")
-				'For Local counter:Int = 0 To data_item.Length-1 Step 4
-					'x = Int(data_item[counter])
-					'y = Int(data_item[counter+1])
-					'w = Int(data_item[counter+2])
-					'h = Int(data_item[counter+3])
-					'difference_collection.AddLast(New Difference_area(x,y,w,h))
-				'Next
 				
 				GameState="PLAYING"
 
@@ -102,7 +114,7 @@ Method OnUpdate()
 		
 	End
 		
-Method OnRender()
+Method OnRender:Int()
 	Select GameState
 		Case "MENU"
 			DrawImage menu, 0, 0
@@ -177,7 +189,7 @@ Method New(balloony :Int =0)
 	
 End
 
-Method Move( )
+Method Move()
         DrawImage image,20, balloony
         balloony+=1 
         If balloony >=   278 Then ' check if at bottom
