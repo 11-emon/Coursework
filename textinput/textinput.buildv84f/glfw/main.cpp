@@ -16912,9 +16912,6 @@ class c_engine : public c_ftEngine{
 String dbg_type(c_engine**p){return "engine";}
 int bb_input_GetChar();
 int bb_graphics_Cls(Float,Float,Float);
-int bb_graphics_DrawImage(c_Image*,Float,Float,int);
-int bb_graphics_DrawImage2(c_Image*,Float,Float,Float,Float,Float,int);
-int bb_graphics_DrawText(String,Float,Float,Float,Float);
 void gc_mark( BBGame *p ){}
 String dbg_type( BBGame **p ){ return "BBGame"; }
 String dbg_value( BBGame **p ){ return dbg_ptr_value( *p ); }
@@ -44471,7 +44468,7 @@ c_game* c_game::m_new(){
 	DBG_ENTER("game.new")
 	c_game *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<7>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<8>");
 	c_App::m_new();
 	return this;
 }
@@ -44479,98 +44476,106 @@ int c_game::p_CreateLayers(){
 	DBG_ENTER("game.CreateLayers")
 	c_game *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<72>");
-	gc_assign(m_layerBackGround,m_eng->p_CreateLayer());
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<73>");
-	gc_assign(m_layerUI,m_eng->p_CreateLayer());
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<74>");
-	gc_assign(m_layerTitle,m_eng->p_CreateLayer());
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<75>");
-	gc_assign(m_layerScore,m_eng->p_CreateLayer());
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<76>");
+	gc_assign(m_layerBackGround,m_eng->p_CreateLayer());
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<77>");
+	gc_assign(m_layerUI,m_eng->p_CreateLayer());
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<78>");
+	gc_assign(m_layerTitle,m_eng->p_CreateLayer());
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<79>");
+	gc_assign(m_layerScore,m_eng->p_CreateLayer());
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<80>");
 	return 0;
 }
 int c_game::p_CreateInfoText(){
 	DBG_ENTER("game.CreateInfoText")
 	c_game *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<80>");
-	gc_assign(m_txtScore,m_eng->p_CreateText(m_font1,String(L"Input your name: ",17),FLOAT(100.0),FLOAT(200.0),0));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<82>");
-	m_txtScore->p_SetLayer(m_layerUI);
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<84>");
+	gc_assign(m_txtScore,m_eng->p_CreateText(m_font1,String(L"Input your name: ",17),FLOAT(100.0),FLOAT(200.0),0));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<86>");
+	m_txtScore->p_SetLayer(m_layerUI);
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<88>");
 	return 0;
 }
 int c_game::p_OnCreate(){
 	DBG_ENTER("game.OnCreate")
 	c_game *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<20>");
-	bb_app_SetUpdateRate(60);
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<21>");
-	gc_assign(m_eng,(new c_engine)->m_new());
+	bb_app_SetUpdateRate(60);
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<22>");
-	p_CreateLayers();
+	gc_assign(m_eng,(new c_engine)->m_new());
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<23>");
-	gc_assign(m_font1,m_eng->p_LoadFont(String(L"cc_font",7)));
+	p_CreateLayers();
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<24>");
+	gc_assign(m_font1,m_eng->p_LoadFont(String(L"cc_font",7)));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<25>");
 	p_CreateInfoText();
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<26>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<27>");
 	return 0;
 }
 int c_game::p_OnUpdate(){
 	DBG_ENTER("game.OnUpdate")
 	c_game *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<30>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<31>");
 	do{
 		DBG_BLOCK();
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<31>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<32>");
 		int t_char=bb_input_GetChar();
 		DBG_LOCAL(t_char,"char")
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<32>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<33>");
 		if(!((t_char)!=0)){
 			DBG_BLOCK();
 			break;
 		}
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<33>");
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<34>");
 		int t_1=t_char;
 		DBG_LOCAL(t_1,"1")
-		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<34>");
-		if(t_1==67){
-			DBG_BLOCK();
-			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<35>");
-			m_result=String(L"OK!",3);
-		}else{
+		DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<35>");
+		if(t_1==49){
 			DBG_BLOCK();
 			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<36>");
-			if(t_1==69){
+			m_result=String(L"OK! Eleanor!",12);
+		}else{
+			DBG_BLOCK();
+			DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<37>");
+			if(t_1==50){
 				DBG_BLOCK();
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<37>");
-				m_result=String(L"OK!",3);
+				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<38>");
+				m_result=String(L"OK! Chloe",9);
 			}else{
 				DBG_BLOCK();
 				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<39>");
-				m_result=String(L"You are not in this class! Check your spelling!",47);
-				DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<40>");
-				return 0;
+				if(t_1==51){
+					DBG_BLOCK();
+					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<40>");
+					m_result=String(L"OK! Becky!",10);
+				}else{
+					DBG_BLOCK();
+					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<42>");
+					m_result=String(L"You are not in this class! Check your spelling!",47);
+					DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<43>");
+					return 0;
+				}
 			}
 		}
 	}while(!(false));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<43>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<46>");
 	return 0;
 }
 int c_game::p_OnRender(){
 	DBG_ENTER("game.OnRender")
 	c_game *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<64>");
-	bb_graphics_Cls(FLOAT(255.0),FLOAT(255.0),FLOAT(255.0));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<65>");
-	bb_graphics_DrawText(m_result,FLOAT(10.0),FLOAT(10.0),FLOAT(0.0),FLOAT(0.0));
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<66>");
-	m_eng->p_Render2();
 	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<67>");
+	bb_graphics_Cls(FLOAT(255.0),FLOAT(255.0),FLOAT(255.0));
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<69>");
+	m_eng->p_CreateText(m_font1,m_result,FLOAT(290.0),FLOAT(200.0),0);
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<70>");
+	m_eng->p_Render2();
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<71>");
 	return 0;
 }
 void c_game::mark(){
@@ -44784,9 +44789,9 @@ c_GameDelegate* bb_app__delegate;
 c_game* bb_textinput_g;
 int bbMain(){
 	DBG_ENTER("Main")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<104>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<108>");
 	gc_assign(bb_textinput_g,(new c_game)->m_new());
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<105>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<109>");
 	return 0;
 }
 c_Stack::c_Stack(){
@@ -59147,7 +59152,7 @@ c_engine* c_engine::m_new(){
 	DBG_ENTER("engine.new")
 	c_engine *self=this;
 	DBG_LOCAL(self,"Self")
-	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<108>");
+	DBG_INFO("C:/Users/User/Documents/GitHub/Coursework/textinput/textinput.monkey<112>");
 	c_ftEngine::m_new();
 	return this;
 }
@@ -59174,121 +59179,6 @@ int bb_graphics_Cls(Float t_r,Float t_g,Float t_b){
 	bb_graphics_DebugRenderDevice();
 	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<380>");
 	bb_graphics_renderDevice->Cls(t_r,t_g,t_b);
-	return 0;
-}
-int bb_graphics_DrawImage(c_Image* t_image,Float t_x,Float t_y,int t_frame){
-	DBG_ENTER("DrawImage")
-	DBG_LOCAL(t_image,"image")
-	DBG_LOCAL(t_x,"x")
-	DBG_LOCAL(t_y,"y")
-	DBG_LOCAL(t_frame,"frame")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<452>");
-	bb_graphics_DebugRenderDevice();
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<453>");
-	if(t_frame<0 || t_frame>=t_image->m_frames.Length()){
-		DBG_BLOCK();
-		bbError(String(L"Invalid image frame",19));
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<456>");
-	c_Frame* t_f=t_image->m_frames.At(t_frame);
-	DBG_LOCAL(t_f,"f")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<458>");
-	bb_graphics_context->p_Validate();
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<460>");
-	if((t_image->m_flags&65536)!=0){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<461>");
-		bb_graphics_renderDevice->DrawSurface(t_image->m_surface,t_x-t_image->m_tx,t_y-t_image->m_ty);
-	}else{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<463>");
-		bb_graphics_renderDevice->DrawSurface2(t_image->m_surface,t_x-t_image->m_tx,t_y-t_image->m_ty,t_f->m_x,t_f->m_y,t_image->m_width,t_image->m_height);
-	}
-	return 0;
-}
-int bb_graphics_DrawImage2(c_Image* t_image,Float t_x,Float t_y,Float t_rotation,Float t_scaleX,Float t_scaleY,int t_frame){
-	DBG_ENTER("DrawImage")
-	DBG_LOCAL(t_image,"image")
-	DBG_LOCAL(t_x,"x")
-	DBG_LOCAL(t_y,"y")
-	DBG_LOCAL(t_rotation,"rotation")
-	DBG_LOCAL(t_scaleX,"scaleX")
-	DBG_LOCAL(t_scaleY,"scaleY")
-	DBG_LOCAL(t_frame,"frame")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<470>");
-	bb_graphics_DebugRenderDevice();
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<471>");
-	if(t_frame<0 || t_frame>=t_image->m_frames.Length()){
-		DBG_BLOCK();
-		bbError(String(L"Invalid image frame",19));
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<474>");
-	c_Frame* t_f=t_image->m_frames.At(t_frame);
-	DBG_LOCAL(t_f,"f")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<476>");
-	bb_graphics_PushMatrix();
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<478>");
-	bb_graphics_Translate(t_x,t_y);
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<479>");
-	bb_graphics_Rotate(t_rotation);
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<480>");
-	bb_graphics_Scale(t_scaleX,t_scaleY);
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<482>");
-	bb_graphics_Translate(-t_image->m_tx,-t_image->m_ty);
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<484>");
-	bb_graphics_context->p_Validate();
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<486>");
-	if((t_image->m_flags&65536)!=0){
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<487>");
-		bb_graphics_renderDevice->DrawSurface(t_image->m_surface,FLOAT(0.0),FLOAT(0.0));
-	}else{
-		DBG_BLOCK();
-		DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<489>");
-		bb_graphics_renderDevice->DrawSurface2(t_image->m_surface,FLOAT(0.0),FLOAT(0.0),t_f->m_x,t_f->m_y,t_image->m_width,t_image->m_height);
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<492>");
-	bb_graphics_PopMatrix();
-	return 0;
-}
-int bb_graphics_DrawText(String t_text,Float t_x,Float t_y,Float t_xalign,Float t_yalign){
-	DBG_ENTER("DrawText")
-	DBG_LOCAL(t_text,"text")
-	DBG_LOCAL(t_x,"x")
-	DBG_LOCAL(t_y,"y")
-	DBG_LOCAL(t_xalign,"xalign")
-	DBG_LOCAL(t_yalign,"yalign")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<577>");
-	bb_graphics_DebugRenderDevice();
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<579>");
-	if(!((bb_graphics_context->m_font)!=0)){
-		DBG_BLOCK();
-		return 0;
-	}
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<581>");
-	int t_w=bb_graphics_context->m_font->p_Width();
-	DBG_LOCAL(t_w,"w")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<582>");
-	int t_h=bb_graphics_context->m_font->p_Height();
-	DBG_LOCAL(t_h,"h")
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<584>");
-	t_x-=(Float)floor(Float(t_w*t_text.Length())*t_xalign);
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<585>");
-	t_y-=(Float)floor(Float(t_h)*t_yalign);
-	DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<587>");
-	for(int t_i=0;t_i<t_text.Length();t_i=t_i+1){
-		DBG_BLOCK();
-		DBG_LOCAL(t_i,"i")
-		DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<588>");
-		int t_ch=(int)t_text.At(t_i)-bb_graphics_context->m_firstChar;
-		DBG_LOCAL(t_ch,"ch")
-		DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<589>");
-		if(t_ch>=0 && t_ch<bb_graphics_context->m_font->p_Frames()){
-			DBG_BLOCK();
-			DBG_INFO("C:/MonkeyXFree84f/modules/mojo/graphics.monkey<590>");
-			bb_graphics_DrawImage(bb_graphics_context->m_font,t_x+Float(t_i*t_w),t_y,t_ch);
-		}
-	}
 	return 0;
 }
 int bbInit(){

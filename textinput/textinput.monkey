@@ -32,10 +32,12 @@ Class game Extends App
             Local char:Int = GetChar()
             If Not char Then Exit
             Select char
-            	Case KEY_C 'name on list --> move to next, playing screen
-            		result = "OK!"
-            	Case KEY_E 'name not on list --> ask again, stay on start screen
-		            result = "OK!"
+            	Case KEY_1 'name on list --> move to next, playing screen
+            		result = "OK! Eleanor!"
+            	Case KEY_2 'name not on list --> ask again, stay on start screen
+		            result = "OK! Chloe"
+		        Case KEY_3
+		        	result = "OK! Becky!"
 		        Default 
 		        	result = "You are not in this class! Check your spelling!"
             Return 0
@@ -63,7 +65,8 @@ Class game Extends App
     
     Method OnRender:Int()
     	Cls(255,255,255)'(0, 153, 153)
-    	DrawText result, 10, 10
+    	'userinput = eng.CreateText(font1, 
+    	eng.CreateText(font1,result, 290, 200)
     	eng.Render()
     	Return 0
     End
