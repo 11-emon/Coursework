@@ -124,7 +124,11 @@ Method OnRender:Int()
 			balloon.Move()
 		Case "PLAYING"
 			Cls 0, 191, 255
-			DrawText "Choose the answer to fill the gap: I love _____ dog!", 140, 100'add layer to this
+			eng.CreateText(font1,"Choose the answer to fill the gap: I love _____ dog!", 140, 100)'FIX THIS
+			'DrawText "Choose the answer to fill the gap: I love _____ dog!", 140, 100 'This line provides the 
+			'plain text version and works as expected.
+			eng.Render()
+			
 			DrawImage youreballoon,200,230
 			DrawImage yourballoon, 350,230
 			For Local difference := Eachin difference_collection
@@ -138,8 +142,9 @@ Method OnRender:Int()
 			'End
 	End
 	
-Method CreateLayers:Int()'FROM TEXT INPUT
-layerBackGround = eng.CreateLayer()
+Method CreateLayers:Int()'FROM TEXT INPUT'This method is used in order
+	'to create the layers used for the font
+	layerBackGround = eng.CreateLayer()'
 	layerUI = eng.CreateLayer()
     layerTitle = eng.CreateLayer()
     layerScore = eng.CreateLayer()
@@ -238,7 +243,7 @@ Class engine Extends ftEngine'FROM TEXT INPUT
 	Field txtLifes:ftObject
 	Field txtLevel:ftObject
 	Field txtComets:ftObject
-	Field txtHighScore:ftObject[10]   'Score list(array) with 10 entries
+	'Field txtHighScore:ftObject[10]   'Score list(array) with 10 entries
 	Field font1:ftFont
 
 	Field layerBackGround:ftLayer

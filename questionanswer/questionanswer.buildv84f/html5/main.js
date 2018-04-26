@@ -24182,25 +24182,25 @@ c_Game_app.m_new=function(){
 }
 c_Game_app.prototype.p_CreateLayers=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<142>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<147>";
 	this.m_layerBackGround=this.m_eng.p_CreateLayer();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<143>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<148>";
 	this.m_layerUI=this.m_eng.p_CreateLayer();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<144>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<149>";
 	this.m_layerTitle=this.m_eng.p_CreateLayer();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<145>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<150>";
 	this.m_layerScore=this.m_eng.p_CreateLayer();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<146>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<151>";
 	pop_err();
 	return 0;
 }
 c_Game_app.prototype.p_CreateInfoText=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<150>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<155>";
 	this.m_txtScore=this.m_eng.p_CreateText(this.m_font1,"Input your name: ",100.0,200.0,0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<152>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<157>";
 	this.m_txtScore.p_SetLayer(this.m_layerUI);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<154>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<159>";
 	pop_err();
 	return 0;
 }
@@ -24347,29 +24347,31 @@ c_Game_app.prototype.p_OnRender=function(){
 			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<126>";
 			bb_graphics_Cls(0.0,191.0,255.0);
 			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<127>";
-			bb_graphics_DrawText("Choose the answer to fill the gap: I love _____ dog!",140.0,100.0,0.0,0.0);
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<128>";
+			this.m_eng.p_CreateText(this.m_font1,"Choose the answer to fill the gap: I love _____ dog!",140.0,100.0,0);
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<130>";
+			this.m_eng.p_Render2();
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>";
 			bb_graphics_DrawImage(this.m_youreballoon,200.0,230.0,0);
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<129>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<133>";
 			bb_graphics_DrawImage(this.m_yourballoon,350.0,230.0,0);
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<130>";
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<130>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>";
 			var t_=this.m_difference_collection.p_ObjectEnumerator();
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<130>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>";
 			while(t_.p_HasNext()){
-				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<130>";
+				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<134>";
 				var t_difference=t_.p_NextObject();
-				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<131>";
+				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<135>";
 				if(dbg_object(t_difference).m_found){
-					err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<132>";
+					err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<136>";
 					bb_graphics_DrawImage(this.m_circle,(dbg_object(t_difference).m_middle_x),(dbg_object(t_difference).m_middle_y),0);
-					err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<133>";
+					err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<137>";
 					bb_graphics_DrawImage(this.m_circle,(dbg_object(t_difference).m_middle_x+340),(dbg_object(t_difference).m_middle_y),0);
 				}
 			}
-			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<136>";
+			err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<140>";
 			if(this.m_won){
-				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<136>";
+				err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<140>";
 				bb_graphics_DrawImage(this.m_complete,0.0,0.0,0);
 			}
 		}
@@ -32735,26 +32737,26 @@ c_Balloon.m_new=function(t_balloony){
 }
 c_Balloon.prototype.p_Move=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<215>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<220>";
 	bb_graphics_DrawImage(this.m_image,20.0,(this.m_balloony),0);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<216>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<221>";
 	this.m_balloony+=1;
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<217>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<222>";
 	if(this.m_balloony>=278){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<218>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<223>";
 		this.m_updowndir="up";
 	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<220>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<225>";
 	if(this.m_balloony<0){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<221>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<226>";
 		this.m_updowndir="down";
 	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<224>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<229>";
 	if(this.m_updowndir=="down"){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<225>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<230>";
 		this.m_balloony+=1;
 	}else{
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<228>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<233>";
 		this.m_balloony-=2;
 	}
 	pop_err();
@@ -32878,9 +32880,9 @@ function c_engine(){
 c_engine.prototype=extend_class(c_ftEngine);
 c_engine.m_new=function(){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<234>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<239>";
 	c_ftEngine.m_new.call(this);
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<234>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<239>";
 	pop_err();
 	return this;
 }
@@ -32956,19 +32958,19 @@ function bb_input_MouseY(){
 }
 function bb_questionanswer_intersects(t_x1,t_y1,t_w1,t_h1,t_x2,t_y2,t_w2,t_h2){
 	push_err();
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<199>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<204>";
 	if(t_x1>=t_x2+t_w2 || t_x1+t_w1<=t_x2){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<199>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<204>";
 		pop_err();
 		return false;
 	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<200>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<205>";
 	if(t_y1>=t_y2+t_h2 || t_y1+t_h1<=t_y2){
-		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<200>";
+		err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<205>";
 		pop_err();
 		return false;
 	}
-	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<201>";
+	err_info="C:/Users/User/Documents/GitHub/Coursework/questionanswer/questionanswer.monkey<206>";
 	pop_err();
 	return true;
 }
@@ -33038,37 +33040,6 @@ function bb_graphics_Cls(t_r,t_g,t_b){
 	bb_graphics_DebugRenderDevice();
 	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<380>";
 	bb_graphics_renderDevice.Cls(t_r,t_g,t_b);
-	pop_err();
-	return 0;
-}
-function bb_graphics_DrawText(t_text,t_x,t_y,t_xalign,t_yalign){
-	push_err();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<577>";
-	bb_graphics_DebugRenderDevice();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<579>";
-	if(!((dbg_object(bb_graphics_context).m_font)!=null)){
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<579>";
-		pop_err();
-		return 0;
-	}
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<581>";
-	var t_w=dbg_object(bb_graphics_context).m_font.p_Width();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<582>";
-	var t_h=dbg_object(bb_graphics_context).m_font.p_Height();
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<584>";
-	t_x-=Math.floor((t_w*t_text.length)*t_xalign);
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<585>";
-	t_y-=Math.floor((t_h)*t_yalign);
-	err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<587>";
-	for(var t_i=0;t_i<t_text.length;t_i=t_i+1){
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<588>";
-		var t_ch=dbg_charCodeAt(t_text,t_i)-dbg_object(bb_graphics_context).m_firstChar;
-		err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<589>";
-		if(t_ch>=0 && t_ch<dbg_object(bb_graphics_context).m_font.p_Frames()){
-			err_info="C:/MonkeyXFree84f/modules/mojo/graphics.monkey<590>";
-			bb_graphics_DrawImage(dbg_object(bb_graphics_context).m_font,t_x+(t_i*t_w),t_y,t_ch);
-		}
-	}
 	pop_err();
 	return 0;
 }
